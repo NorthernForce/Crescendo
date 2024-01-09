@@ -15,6 +15,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,11 +23,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.SwerveModuleHelpers;
 import frc.robot.gyros.NFRPigeon2;
+import frc.robot.subsystems.OrangePi;
+import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 
 public class SwervyContainer implements NFRRobotContainer
 {
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
+    protected final OrangePi orangePi;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -49,7 +53,9 @@ public class SwervyContainer implements NFRRobotContainer
             new NFRSwerveModuleSetState(modules[2], 0, false),
             new NFRSwerveModuleSetState(modules[3], 0, false)
         };
+        orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive));
+        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -86,5 +92,13 @@ public class SwervyContainer implements NFRRobotContainer
     public void setInitialPose(Pose2d pose)
     {
         drive.resetPose(pose);
+        orangePi.sendGlobalSetPose(pose, Timer.getFPGATimestamp());
+    }
+    @Override
+    public void periodic()
+    {
+        var chassisSpeeds = drive.getChassisSpeeds();
+        orangePi.setOdometry(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, Timer.getFPGATimestamp());
+        orangePi.setIMU(drive.getRotation(), Timer.getFPGATimestamp());
     }
 }
