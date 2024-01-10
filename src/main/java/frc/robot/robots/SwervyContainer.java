@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -31,6 +32,7 @@ public class SwervyContainer implements NFRRobotContainer
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final OrangePi orangePi;
+    protected final Field2d field;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -56,6 +58,8 @@ public class SwervyContainer implements NFRRobotContainer
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        field = new Field2d();
+        Shuffleboard.getTab("General").add("Field", field);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -100,5 +104,6 @@ public class SwervyContainer implements NFRRobotContainer
         var chassisSpeeds = drive.getChassisSpeeds();
         orangePi.setOdometry(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, Timer.getFPGATimestamp());
         orangePi.setIMU(drive.getRotation(), Timer.getFPGATimestamp());
+        field.setRobotPose(orangePi.getPose());
     }
 }
