@@ -76,6 +76,17 @@ public class SwervyContainer implements NFRRobotContainer
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
         }
+        else
+        {
+            drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
+                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(1), 0.1, 1),
+                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1),
+                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(5), 0.1, 1), true, true));
+            new JoystickButton(driverHID, XboxController.Button.kB.value)
+                .onTrue(Commands.runOnce(drive::clearRotation, drive));
+            new JoystickButton(driverHID, XboxController.Button.kY.value)
+                .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+        }
     }
     @Override
     public Map<String, Command> getAutonomousOptions()
