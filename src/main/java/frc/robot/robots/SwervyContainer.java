@@ -26,6 +26,7 @@ import frc.robot.utils.SwerveModuleHelpers;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
+import frc.robot.subsystems.OrangePi.TargetCamera;
 
 public class SwervyContainer implements NFRRobotContainer
 {
@@ -33,6 +34,7 @@ public class SwervyContainer implements NFRRobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final OrangePi orangePi;
     protected final Field2d field;
+    protected final TargetCamera aprilTagCamera, noteDetectorCamera;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -60,6 +62,8 @@ public class SwervyContainer implements NFRRobotContainer
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
+        noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
+        aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
