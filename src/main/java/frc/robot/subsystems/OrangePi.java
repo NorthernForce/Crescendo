@@ -1,28 +1,19 @@
 package frc.robot.subsystems;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import org.northernforce.subsystems.NFRSubsystem;
 
-import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.IntegerArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
@@ -204,114 +195,38 @@ public class OrangePi extends NFRSubsystem
         }
         return connectionFound;
     }
-    public class AprilTagCamera
-    {
-        protected class AprilTagTable
-        {
-            protected final int tagID;
-            protected final NetworkTable apriltagTable;
-            protected final IntegerSubscriber apriltagHamming, apriltagStamp;
-            protected final DoubleSubscriber apriltagDecisionMargin, apriltagCenterX, apriltagCenterY;
-            protected final DoubleArraySubscriber apriltagHomography, apriltagCorners;
-            protected final BooleanSubscriber apriltagPresent;
-            protected final Consumer<AprilTagDetection> detectionConsumer;
-            /**
-             * Creates a table that holds the values for an apriltag
-             * @param tagID the id for the tag
-             */
-            public AprilTagTable(int tagID, Consumer<AprilTagDetection> detectionConsumer)
-            {
-                this.tagID = tagID;
-                apriltagTable = cameraTable.getSubTable(tagFamily + "_" + tagID);
-                apriltagHamming = apriltagTable.getIntegerTopic("hamming").subscribe(0);
-                apriltagDecisionMargin = apriltagTable.getDoubleTopic("decision_margin").subscribe(0);
-                apriltagHomography = apriltagTable.getDoubleArrayTopic("homography").subscribe(new double[] {});
-                apriltagCenterX = apriltagTable.getDoubleTopic("centerX").subscribe(0);
-                apriltagCenterY = apriltagTable.getDoubleTopic("centerY").subscribe(0);
-                apriltagCorners = apriltagTable.getDoubleArrayTopic("corners").subscribe(new double[] {});
-                apriltagStamp = apriltagTable.getIntegerTopic("stamp").subscribe(0);
-                apriltagPresent = apriltagTable.getBooleanTopic("present").subscribe(false);
-                this.detectionConsumer = detectionConsumer;
-                NetworkTableInstance.getDefault().addListener(apriltagStamp, EnumSet.of(Kind.kValueAll), this::handleDetection);
-            }
-            /**
-             * Gets the current detection
-             * @return the detection, if any
-             */
-            public Optional<AprilTagDetection> getDetection()
-            {
-                if (apriltagPresent.get())
-                {
-                    return Optional.of(new AprilTagDetection(tagFamily, tagID, (int)apriltagHamming.get(), (float)apriltagDecisionMargin.get(),
-                        apriltagHomography.get(), apriltagCenterX.get(), apriltagCenterY.get(), apriltagCorners.get()));
-                }
-                else
-                {
-                    return Optional.empty();
-                }
-            }
-            public void handleDetection(NetworkTableEvent event)
-            {
-                getDetection().ifPresent(detectionConsumer);
-            }
-        };
-        protected final String tagFamily;
-        protected final NetworkTable cameraTable;
-        protected final Map<Integer, AprilTagTable> tableMap;
-        protected final Consumer<AprilTagDetection> detectionConsumer;
-        public AprilTagCamera(String name, String tagFamily, int tagCount, Consumer<AprilTagDetection> detectionConsumer)
-        {
-            cameraTable = table.getSubTable("apriltags").getSubTable(name);
-            this.tagFamily = tagFamily;
-            tableMap = new HashMap<>();
-            for (int i = 1; i <= tagCount; i++)
-            {
-                tableMap.put(i, new AprilTagTable(i, this::handleApriltagDetection));
-            }
-            this.detectionConsumer = detectionConsumer;
-        }
-        public void handleApriltagDetection(AprilTagDetection detection)
-        {
-            detectionConsumer.accept(detection);
-        }
-    };
-    public static record TargetDetection(double area, double x, double y, double width, double height)
+    public static record TargetDetection(double area, double tx, double ty, double pitch, double yaw, int fiducialID)
     {
     }
-    public class NoteDetectorCamera
+    public class TargetCamera
     {
-        protected final NetworkTable detectorTable;
-        protected final DoubleSubscriber area, x, y, width, height;
-        protected final BooleanSubscriber present;
-        protected final IntegerSubscriber stamp;
-        protected final Consumer<TargetDetection> detectionConsumer;
-        public NoteDetectorCamera(String cameraName, Consumer<TargetDetection> detectionConsumer)
+        protected final NetworkTable table;
+        protected final DoubleArraySubscriber area;
+        protected final DoubleArraySubscriber tx;
+        protected final DoubleArraySubscriber ty;
+        protected final DoubleArraySubscriber yaw;
+        protected final DoubleArraySubscriber pitch;
+        protected final IntegerArraySubscriber fiducialID;
+        protected final IntegerArraySubscriber stamp;
+        public TargetCamera(String name)
         {
-            detectorTable = table.getSubTable(cameraName);
-            area = detectorTable.getDoubleTopic("area").subscribe(0);
-            x = detectorTable.getDoubleTopic("x").subscribe(0);
-            y = detectorTable.getDoubleTopic("y").subscribe(0);
-            width = detectorTable.getDoubleTopic("width").subscribe(0);
-            height = detectorTable.getDoubleTopic("height").subscribe(0);
-            present = detectorTable.getBooleanTopic("present").subscribe(false);
-            stamp = detectorTable.getIntegerTopic("stamp").subscribe(0);
-            this.detectionConsumer = detectionConsumer;
-            NetworkTableInstance.getDefault().addListener(stamp, EnumSet.of(Kind.kValueAll), this::handleDetection);
+            table = OrangePi.this.table.getSubTable(name);
+            area = table.getDoubleArrayTopic("area").subscribe(new double[] {});
+            tx = table.getDoubleArrayTopic("tx").subscribe(new double[] {});
+            ty = table.getDoubleArrayTopic("ty").subscribe(new double[] {});
+            yaw = table.getDoubleArrayTopic("yaw").subscribe(new double[] {});
+            pitch = table.getDoubleArrayTopic("pitch").subscribe(new double[] {});
+            fiducialID = table.getIntegerArrayTopic("fiducial_id").subscribe(new long[] {});
+            stamp = table.getIntegerArrayTopic("stamp").subscribe(new long[] {});
         }
-        public Optional<TargetDetection> getDetection()
+        public TargetDetection[] getDetections()
         {
-            if (present.get())
+            TargetDetection[] detections = new TargetDetection[stamp.get().length];
+            for (int i = 0; i < stamp.get().length; i++)
             {
-                return Optional.of(new TargetDetection(area.get(), x.get(), y.get(), width.get(), height.get()));
+                detections[i] = new TargetDetection(area.get()[i], tx.get()[i], ty.get()[i], yaw.get()[i], pitch.get()[i], (int)fiducialID.get()[i]);
             }
-            else
-            {
-                return Optional.empty();
-            }
+            return detections;
         }
-        public void handleDetection(NetworkTableEvent event)
-        {
-            getDetection().ifPresent(detectionConsumer);
-        }
-    };
+    }
 }
