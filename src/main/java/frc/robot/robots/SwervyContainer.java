@@ -41,7 +41,9 @@ public class SwervyContainer implements NFRRobotContainer
             new Translation2d(-0.581025, 0.581025),
             new Translation2d(-0.581025, -0.581025)
         };
-        drive = new NFRSwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, new NFRNavX());
+        NFRNavX gyro = new NFRNavX();
+        gyro.reset();
+        drive = new NFRSwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(modules[0], 0, false),
             new NFRSwerveModuleSetState(modules[1], 0, false),
