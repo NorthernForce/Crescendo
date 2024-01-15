@@ -20,6 +20,7 @@ public class TurnToTarget extends Command
     protected final ProfiledPIDController controller;
     protected final DoubleSupplier xSupplier, ySupplier, thetaSupplier;
     protected final Supplier<Optional<TargetDetection>> targetSupplier;
+    protected final boolean optimize, fieldRelative;
     /**
      * Creates a new TurnToTarget. This allows the robot to be driven in both directions with optional field relative driving, while aligning with
      * a target.
@@ -32,7 +33,8 @@ public class TurnToTarget extends Command
      * @param targetSupplier
      */
     public TurnToTarget(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, ProfiledPIDController controller,
-        DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier thetaSupplier, Supplier<Optional<TargetDetection>> targetSupplier)
+        DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier thetaSupplier, Supplier<Optional<TargetDetection>> targetSupplier,
+        boolean optimize, boolean fieldRelative)
     {
         this.drive = drive;
         this.setStateCommands = setStateCommands;
@@ -41,6 +43,8 @@ public class TurnToTarget extends Command
         this.ySupplier = ySupplier;
         this.thetaSupplier = thetaSupplier;
         this.targetSupplier = targetSupplier;
+        this.optimize = optimize;
+        this.fieldRelative = fieldRelative;
         addRequirements(drive);
     }
     @Override
@@ -49,7 +53,7 @@ public class TurnToTarget extends Command
         controller.reset(0);
         for (var command : setStateCommands)
         {
-            command.initialize();
+            command.schedule();
         }
         controller.setGoal(0);
     }
@@ -59,31 +63,27 @@ public class TurnToTarget extends Command
         var detection = targetSupplier.get();
         if (detection.isPresent())
         {
-            ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(detection.get().yaw())),
-                drive.getRotation()
-            );
+            ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(detection.get().yaw()));
+            if (fieldRelative)
+                speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
             SwerveModuleState[] states = drive.toModuleStates(speeds);
-            for (int i = 0; i < setStateCommands.length; i++)
+            for (int i = 0; i < states.length; i++)
             {
-                setStateCommands[i].setTargetState(states[i]);
+                setStateCommands[i].setTargetState(optimize ? SwerveModuleState.optimize(states[i],
+                    drive.getModules()[i].getRotation()) : states[i]);
             }
         }
         else
         {
-            ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), thetaSupplier.getAsDouble()),
-                drive.getRotation()
-            );
+            ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), thetaSupplier.getAsDouble());
+            if (fieldRelative)
+                speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
             SwerveModuleState[] states = drive.toModuleStates(speeds);
-            for (int i = 0; i < setStateCommands.length; i++)
+            for (int i = 0; i < states.length; i++)
             {
-                setStateCommands[i].setTargetState(states[i]);
+                setStateCommands[i].setTargetState(optimize ? SwerveModuleState.optimize(states[i],
+                    drive.getModules()[i].getRotation()) : states[i]);
             }
-        }
-        for (var command : setStateCommands)
-        {
-            command.execute();
         }
     }
     @Override
@@ -96,7 +96,7 @@ public class TurnToTarget extends Command
     {
         for (var command : setStateCommands)
         {
-            command.end(interrupted);
+            command.cancel();
         }
     }
 }
