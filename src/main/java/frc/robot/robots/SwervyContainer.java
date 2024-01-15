@@ -30,8 +30,8 @@ public class SwervyContainer implements NFRRobotContainer
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
-            NFRSwerveModule.createMk3Slow("Forward Left", 1, 5, 9, false),
-            NFRSwerveModule.createMk3Slow("Forward Right", 2, 6, 10, true),
+            NFRSwerveModule.createMk3Slow("Front Left", 1, 5, 9, false),
+            NFRSwerveModule.createMk3Slow("Front Right", 2, 6, 10, true),
             NFRSwerveModule.createMk3Slow("Back Left", 3, 7, 11, false),
             NFRSwerveModule.createMk3Slow("Back Right", 4, 8, 12, true)
         };
@@ -57,8 +57,8 @@ public class SwervyContainer implements NFRRobotContainer
         {
             XboxController driverController = (XboxController)driverHID;
             drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
-                () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
+                () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), true, true));
             new JoystickButton(driverController, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
