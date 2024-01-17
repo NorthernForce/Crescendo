@@ -13,6 +13,7 @@ import org.northernforce.util.NFRRobotContainer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
@@ -35,6 +36,7 @@ public class SwervyContainer implements NFRRobotContainer
     protected final OrangePi orangePi;
     protected final Field2d field;
     protected final TargetCamera aprilTagCamera, noteDetectorCamera;
+    protected final NFRPigeon2 gyro;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -49,7 +51,7 @@ public class SwervyContainer implements NFRRobotContainer
             new Translation2d(-0.581025, 0.581025),
             new Translation2d(-0.581025, -0.581025)
         };
-        NFRPigeon2 gyro = new NFRPigeon2(13);
+        gyro = new NFRPigeon2(13);
         drive = new NFRSwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(modules[0], 0, false),
@@ -117,8 +119,9 @@ public class SwervyContainer implements NFRRobotContainer
     public void periodic()
     {
         var chassisSpeeds = drive.getChassisSpeeds();
-        orangePi.setOdometry(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, Timer.getFPGATimestamp());
-        orangePi.setIMU(drive.getRotation(), Timer.getFPGATimestamp());
+        orangePi.setOdometry(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond,
+            Rotation2d.fromRadians(chassisSpeeds.omegaRadiansPerSecond), Timer.getFPGATimestamp());
+        orangePi.setIMU(Rotation2d.fromDegrees(gyro.getRate()), Timer.getFPGATimestamp());
         field.setRobotPose(orangePi.getPose());
     }
 }

@@ -57,10 +57,10 @@ public class OrangePi extends NFRSubsystem
     }
     protected final NetworkTable table;
     protected final NetworkTable odometryTable;
-    protected final DoublePublisher odometryDeltaX, odometryDeltaY;
+    protected final DoublePublisher odometryDeltaX, odometryDeltaY, odometryDeltaTheta;
     protected final IntegerPublisher odometryStamp;
     protected final NetworkTable imuTable;
-    protected final DoublePublisher imuTheta;
+    protected final DoublePublisher imuDeltaTheta;
     protected final IntegerPublisher imuStamp;
     protected final NetworkTable targetPoseTable;
     protected final DoublePublisher targetPoseX, targetPoseY, targetPoseTheta;
@@ -85,9 +85,10 @@ public class OrangePi extends NFRSubsystem
         odometryTable = table.getSubTable("odometry");
         odometryDeltaX = odometryTable.getDoubleTopic("vx").publish();
         odometryDeltaY = odometryTable.getDoubleTopic("vy").publish();
+        odometryDeltaTheta = odometryTable.getDoubleTopic("vtheta").publish();
         odometryStamp = odometryTable.getIntegerTopic("stamp").publish();
         imuTable = table.getSubTable("imu");
-        imuTheta = imuTable.getDoubleTopic("theta").publish();
+        imuDeltaTheta = imuTable.getDoubleTopic("vtheta").publish();
         imuStamp = imuTable.getIntegerTopic("stamp").publish();
         targetPoseTable = table.getSubTable("target_pose");
         targetPoseX = targetPoseTable.getDoubleTopic("x").publish();
@@ -114,22 +115,24 @@ public class OrangePi extends NFRSubsystem
      * Sets the odometry
      * @param deltaX in m/s
      * @param deltaY in m/s
+     * @param deltaTheta change in angle
      * @param stamp in seconds
      */
-    public void setOdometry(double deltaX, double deltaY, double stamp)
+    public void setOdometry(double deltaX, double deltaY, Rotation2d deltaTheta, double stamp)
     {
         odometryDeltaX.set(deltaX);
         odometryDeltaY.set(deltaY);
+        odometryDeltaTheta.set(deltaTheta.getRadians());
         odometryStamp.set((long)(stamp * 1e9));
     }
     /**
      * Sets the imu
-     * @param theta absolute rotation blue relative
+     * @param deltaTheta change in angle
      * @param stamp in seconds
      */
-    public void setIMU(Rotation2d theta, double stamp)
+    public void setIMU(Rotation2d deltaTheta, double stamp)
     {
-        imuTheta.set(theta.getRadians());
+        imuDeltaTheta.set(deltaTheta.getRadians());
         imuStamp.set((long)(stamp * 1e9));
     }
     /**
