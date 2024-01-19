@@ -5,7 +5,6 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
-import org.northernforce.gyros.NFRNavX;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
@@ -22,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.SwerveModuleHelpers;
+import frc.robot.gyros.NFRPigeon2;
 
 public class SwervyContainer implements NFRRobotContainer
 {
@@ -41,8 +41,7 @@ public class SwervyContainer implements NFRRobotContainer
             new Translation2d(-0.581025, 0.581025),
             new Translation2d(-0.581025, -0.581025)
         };
-        NFRNavX gyro = new NFRNavX();
-        gyro.reset();
+        NFRPigeon2 gyro = new NFRPigeon2(13);
         drive = new NFRSwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(modules[0], 0, false),
