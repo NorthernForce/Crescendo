@@ -1,7 +1,11 @@
 package frc.robot.subsystems;
 
+import java.util.EnumSet;
+import java.util.function.Consumer;
+
 import org.northernforce.subsystems.NFRSubsystem;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -14,6 +18,7 @@ import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
@@ -57,23 +62,17 @@ public class OrangePi extends NFRSubsystem
     }
     protected final NetworkTable table;
     protected final NetworkTable odometryTable;
-    protected final DoublePublisher odometryDeltaX, odometryDeltaY, odometryDeltaTheta;
+    protected final DoublePublisher odometryX, odometryY, odometryTheta, odometryDeltaX, odometryDeltaY, odometryDeltaTheta;
     protected final IntegerPublisher odometryStamp;
-    protected final NetworkTable imuTable;
-    protected final DoublePublisher imuDeltaTheta;
-    protected final IntegerPublisher imuStamp;
     protected final NetworkTable targetPoseTable;
     protected final DoublePublisher targetPoseX, targetPoseY, targetPoseTheta;
     protected final IntegerPublisher targetPoseStamp;
     protected final BooleanPublisher targetPoseCancel;
-    protected final NetworkTable globalSetPoseTable;
-    protected final DoublePublisher globalSetPoseX, globalSetPoseY, globalSetPoseTheta;
-    protected final IntegerPublisher globalSetPoseStamp;
     protected final NetworkTable cmdVelTable;
     protected final DoubleSubscriber cmdVelX, cmdVelY, cmdVelTheta;
     protected final NetworkTable poseTable;
-    protected final DoubleSubscriber poseX, poseY, poseTheta;
-    protected final IntegerSubscriber poseStamp;
+    protected final DoublePublisher poseX, poseY, poseTheta;
+    protected final IntegerPublisher poseStamp;
     /**
      * Create a new orange pi.
      * @param config
@@ -83,33 +82,28 @@ public class OrangePi extends NFRSubsystem
         super(config);
         table = NetworkTableInstance.getDefault().getTable(config.tableName);
         odometryTable = table.getSubTable("odometry");
+        odometryX = odometryTable.getDoubleTopic("x").publish();
+        odometryY = odometryTable.getDoubleTopic("y").publish();
+        odometryTheta = odometryTable.getDoubleTopic("theta").publish();
         odometryDeltaX = odometryTable.getDoubleTopic("vx").publish();
         odometryDeltaY = odometryTable.getDoubleTopic("vy").publish();
         odometryDeltaTheta = odometryTable.getDoubleTopic("vtheta").publish();
         odometryStamp = odometryTable.getIntegerTopic("stamp").publish();
-        imuTable = table.getSubTable("imu");
-        imuDeltaTheta = imuTable.getDoubleTopic("vtheta").publish();
-        imuStamp = imuTable.getIntegerTopic("stamp").publish();
         targetPoseTable = table.getSubTable("target_pose");
         targetPoseX = targetPoseTable.getDoubleTopic("x").publish();
         targetPoseY = targetPoseTable.getDoubleTopic("y").publish();
         targetPoseTheta = targetPoseTable.getDoubleTopic("theta").publish();
         targetPoseStamp = targetPoseTable.getIntegerTopic("stamp").publish();
         targetPoseCancel = targetPoseTable.getBooleanTopic("cancel").publish();
-        globalSetPoseTable = table.getSubTable("global_set_pose");
-        globalSetPoseX = globalSetPoseTable.getDoubleTopic("x").publish();
-        globalSetPoseY = globalSetPoseTable.getDoubleTopic("y").publish();
-        globalSetPoseTheta = globalSetPoseTable.getDoubleTopic("theta").publish();
-        globalSetPoseStamp = globalSetPoseTable.getIntegerTopic("stamp").publish();
         cmdVelTable = table.getSubTable("cmd_vel");
         cmdVelX = cmdVelTable.getDoubleTopic("x").subscribe(0);
         cmdVelY = cmdVelTable.getDoubleTopic("y").subscribe(0);
         cmdVelTheta = cmdVelTable.getDoubleTopic("theta").subscribe(0);
         poseTable = table.getSubTable("pose");
-        poseX = poseTable.getDoubleTopic("x").subscribe(0);
-        poseY = poseTable.getDoubleTopic("y").subscribe(0);
-        poseTheta = poseTable.getDoubleTopic("theta").subscribe(0);
-        poseStamp = poseTable.getIntegerTopic("stamp").subscribe(0);
+        poseX = poseTable.getDoubleTopic("x").publish();
+        poseY = poseTable.getDoubleTopic("y").publish();
+        poseTheta = poseTable.getDoubleTopic("theta").publish();
+        poseStamp = poseTable.getIntegerTopic("stamp").publish();
     }
     /**
      * Sets the odometry
@@ -118,22 +112,15 @@ public class OrangePi extends NFRSubsystem
      * @param deltaTheta change in angle
      * @param stamp in seconds
      */
-    public void setOdometry(double deltaX, double deltaY, Rotation2d deltaTheta, double stamp)
+    public void setOdometry(Pose2d pose, double deltaX, double deltaY, Rotation2d deltaTheta, double stamp)
     {
+        odometryX.set(pose.getX());
+        odometryY.set(pose.getY());
+        odometryTheta.set(pose.getRotation().getRadians());
         odometryDeltaX.set(deltaX);
         odometryDeltaY.set(deltaY);
         odometryDeltaTheta.set(deltaTheta.getRadians());
         odometryStamp.set((long)(stamp * 1e9));
-    }
-    /**
-     * Sets the imu
-     * @param deltaTheta change in angle
-     * @param stamp in seconds
-     */
-    public void setIMU(Rotation2d deltaTheta, double stamp)
-    {
-        imuDeltaTheta.set(deltaTheta.getRadians());
-        imuStamp.set((long)(stamp * 1e9));
     }
     /**
      * Sends a target pose
@@ -155,18 +142,6 @@ public class OrangePi extends NFRSubsystem
         targetPoseCancel.set(true);
     }
     /**
-     * Sends a global set pose
-     * @param pose the global set pose
-     * @param stamp in seconds
-     */
-    public void sendGlobalSetPose(Pose2d pose, double stamp)
-    {
-        globalSetPoseX.set(pose.getX());
-        globalSetPoseY.set(pose.getY());
-        globalSetPoseTheta.set(pose.getRotation().getRadians());
-        globalSetPoseStamp.set((long)(stamp * 1e9));
-    }
-    /**
      * Gets the command velocity from nav2
      * @return dx, dy, and dtheta
      */
@@ -175,12 +150,16 @@ public class OrangePi extends NFRSubsystem
         return new Twist2d(cmdVelX.get(), cmdVelY.get(), cmdVelTheta.get());
     }
     /**
-     * Gets the pose of the robot via localization
-     * @return robot pose
+     * Sets the map -> base_link pose
+     * @param pose in meters
+     * @param stamp in seconds
      */
-    public Pose2d getPose()
+    public void setPose(Pose2d pose, double stamp)
     {
-        return new Pose2d(poseX.get(), poseY.get(), Rotation2d.fromRadians(poseTheta.get()));
+        poseX.set(pose.getX());
+        poseY.set(pose.getY());
+        poseTheta.set(pose.getRotation().getRadians());
+        poseStamp.set((long)(stamp * 1e9));
     }
     /**
      * Checks to see if the orange pi is connected
@@ -230,6 +209,23 @@ public class OrangePi extends NFRSubsystem
                 detections[i] = new TargetDetection(area.get()[i], tx.get()[i], ty.get()[i], yaw.get()[i], pitch.get()[i], (int)fiducialID.get()[i]);
             }
             return detections;
+        }
+    }
+    public class PoseSupplier
+    {
+        protected final NetworkTable table;
+        protected final DoubleSubscriber x, y, theta;
+        protected final IntegerSubscriber stamp;
+        public PoseSupplier(String name, Consumer<Pair<Pose2d, Double>> consumer)
+        {
+            table = OrangePi.this.table.getSubTable("poses").getSubTable(name);
+            x = table.getDoubleTopic("x").subscribe(0);
+            y = table.getDoubleTopic("y").subscribe(0);
+            theta = table.getDoubleTopic("theta").subscribe(0);
+            stamp = table.getIntegerTopic("stamp").subscribe(0);
+            NetworkTableInstance.getDefault().addListener(stamp, EnumSet.of(Kind.kValueAll), event -> {
+                consumer.accept(Pair.of(new Pose2d(x.get(), y.get(), Rotation2d.fromRadians(theta.get())), (double)stamp.get() / 1e9));
+            });
         }
     }
 }
