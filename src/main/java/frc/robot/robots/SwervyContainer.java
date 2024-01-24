@@ -5,15 +5,21 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+import org.northernforce.motors.NFRTalonFX;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 import org.northernforce.util.NFRRobotContainer;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
+import Sensors.BeamBreak;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -25,10 +31,18 @@ import frc.robot.gyros.NFRPigeon2;
 
 public class SwervyContainer implements NFRRobotContainer
 {
+    BeamBreak beamBreak = new BeamBreak(0);
+    
+
+    TalonFXConfiguration rotatingJointMotorConfiguration = new TalonFXConfiguration();
+    private NFRTalonFX beamTest = new NFRTalonFX("drive",rotatingJointMotorConfiguration, 13);
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
+    
     public SwervyContainer()
     {
+        
+    
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
             SwerveModuleHelpers.createMk3Slow("Front Left", 1, 5, 9, false, "drive"),
             SwerveModuleHelpers.createMk3Slow("Front Right", 2, 6, 10, true, "drive"),
@@ -86,5 +100,19 @@ public class SwervyContainer implements NFRRobotContainer
     public void setInitialPose(Pose2d pose)
     {
         drive.resetPose(pose);
+    }
+    @Override
+    public void periodic()
+    {
+
+        if(DriverStation.isEnabled())
+        {
+            if(beamBreak.beamIntact())
+            {
+                beamTest.set(0.25);
+            } else {
+                beamTest.set(0);
+            }
+        }
     }
 }
