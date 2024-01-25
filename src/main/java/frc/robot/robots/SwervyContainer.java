@@ -102,9 +102,9 @@ public class SwervyContainer implements NFRRobotContainer
     {
         if(DriverStation.isEnabled()){
             if(limitSwitch.get()){
-                testMotor.set(0.25);
-            } else {
                 testMotor.set(0);
+            } else {
+                testMotor.set(0.25);
             }
         }
     }
