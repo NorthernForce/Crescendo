@@ -5,15 +5,20 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+import org.northernforce.motors.NFRTalonFX;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 import org.northernforce.util.NFRRobotContainer;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -27,6 +32,10 @@ public class SwervyContainer implements NFRRobotContainer
 {
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
+    private DigitalInput limitSwitch;
+    private NFRTalonFX testMotor;
+    private boolean isMotorEnabled;
+    private boolean switchHeld;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -50,6 +59,11 @@ public class SwervyContainer implements NFRRobotContainer
             new NFRSwerveModuleSetState(modules[3], 0, false)
         };
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive));
+        limitSwitch = new DigitalInput(7);
+        TalonFXConfiguration testMotorConfiguration = new TalonFXConfiguration();
+        testMotor = new NFRTalonFX(testMotorConfiguration, 1);
+        isMotorEnabled = false;
+        switchHeld = false;
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -86,5 +100,16 @@ public class SwervyContainer implements NFRRobotContainer
     public void setInitialPose(Pose2d pose)
     {
         drive.resetPose(pose);
+    }
+    @Override
+    public void periodic()
+    {
+        if(DriverStation.isEnabled()){
+            if(limitSwitch.get()){
+                testMotor.set(0.25);
+            } else {
+                testMotor.set(0);
+            }
+        }
     }
 }
