@@ -1,4 +1,4 @@
-package Sensors;
+package frc.robot.sensors;
 
 
 
@@ -17,6 +17,10 @@ public class BeamBreak
     public boolean beamIntact()
     {
         return initialConveyorSensor.get();
+    }
+    public boolean beamBroken()
+    {
+        return !initialConveyorSensor.get();
     }
 
     // public BeamStatus GetStatus()

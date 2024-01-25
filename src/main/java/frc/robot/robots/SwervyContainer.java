@@ -13,7 +13,6 @@ import org.northernforce.util.NFRRobotContainer;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
-import Sensors.BeamBreak;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,19 +27,21 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.SwerveModuleHelpers;
 import frc.robot.gyros.NFRPigeon2;
+import frc.robot.sensors.*;
 
 public class SwervyContainer implements NFRRobotContainer
 {
     BeamBreak beamBreak = new BeamBreak(0);
     
-
-    TalonFXConfiguration rotatingJointMotorConfiguration = new TalonFXConfiguration();
-    private NFRTalonFX beamTest = new NFRTalonFX("drive",rotatingJointMotorConfiguration, 13);
+    
+    protected final NFRTalonFX beamTest;
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
     
     public SwervyContainer()
     {
+    TalonFXConfiguration talonConfig = new TalonFXConfiguration();
+    beamTest = new NFRTalonFX("drive",talonConfig, 13);
         
     
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
