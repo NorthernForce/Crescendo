@@ -34,8 +34,6 @@ public class SwervyContainer implements NFRRobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
     private DigitalInput limitSwitch;
     private NFRTalonFX testMotor;
-    private boolean isMotorEnabled;
-    private boolean switchHeld;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -61,9 +59,7 @@ public class SwervyContainer implements NFRRobotContainer
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive));
         limitSwitch = new DigitalInput(7);
         TalonFXConfiguration testMotorConfiguration = new TalonFXConfiguration();
-        testMotor = new NFRTalonFX(testMotorConfiguration, 1);
-        isMotorEnabled = false;
-        switchHeld = false;
+        testMotor = new NFRTalonFX("drive", testMotorConfiguration, 14);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
