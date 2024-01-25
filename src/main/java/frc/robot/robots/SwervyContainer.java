@@ -31,7 +31,7 @@ import frc.robot.sensors.*;
 
 public class SwervyContainer implements NFRRobotContainer
 {
-    BeamBreak beamBreak = new BeamBreak(9);
+    NFRBeamBreak beamBreak = new NFRBeamBreak(9);
     
     
     protected final NFRTalonFX beamTest;
