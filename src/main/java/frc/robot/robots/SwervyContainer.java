@@ -11,7 +11,6 @@ import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
-import Sensors.BeamBreak;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -50,6 +49,8 @@ public class SwervyContainer implements RobotContainer
 
     public SwervyContainer()
     {
+    TalonFXConfiguration talonConfig = new TalonFXConfiguration();
+    beamTest = new NFRTalonFX("drive",talonConfig, 13);
         
     
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
