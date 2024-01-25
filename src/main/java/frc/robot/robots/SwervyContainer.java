@@ -50,7 +50,7 @@ public class SwervyContainer implements RobotContainer
     public SwervyContainer()
     {
     TalonFXConfiguration talonConfig = new TalonFXConfiguration();
-    beamTest = new NFRTalonFX("drive",talonConfig, 13);
+    beamTest = new NFRTalonFX("drive",talonConfig, 14);
         
     
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
