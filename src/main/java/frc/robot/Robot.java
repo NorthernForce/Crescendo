@@ -3,18 +3,17 @@ package frc.robot;
 import java.util.Map;
 
 import org.northernforce.util.NFRRobotChooser;
-import org.northernforce.util.NFRRobotContainer;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.robots.SwervyContainer;
+import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.RobotContainer;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,31 +22,22 @@ import frc.robot.robots.SwervyContainer;
  * project.
  */
 public class Robot extends TimedRobot {
-  private NFRRobotContainer container;
-  private SendableChooser<Pose2d> poseChooser;
-  private SendableChooser<Command> autonomousChooser;
-  private Command autonomousCommand;
+  private RobotContainer container;
+  private SendableChooser<AutonomousRoutine> autoChooser;
+  private AutonomousRoutine routine;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    container = new NFRRobotChooser(() -> new SwervyContainer(), Map.of("Swervy", () -> new SwervyContainer())).getNFRRobotContainer();
-    poseChooser = new SendableChooser<>();
-    autonomousChooser = new SendableChooser<>();
-    for (var pair : container.getStartingLocations().entrySet())
+    container = (RobotContainer)new NFRRobotChooser(() -> new SwervyContainer(), Map.of("Swervy", () -> new SwervyContainer())).getNFRRobotContainer();
+    autoChooser = new SendableChooser<>();
+    for (var auto : container.getAutonomousRoutines())
     {
-      poseChooser.addOption(pair.getKey(), pair.getValue());
+      autoChooser.addOption(auto.name(), auto);
     }
-    for (var pair : container.getAutonomousOptions().entrySet())
-    {
-      autonomousChooser.addOption(pair.getKey(), pair.getValue());
-    }
-    var pair = container.getDefaultAutonomous();
-    autonomousChooser.setDefaultOption(pair.getFirst(), pair.getSecond());
-    Shuffleboard.getTab("Autonomous").add("Starting location?", poseChooser);
-    Shuffleboard.getTab("Autonomous").add("Autonomous routine?", autonomousChooser);
+    Shuffleboard.getTab("Autonomous").add("Autonomous routine?", autoChooser);
   }
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -72,15 +62,11 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autonomousCommand = autonomousChooser.getSelected();
-    var pose = poseChooser.getSelected();
-    if (pose != null)
+    routine = autoChooser.getSelected();
+    if (routine != null)
     {
-      container.setInitialPose(pose);
-    }
-    if (autonomousCommand != null)
-    {
-      autonomousCommand.schedule();
+      container.setInitialPose(routine.startingPose());
+      routine.command().schedule();
     }
   }
 
@@ -92,9 +78,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if (autonomousCommand != null)
+    if (routine != null)
     {
-      autonomousCommand.cancel();
+      routine.command().cancel();
     }
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
     GenericHID driverController;
