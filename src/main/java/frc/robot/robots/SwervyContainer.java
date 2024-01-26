@@ -1,5 +1,6 @@
 package frc.robot.robots;
 
+import java.util.List;
 import java.util.Map;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
@@ -7,7 +8,6 @@ import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
-import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.RobotContainer;
 import frc.robot.utils.SwerveModuleHelpers;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.subsystems.OrangePi;
@@ -30,7 +32,7 @@ import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 
-public class SwervyContainer implements NFRRobotContainer
+public class SwervyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
@@ -127,5 +129,9 @@ public class SwervyContainer implements NFRRobotContainer
             Rotation2d.fromRadians(chassisSpeeds.omegaRadiansPerSecond), Timer.getFPGATimestamp());
         orangePi.setPose(drive.getEstimatedPose(), Timer.getFPGATimestamp());
         field.setRobotPose(drive.getEstimatedPose());
+    }
+    @Override
+    public List<AutonomousRoutine> getAutonomousRoutines() {
+        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(), Commands.none()));
     }
 }
