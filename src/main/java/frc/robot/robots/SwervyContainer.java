@@ -1,19 +1,24 @@
 package frc.robot.robots;
 
 import java.util.Map;
+
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+import org.northernforce.motors.NFRTalonFX;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 import org.northernforce.util.NFRRobotContainer;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -22,13 +27,13 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.utils.SwerveModuleHelpers;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.subsystems.OrangePi;
-import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
+import frc.robot.subsystems.SwerveDrive;
+import frc.robot.utils.SwerveModuleHelpers;
 
 public class SwervyContainer implements NFRRobotContainer
 {
@@ -39,6 +44,8 @@ public class SwervyContainer implements NFRRobotContainer
     protected final TargetCamera aprilTagCamera, noteDetectorCamera;
     protected final NFRPigeon2 gyro;
     protected final PoseSupplier aprilTagSupplier;
+    protected final NFRTalonFX ultrasonicMotor;
+    protected final AnalogPotentiometer ultrasonic;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -70,6 +77,11 @@ public class SwervyContainer implements NFRRobotContainer
         aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
         aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
+        });
+        ultrasonicMotor = new NFRTalonFX("drive",new TalonFXConfiguration(),14);
+        ultrasonic = new AnalogPotentiometer(3, 1024); // TODO: Get proper scaling value
+        Shuffleboard.getTab("General").addDouble("Ultrasonic", () -> {
+            return ultrasonic.get();
         });
     }
     @Override
@@ -127,5 +139,13 @@ public class SwervyContainer implements NFRRobotContainer
             Rotation2d.fromRadians(chassisSpeeds.omegaRadiansPerSecond), Timer.getFPGATimestamp());
         orangePi.setPose(drive.getEstimatedPose(), Timer.getFPGATimestamp());
         field.setRobotPose(drive.getEstimatedPose());
+        if (ultrasonic.get() < 14) // NOTE: this is just an example value
+        {
+            ultrasonicMotor.set(0);
+        }
+        else
+        {
+            ultrasonicMotor.set(0.25);
+        }
     }
 }
