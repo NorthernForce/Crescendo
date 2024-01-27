@@ -26,6 +26,7 @@ public class SwerveDrive extends NFRSwerveDrive
     /**
      * Updates the odometry and pose estimator with module positions.
      */
+    @Override
     public void updateOdometry()
     {
         poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getRotation(), getPositions());
