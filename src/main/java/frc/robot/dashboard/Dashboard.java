@@ -10,15 +10,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.utils.AutonomousRoutine;
 
+/**
+ * This is the base class for any Dashboard interface
+ */
 public abstract class Dashboard
 {
     protected final NetworkTable table;
     protected final SendableChooser<AutonomousRoutine> autoChooser;
+    /**
+     * Creates a new Dashboard
+     * @param tablePath the path to the table
+     */
     public Dashboard(String tablePath)
     {
         table = NetworkTableInstance.getDefault().getTable(tablePath);
         autoChooser = new SendableChooser<>();
     }
+    /**
+     * Adds a sendable to the dashboard
+     * @param name the name of the sendable
+     * @param sendable the sendable to publish
+     */
     public void addSendable(String name, Sendable sendable)
     {
         NetworkTable subTable = table.getSubTable(name);
@@ -28,6 +40,11 @@ public abstract class Dashboard
         builder.startListeners();
         subTable.getEntry(".name").setString(name);
     }
+    /**
+     * Displays autonomous routines
+     * @param name the name of the SendableChooser
+     * @param routines the routines to choose from
+     */
     public void displayAutonomousRoutines(String name, List<AutonomousRoutine> routines)
     {
         for (var routine : routines)
@@ -36,7 +53,11 @@ public abstract class Dashboard
         }
         addSendable(name, autoChooser);
     }
-    public AutonomousRoutine getSelected()
+    /**
+     * Gets the currently selected autonomous routine
+     * @return the selected AutonomousRoutine
+     */
+    public AutonomousRoutine getSelectedRoutine()
     {
         return autoChooser.getSelected();
     }
