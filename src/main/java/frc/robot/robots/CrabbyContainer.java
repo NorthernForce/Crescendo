@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.constants.CrabbyConstants;
+import frc.robot.dashboard.CrabbyDashboard;
+import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
@@ -36,6 +38,7 @@ public class CrabbyContainer implements RobotContainer
     protected final TargetCamera aprilTagCamera, noteDetectorCamera;
     protected final PoseSupplier aprilTagSupplier;
     protected final CrabbyMap map;
+    protected final CrabbyDashboard dashboard;
     public CrabbyContainer()
     {
         map = new CrabbyMap();
@@ -54,6 +57,7 @@ public class CrabbyContainer implements RobotContainer
         noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
         aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
         aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {});
+        dashboard = new CrabbyDashboard();
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -108,5 +112,10 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
         return List.of(new AutonomousRoutine("Do nothing", new Pose2d(), Commands.none()));
+    }
+    @Override
+    public Dashboard getDashboard()
+    {
+        return dashboard;
     }
 }
