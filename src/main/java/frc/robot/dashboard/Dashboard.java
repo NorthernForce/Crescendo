@@ -41,11 +41,11 @@ public abstract class Dashboard
         subTable.getEntry(".name").setString(name);
     }
     /**
-     * Displays autonomous routines
+     * Displays autonomous routines with a name. Intended for internal use
      * @param name the name of the SendableChooser
      * @param routines the routines to choose from
      */
-    public void displayAutonomousRoutines(String name, List<AutonomousRoutine> routines)
+    protected void displayAutonomousRoutines(String name, List<AutonomousRoutine> routines)
     {
         for (var routine : routines)
         {
@@ -53,6 +53,11 @@ public abstract class Dashboard
         }
         addSendable(name, autoChooser);
     }
+    /**
+     * Displays the autonomous routines
+     * @param routines the routines to choose from
+     */
+    public abstract void displayAutonomousRoutines(List<AutonomousRoutine> routines);
     /**
      * Gets the currently selected autonomous routine
      * @return the selected AutonomousRoutine

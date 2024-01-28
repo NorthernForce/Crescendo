@@ -1,7 +1,10 @@
 package frc.robot.dashboard;
 
+import java.util.List;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.utils.AutonomousRoutine;
 
 /**
  * This is a Dashboard specifically meant to interface with FWC for the swervy robot
@@ -25,5 +28,10 @@ public class SwervyDashboard extends Dashboard
     public void updateRobotPose(Pose2d pose)
     {
         field.setRobotPose(pose);
+    }
+    @Override
+    public void displayAutonomousRoutines(List<AutonomousRoutine> routines)
+    {
+        displayAutonomousRoutines("Autonomous", routines);
     }
 }
