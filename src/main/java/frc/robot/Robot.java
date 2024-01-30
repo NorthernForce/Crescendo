@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.robots.CrabbyContainer;
 import frc.robot.robots.SwervyContainer;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
@@ -31,7 +32,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    container = (RobotContainer)new NFRRobotChooser(() -> new SwervyContainer(), Map.of("Swervy", () -> new SwervyContainer())).getNFRRobotContainer();
+    container = (RobotContainer)new NFRRobotChooser(() -> new CrabbyContainer(), Map.of(
+      "Crabby", () -> new CrabbyContainer(),
+      "Swervy", () -> new SwervyContainer())).getNFRRobotContainer();
     autoChooser = new SendableChooser<>();
     for (var auto : container.getAutonomousRoutines())
     {
