@@ -179,6 +179,17 @@ public class OrangePi extends NFRSubsystem
     }
     public static record TargetDetection(double area, double tx, double ty, double pitch, double yaw, int fiducialID)
     {
+        /**
+         * Calculates distance to target
+         * @param cameraPitch the pitch of the camera
+         * @param cameraHeight the height of the camera in meters
+         * @param targetHeight the height of the target in meters
+         * @return a distance in meters to the target
+         */
+        public double calculateDistance(Rotation2d cameraPitch, double cameraHeight, double targetHeight)
+        {
+            return (targetHeight - cameraHeight) / Math.tan(pitch + cameraPitch.getRadians());
+        }
     }
     public class TargetCamera
     {
