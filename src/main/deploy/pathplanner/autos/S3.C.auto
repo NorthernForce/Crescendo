@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.C.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.C.2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.C.3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.C.4"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -1,0 +1,60 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.9115053888359574,
+        "y": 1.6894345214457658
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.666268472182715,
+        "y": 1.6894345214457658
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.288266708909523,
+        "y": 0.7643734448334493
+      },
+      "prevControl": {
+        "x": 6.768266708909531,
+        "y": 0.7643734448334493
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "S3.C.1.end"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "S3.C",
+  "previewStartingState": null,
+  "useDefaultConstraints": true
+}
