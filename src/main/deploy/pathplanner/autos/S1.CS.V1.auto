@@ -1,16 +1,35 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 2,
-      "y": 2
-    },
-    "rotation": 0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1.CS.V1.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1.CS.V1.2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1.CS.V1.3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1.CS.V1.4"
+          }
+        }
+      ]
     }
   },
   "folder": null,
