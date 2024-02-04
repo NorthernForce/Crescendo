@@ -15,6 +15,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -52,8 +53,10 @@ public class SwervyContainer implements RobotContainer
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
     protected final SwervyDashboard dashboard;
+    protected final LinearFilter filter;
     public SwervyContainer()
     {
+        filter = LinearFilter.movingAverage(100);
         map = new SwervyMap();
         drive = new SwerveDrive(SwervyConstants.Drive.config, map.modules, SwervyConstants.Drive.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
@@ -96,7 +99,7 @@ public class SwervyContainer implements RobotContainer
             var detections = aprilTagCamera.getDetections();
             for (int i = 0; i < detections.length; i++)
             {
-                if (detections[i].fiducialID() == 4)
+                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 8)
                 {
                     return detections[i].calculateDistanceWithPitch(Rotation2d.fromDegrees(0), Units.inchesToMeters(17),
                         Units.inchesToMeters(57));
@@ -108,9 +111,10 @@ public class SwervyContainer implements RobotContainer
             var detections = aprilTagCamera.getDetections();
             for (int i = 0; i < detections.length; i++)
             {
-                if (detections[i].fiducialID() == 4)
+                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 8)
                 {
-                    return detections[i].calculateDistanceWithDepth(Units.inchesToMeters(17), Units.inchesToMeters(57));
+                    return filter.calculate(detections[i].calculateDistanceWithDepth(Units.inchesToMeters(17),
+                        Units.inchesToMeters(57)));
                 }
             }
             return 0;
