@@ -190,6 +190,11 @@ public class OrangePi extends NFRSubsystem
         {
             return (targetHeight - cameraHeight) / Math.tan(pitch + cameraPitch.getRadians());
         }
+        public double calculateDistanceWithDepth(double cameraHeight, double targetHeight)
+        {
+            double opposite = cameraHeight - targetHeight;
+            return Math.sqrt(depth * depth - opposite * opposite);
+        }
     }
     public class TargetCamera
     {
