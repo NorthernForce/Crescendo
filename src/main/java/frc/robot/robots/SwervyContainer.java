@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
@@ -118,6 +119,29 @@ public class SwervyContainer implements RobotContainer
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
         dashboard.register(orangePi);
+        Shuffleboard.getTab("General").addDouble("Distance", () -> {
+            var detections = aprilTagCamera.getDetections();
+            for (int i = 0; i < detections.length; i++)
+            {
+                if (detections[i].fiducialID() == 4)
+                {
+                    return detections[i].calculateDistanceWithPitch(Rotation2d.fromDegrees(0), Units.inchesToMeters(17),
+                        Units.inchesToMeters(57));
+                }
+            }
+            return 0;
+        });
+        Shuffleboard.getTab("General").addDouble("Depth", () -> {
+            var detections = aprilTagCamera.getDetections();
+            for (int i = 0; i < detections.length; i++)
+            {
+                if (detections[i].fiducialID() == 4)
+                {
+                    return detections[i].calculateDistanceWithDepth(Units.inchesToMeters(17), Units.inchesToMeters(57));
+                }
+            }
+            return 0;
+        });
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
