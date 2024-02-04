@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.NFRSwerveDriveFollowPath;
+import frc.robot.utils.AutonomousRoutine;
 
 public class S1CSV1 extends SequentialCommandGroup
 {
@@ -33,5 +34,11 @@ public class S1CSV1 extends SequentialCommandGroup
                 PathPlannerPath.fromPathFile("S1.CS.V1.4"), poseSupplier, controller,
                 () -> Rotation2d.fromDegrees(0), 0.1)
         );
+    }
+    public static AutonomousRoutine getRoutine(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller)
+    {
+        return new AutonomousRoutine(S1CSV1.class.getName(), PathPlannerPath.fromPathFile("S1.CS.V1.1").getStartingDifferentialPose(),
+            new S1CSV1(drive, setStateCommands, poseSupplier, controller));
     }
 }

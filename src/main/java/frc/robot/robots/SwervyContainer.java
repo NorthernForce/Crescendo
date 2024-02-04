@@ -7,6 +7,9 @@ import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PIDConstants;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
@@ -23,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
+import frc.robot.commands.auto.S1CSV1;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
@@ -129,7 +133,8 @@ public class SwervyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(5, 5, new Rotation2d(2)), Commands.none()));
+        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(), Commands.none()), S1CSV1.getRoutine(drive, setStateCommands,
+            drive::getEstimatedPose, new PPHolonomicDriveController(new PIDConstants(0.2), new PIDConstants(0.2), 1, 0.3)));
     }
     @Override
     public Dashboard getDashboard()
