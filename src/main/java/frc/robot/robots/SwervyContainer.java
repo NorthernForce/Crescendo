@@ -120,6 +120,7 @@ public class SwervyContainer implements RobotContainer
     public void setInitialPose(Pose2d pose)
     {
         drive.resetPose(pose);
+        orangePi.setGlobalPose(pose);
     }
     @Override
     public void periodic()
@@ -127,11 +128,10 @@ public class SwervyContainer implements RobotContainer
         var chassisSpeeds = drive.getChassisSpeeds();
         orangePi.setOdometry(drive.getOdometryPose(), chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond,
             Rotation2d.fromRadians(chassisSpeeds.omegaRadiansPerSecond), Timer.getFPGATimestamp());
-        orangePi.setPose(drive.getEstimatedPose(), Timer.getFPGATimestamp());
-        field.setRobotPose(drive.getEstimatedPose());
+        field.setRobotPose(orangePi.getPose());
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(), Commands.none()));
+        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(5, 5, new Rotation2d(2)), Commands.none()));
     }
 }
