@@ -19,6 +19,7 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
@@ -64,6 +65,9 @@ public class OrangePi extends NFRSubsystem
     protected final NetworkTable odometryTable;
     protected final DoublePublisher odometryX, odometryY, odometryTheta, odometryDeltaX, odometryDeltaY, odometryDeltaTheta;
     protected final IntegerPublisher odometryStamp;
+    protected final NetworkTable globalPoseTable;
+    protected final DoublePublisher globalPoseX, globalPoseY, globalPoseTheta;
+    protected final IntegerPublisher globalPoseStamp;
     protected final NetworkTable targetPoseTable;
     protected final DoublePublisher targetPoseX, targetPoseY, targetPoseTheta;
     protected final IntegerPublisher targetPoseStamp;
@@ -71,8 +75,8 @@ public class OrangePi extends NFRSubsystem
     protected final NetworkTable cmdVelTable;
     protected final DoubleSubscriber cmdVelX, cmdVelY, cmdVelTheta;
     protected final NetworkTable poseTable;
-    protected final DoublePublisher poseX, poseY, poseTheta;
-    protected final IntegerPublisher poseStamp;
+    protected final DoubleSubscriber poseX, poseY, poseTheta;
+    protected final IntegerSubscriber poseStamp;
     /**
      * Create a new orange pi.
      * @param config
@@ -95,15 +99,20 @@ public class OrangePi extends NFRSubsystem
         targetPoseTheta = targetPoseTable.getDoubleTopic("theta").publish();
         targetPoseStamp = targetPoseTable.getIntegerTopic("stamp").publish();
         targetPoseCancel = targetPoseTable.getBooleanTopic("cancel").publish();
+        globalPoseTable = table.getSubTable("global_set_pose");
+        globalPoseX = globalPoseTable.getDoubleTopic("x").publish();
+        globalPoseY = globalPoseTable.getDoubleTopic("y").publish();
+        globalPoseTheta = globalPoseTable.getDoubleTopic("theta").publish();
+        globalPoseStamp = globalPoseTable.getIntegerTopic("stamp").publish();
         cmdVelTable = table.getSubTable("cmd_vel");
         cmdVelX = cmdVelTable.getDoubleTopic("x").subscribe(0);
         cmdVelY = cmdVelTable.getDoubleTopic("y").subscribe(0);
         cmdVelTheta = cmdVelTable.getDoubleTopic("theta").subscribe(0);
         poseTable = table.getSubTable("pose");
-        poseX = poseTable.getDoubleTopic("x").publish();
-        poseY = poseTable.getDoubleTopic("y").publish();
-        poseTheta = poseTable.getDoubleTopic("theta").publish();
-        poseStamp = poseTable.getIntegerTopic("stamp").publish();
+        poseX = poseTable.getDoubleTopic("x").subscribe(0);
+        poseY = poseTable.getDoubleTopic("y").subscribe(0);
+        poseTheta = poseTable.getDoubleTopic("theta").subscribe(0);
+        poseStamp = poseTable.getIntegerTopic("stamp").subscribe(0);
     }
     /**
      * Sets the odometry
@@ -149,17 +158,21 @@ public class OrangePi extends NFRSubsystem
     {
         return new Twist2d(cmdVelX.get(), cmdVelY.get(), cmdVelTheta.get());
     }
-    /**
-     * Sets the map -> base_link pose
-     * @param pose in meters
-     * @param stamp in seconds
-     */
-    public void setPose(Pose2d pose, double stamp)
+    // /**
+    //  * Sets the map -> base_link pose
+    //  * @param pose in meters
+    //  * @param stamp in seconds
+    //  */
+    // public void setPose(Pose2d pose, double stamp)
+    // {
+    //     poseX.set(pose.getX());
+    //     poseY.set(pose.getY());
+    //     poseTheta.set(pose.getRotation().getRadians());
+    //     poseStamp.set((long)(stamp * 1e9));
+    // }
+    public Pose2d getPose()
     {
-        poseX.set(pose.getX());
-        poseY.set(pose.getY());
-        poseTheta.set(pose.getRotation().getRadians());
-        poseStamp.set((long)(stamp * 1e9));
+        return new Pose2d(poseX.get(), poseY.get(), Rotation2d.fromRadians(poseTheta.get()));
     }
     /**
      * Checks to see if the orange pi is connected
@@ -254,5 +267,12 @@ public class OrangePi extends NFRSubsystem
                 consumer.accept(Pair.of(new Pose2d(x.get(), y.get(), Rotation2d.fromRadians(theta.get())), (double)stamp.get() / 1e9));
             });
         }
+    }
+    public void setGlobalPose(Pose2d pose)
+    {
+        globalPoseX.set(pose.getX());
+        globalPoseY.set(pose.getY());
+        globalPoseTheta.set(pose.getRotation().getRadians());
+        globalPoseStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
 }
