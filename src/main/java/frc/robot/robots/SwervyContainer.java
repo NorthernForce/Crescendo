@@ -94,7 +94,7 @@ public class SwervyContainer implements RobotContainer
             var detections = aprilTagCamera.getDetections();
             for (int i = 0; i < detections.length; i++)
             {
-                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 8)
+                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 7)
                 {
                     return filter.calculate(detections[i].calculateDistanceWithDepth(Units.inchesToMeters(17),
                         Units.inchesToMeters(57)));
