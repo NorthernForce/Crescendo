@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
-import frc.robot.commands.auto.S1CSV1;
+import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
@@ -133,8 +133,10 @@ public class SwervyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(), Commands.none()), S1CSV1.getRoutine(drive, setStateCommands,
-            drive::getEstimatedPose, new PPHolonomicDriveController(new PIDConstants(0.2), new PIDConstants(0.2), 1, 0.3)));
+        var autos = Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose,
+            new PPHolonomicDriveController(new PIDConstants(0.2), new PIDConstants(0.2), 1, 0.3));
+        autos.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
+        return autos;
     }
     @Override
     public Dashboard getDashboard()

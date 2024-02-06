@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import org.northernforce.commands.NFRSwerveModuleSetState;
@@ -16,6 +17,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 
+/**
+ * A command to follow a path with a NFRSwerveDrive.
+ */
 public class NFRSwerveDriveFollowPath extends Command
 {
     protected final NFRSwerveDrive drive;
@@ -27,8 +31,20 @@ public class NFRSwerveDriveFollowPath extends Command
     protected final Supplier<Rotation2d> desiredRotation;
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final double tolerance;
+    protected final BooleanSupplier shouldFlipPath;
+    /**
+     * Creates a new NFRSwerveDriveFollowPath
+     * @param drive the drive subsystem
+     * @param setStateCommands the set state commands
+     * @param path the path to follow. Should be made for the blue alliance
+     * @param poseSupplier the supplier of the pose estimation
+     * @param controller the controller to follow the pose
+     * @param desiredRotation the desired rotation to follow
+     * @param tolerance the tolerance at the end
+     * @param shouldFlipPath whether to flip the path (ie. if red alliance)
+     */
     public NFRSwerveDriveFollowPath(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, PathPlannerPath path, Supplier<Pose2d> poseSupplier,
-        PPHolonomicDriveController controller, Supplier<Rotation2d> desiredRotation, double tolerance)
+        PPHolonomicDriveController controller, Supplier<Rotation2d> desiredRotation, double tolerance, BooleanSupplier shouldFlipPath)
     {
         this.drive = drive;
         this.path = path;
@@ -38,6 +54,7 @@ public class NFRSwerveDriveFollowPath extends Command
         this.desiredRotation = desiredRotation;
         this.setStateCommands = setStateCommands;
         this.tolerance = tolerance;
+        this.shouldFlipPath = shouldFlipPath;
     }
     @Override
     public void initialize()
@@ -46,7 +63,14 @@ public class NFRSwerveDriveFollowPath extends Command
         {
             setStateCommand.schedule();
         }
-        trajectory = path.getTrajectory(drive.getChassisSpeeds(), drive.getRotation());
+        if (shouldFlipPath.getAsBoolean())
+        {
+            trajectory = path.flipPath().getTrajectory(drive.getChassisSpeeds(), drive.getRotation());
+        }
+        else
+        {
+            trajectory = path.getTrajectory(drive.getChassisSpeeds(), drive.getRotation());
+        }
     }
     @Override
     public void execute()
