@@ -90,7 +90,7 @@ public class SwervyContainer implements RobotContainer
             }
             return 0;
         });
-        Shuffleboard.getTab("General").addDouble("Depth", () -> {
+        Shuffleboard.getTab("General").addDouble("Depth-Based Distance", () -> {
             var detections = aprilTagCamera.getDetections();
             for (int i = 0; i < detections.length; i++)
             {
