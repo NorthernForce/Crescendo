@@ -38,7 +38,7 @@ public class SwervyContainer implements RobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final OrangePi orangePi;
     protected final Field2d field;
-    protected final TargetCamera aprilTagCamera, noteDetectorCamera;
+    protected final TargetCamera aprilTagCamera;
     protected final NFRPigeon2 gyro;
     protected final PoseSupplier aprilTagSupplier;
     public SwervyContainer()
@@ -68,9 +68,8 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
-        noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
-        aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
-        aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
     }
