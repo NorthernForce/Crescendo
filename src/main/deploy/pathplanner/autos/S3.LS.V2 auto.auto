@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P1 (S3 to G7)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P2 (G7 to score)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P3 (G7 score to G6)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P4 (G6 score)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P5 (G5 from G6 score)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P6 (G5 score)"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
