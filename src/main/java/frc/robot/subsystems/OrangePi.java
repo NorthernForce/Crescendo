@@ -177,7 +177,7 @@ public class OrangePi extends NFRSubsystem
         }
         return connectionFound;
     }
-    public static record TargetDetection(double area, double tx, double ty, double pitch, double yaw, int fiducialID)
+    public static record TargetDetection(double area, double tx, double ty, double pitch, double yaw, double depth, int fiducialID)
     {
         /**
          * Calculates distance to target
@@ -199,6 +199,7 @@ public class OrangePi extends NFRSubsystem
         protected final DoubleArraySubscriber ty;
         protected final DoubleArraySubscriber yaw;
         protected final DoubleArraySubscriber pitch;
+        protected final DoubleArraySubscriber depth;
         protected final IntegerArraySubscriber fiducialID;
         protected final IntegerArraySubscriber stamp;
         public TargetCamera(String name)
@@ -209,15 +210,25 @@ public class OrangePi extends NFRSubsystem
             ty = table.getDoubleArrayTopic("ty").subscribe(new double[] {});
             yaw = table.getDoubleArrayTopic("yaw").subscribe(new double[] {});
             pitch = table.getDoubleArrayTopic("pitch").subscribe(new double[] {});
+            depth = table.getDoubleArrayTopic("depth").subscribe(new double[] {});
             fiducialID = table.getIntegerArrayTopic("fiducial_id").subscribe(new long[] {});
             stamp = table.getIntegerArrayTopic("stamp").subscribe(new long[] {});
         }
         public TargetDetection[] getDetections()
         {
+            var stamps = stamp.get();
+            var areas = area.get();
+            var tx = this.tx.get();
+            var ty = this.ty.get();
+            var pitch = this.pitch.get();
+            var yaw = this.yaw.get();
+            var depth = this.depth.get();
+            var fiducialID = this.fiducialID.get();
             TargetDetection[] detections = new TargetDetection[stamp.get().length];
-            for (int i = 0; i < stamp.get().length; i++)
+            for (int i = 0; i < stamps.length; i++)
             {
-                detections[i] = new TargetDetection(area.get()[i], tx.get()[i], ty.get()[i], yaw.get()[i], pitch.get()[i], (int)fiducialID.get()[i]);
+                detections[i] = new TargetDetection(areas[i], tx[i], ty[i], -pitch[i], yaw[i], depth[i],
+                    (int)fiducialID[i]);
             }
             return detections;
         }
