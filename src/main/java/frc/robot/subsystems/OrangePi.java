@@ -242,7 +242,7 @@ public class OrangePi extends NFRSubsystem
             var yaw = this.yaw.get();
             var depth = this.depth.get();
             var fiducialID = this.fiducialID.get();
-            TargetDetection[] detections = new TargetDetection[stamp.get().length];
+            TargetDetection[] detections = new TargetDetection[stamps.length];
             for (int i = 0; i < stamps.length; i++)
             {
                 detections[i] = new TargetDetection(areas[i], tx[i], ty[i], -pitch[i], yaw[i], depth[i],
