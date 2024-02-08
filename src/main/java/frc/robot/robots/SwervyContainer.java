@@ -80,6 +80,9 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverController, XboxController.Button.kA.value)
+                .onTrue(new MVPWristCommand(0.25, 90, mvpTest, mvpCan));
+                
         }
         else
         {
