@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -124,9 +123,7 @@ public class SwervyContainer implements RobotContainer
     @Override
     public void periodic()
     {
-        var chassisSpeeds = drive.getChassisSpeeds();
-        orangePi.setOdometry(drive.getOdometryPose(), chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond,
-            Rotation2d.fromRadians(chassisSpeeds.omegaRadiansPerSecond), Timer.getFPGATimestamp());
+        orangePi.setOdometry(drive.getChassisSpeeds());
         field.setRobotPose(orangePi.getPose());
     }
     @Override
