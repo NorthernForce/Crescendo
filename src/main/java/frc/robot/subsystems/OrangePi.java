@@ -70,7 +70,7 @@ public class OrangePi extends NFRSubsystem
     protected final StructSubscriber<Pose2d> poseSubscriber;
     /**
      * Create a new orange pi.
-     * @param config
+     * @param config the configuration for the orange pi.
      */
     public OrangePi(OrangePiConfiguration config)
     {
@@ -118,11 +118,10 @@ public class OrangePi extends NFRSubsystem
     {
         return cmdVelSubscriber.get();
     }
-    // /**
-    //  * Sets the map -> base_link pose
-    //  * @param pose in meters
-    //  * @param stamp in seconds
-    //  */
+    /**
+     * Gets the position recorded by the sensor fusion
+     * @return the pose on the topic "pose" (in meters)
+     */
     public Pose2d getPose()
     {
         return poseSubscriber.get();
@@ -143,25 +142,46 @@ public class OrangePi extends NFRSubsystem
         }
         return connectionFound;
     }
+    /**
+     * This is a record of each target detection
+     * @param area the area of the detection. 0 for apriltags
+     * @param tx the image coordinate x of the tag
+     * @param ty the image coordinate y of the tag
+     * @param pitch the angle of pitch (up/down) in radians
+     * @param yaw the angle of yaw (left/right) in radians
+     * @param depth the depth of the target via depth sensor
+     * @param fiducialID the fiducialID of the target
+     */
     public static record TargetDetection(double area, double tx, double ty, double pitch, double yaw, double depth, int fiducialID)
     {
         /**
-         * Calculates distance to target
+         * Calculates distance to target. <li>
+         * (targetHeight - cameraHeight) / tan(pitch + cameraPitch)
          * @param cameraPitch the pitch of the camera
          * @param cameraHeight the height of the camera in meters
          * @param targetHeight the height of the target in meters
          * @return a distance in meters to the target
          */
-        public double calculateDistance(Rotation2d cameraPitch, double cameraHeight, double targetHeight)
+        public double calculateDistanceWithPitch(Rotation2d cameraPitch, double cameraHeight, double targetHeight)
         {
             return (targetHeight - cameraHeight) / Math.tan(pitch + cameraPitch.getRadians());
         }
+        /**
+         * This calculates the distance to the target using the depth estimation. Gets rid of height as a factor. <li>
+         * sqrt(depth * depth - opposite * opposite)
+         * @param cameraHeight The height of the camera in meters
+         * @param targetHeight The height of the target in meters
+         * @return the distance along the xy plane
+         */
         public double calculateDistanceWithDepth(double cameraHeight, double targetHeight)
         {
             double opposite = cameraHeight - targetHeight;
             return Math.sqrt(depth * depth - opposite * opposite);
         }
     }
+    /**
+     * This is a simple struct class for the target detection
+     */
     public static class TargetDetectionStruct implements Struct<TargetDetection>
     {
         @Override
@@ -202,21 +222,40 @@ public class OrangePi extends NFRSubsystem
             buffer.putLong(detection.fiducialID);
         }
     }
+    /**
+     * Each target camera subscribes to a topic for getting target detection structs
+     */
     public class TargetCamera
     {
         protected final StructArraySubscriber<TargetDetection> detections;
+        /**
+         * Creates a new Target Camera.
+         * @param name topic on nt to subscribe to
+         */
         public TargetCamera(String name)
         {
             detections = table.getStructArrayTopic(name, new TargetDetectionStruct()).subscribe(new TargetDetection[] {});
         }
+        /**
+         * Returns the list of target detections.
+         * @return current detections on Network tables.
+         */
         public TargetDetection[] getDetections()
         {
             return detections.get();
         }
     }
+    /**
+     * Each pose supplier supplies to poses/poseName for getting pose estimations via vision.
+     */
     public class PoseSupplier
     {
         protected final StructSubscriber<Pose2d> poseSubscriber;
+        /**
+         * Creates a new PoseSupplier
+         * @param name the name of the topic under poses to subscribe to
+         * @param consumer the consumer for the pose estimation
+         */
         public PoseSupplier(String name, Consumer<Pair<Pose2d, Double>> consumer)
         {
             poseSubscriber = table.getSubTable("poses").getStructTopic(name, new Pose2dStruct()).subscribe(new Pose2d());
@@ -226,6 +265,10 @@ public class OrangePi extends NFRSubsystem
             });
         }
     }
+    /**
+     * Sets the global pose for resetting purposes (start of match for example)
+     * @param pose the pose of the robot at start of match
+     */
     public void setGlobalPose(Pose2d pose)
     {
         globalPosePublisher.set(pose);
