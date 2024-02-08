@@ -79,14 +79,16 @@ public class MVPWristCommand extends Command{
     }
 
     public void setTurned(){
-    // if the degrees suddenly went over 360 and flowed over to a lesser degree (ex. if motor was at 300 and changed by 70, you get 10), then the correct change must be recorded. I am awful at writing comments.    
-    if(m_can.getPosition().getValueAsDouble() >m_prevPos){
-        m_turned+=(m_can.getPosition().getValueAsDouble()-m_prevPos);
-        m_prevPos = m_can.getPosition().getValueAsDouble();
+    // if the degrees suddenly went over 360 and flowed over to a lesser degree (ex. if motor was at 300 and changed by 70, you get 10), then the correct change must be recorded. I am awful at writing comments. 
+    double m_curPos = m_can.getPosition().getValueAsDouble();
+    if(m_curPos >m_prevPos){
+    m_turned+=m_curPos-m_prevPos;
+    
     } else {
-        m_turned+=((360-m_prevPos)+m_can.getPosition().getValueAsDouble());
-        m_prevPos = m_can.getPosition().getValueAsDouble();
-    }
+    m_turned+=(360-m_prevPos)+m_curPos;
+    
+    } 
+    m_prevPos = m_curPos;
     }
 
 }
