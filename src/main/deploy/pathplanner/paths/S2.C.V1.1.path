@@ -3,48 +3,75 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0,
-        "y": 4.0
+        "x": 0.68,
+        "y": 4.37
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7346367971018353,
-        "y": 4.72611257361243
+        "x": 1.4363704304636877,
+        "y": 3.059927985094151
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.8614677873451537,
-        "y": 6.262700287580591
+        "x": 4.643909535548221,
+        "y": 3.298793319304227
       },
       "prevControl": {
-        "x": 1.5229291565106664,
-        "y": 6.221724615208108
+        "x": 3.400980806916197,
+        "y": 2.8548902019356484
       },
       "nextControl": {
-        "x": 4.349944816116219,
-        "y": 6.3082659109103165
+        "x": 6.068973030424468,
+        "y": 3.807744567474314
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.812694865687006,
-        "y": 7.450994786382636
+        "x": 6.774644498917404,
+        "y": 5.825626448940759
       },
       "prevControl": {
-        "x": 6.812694865687006,
-        "y": 7.450994786382636
+        "x": 6.514848741789549,
+        "y": 4.5853112213626135
+      },
+      "nextControl": {
+        "x": 6.986352139508573,
+        "y": 6.836359700795371
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.846841259330743,
+        "y": 7.430506950196394
+      },
+      "prevControl": {
+        "x": 7.2458647312009745,
+        "y": 7.280262818163952
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 27.44452257408881,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -2.489552921999161,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -61,7 +88,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 120.0,
     "velocity": 0
   },
   "useDefaultConstraints": true
