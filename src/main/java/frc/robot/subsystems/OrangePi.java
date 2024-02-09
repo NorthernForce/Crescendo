@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.geometry.struct.Twist2dStruct;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArraySubscriber;
@@ -21,6 +22,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
@@ -66,6 +68,7 @@ public class OrangePi extends NFRSubsystem
     protected final StructPublisher<Twist2d> odometryPublisher;
     protected final StructSubscriber<Twist2d> cmdVelSubscriber;
     protected final StructPublisher<Pose2d> globalPosePublisher, targetPosePublisher;
+    protected final IntegerPublisher odometryStamp, globalPoseStamp, targetPoseStamp;
     protected final BooleanPublisher targetPoseCancel;
     protected final StructSubscriber<Pose2d> poseSubscriber;
     /**
@@ -77,9 +80,12 @@ public class OrangePi extends NFRSubsystem
         super(config);
         table = NetworkTableInstance.getDefault().getTable(config.tableName);
         odometryPublisher = table.getStructTopic("odometry", new Twist2dStruct()).publish();
+        odometryStamp = table.getIntegerTopic("odometry_stamp").publish();
         targetPosePublisher = table.getStructTopic("target_pose", new Pose2dStruct()).publish();
+        targetPoseStamp = table.getIntegerTopic("target_pose_stamp").publish();
         targetPoseCancel = table.getBooleanTopic("target_pose_cancel").publish();
         globalPosePublisher = table.getStructTopic("global_set_pose", new Pose2dStruct()).publish();
+        globalPoseStamp = table.getIntegerTopic("global_pose_stamp").publish();
         cmdVelSubscriber = table.getStructTopic("cmd_vel", new Twist2dStruct()).subscribe(new Twist2d());
         poseSubscriber = table.getStructTopic("pose", new Pose2dStruct()).subscribe(new Pose2d());
     }
@@ -93,15 +99,17 @@ public class OrangePi extends NFRSubsystem
     public void setOdometry(ChassisSpeeds speeds)
     {
         odometryPublisher.set(new Twist2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
+        odometryStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
     /**
      * Sends a target pose
      * @param pose the target pose
      * @param stamp in seconds
      */
-    public void sendTargetPose(Pose2d pose, double stamp)
+    public void sendTargetPose(Pose2d pose)
     {
         targetPosePublisher.set(pose);
+        targetPoseStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
     /**
      * Cancels a target pose
@@ -272,5 +280,6 @@ public class OrangePi extends NFRSubsystem
     public void setGlobalPose(Pose2d pose)
     {
         globalPosePublisher.set(pose);
+        globalPoseStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
 }

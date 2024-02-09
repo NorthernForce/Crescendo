@@ -14,7 +14,9 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -40,6 +42,7 @@ public class SwervyContainer implements RobotContainer
     protected final TargetCamera aprilTagCamera;
     protected final NFRPigeon2 gyro;
     protected final PoseSupplier aprilTagSupplier;
+    protected final Notifier flushNotifier;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -71,6 +74,8 @@ public class SwervyContainer implements RobotContainer
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
+        flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
+        flushNotifier.startPeriodic(0.01);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
