@@ -35,6 +35,7 @@ public class Shooter extends SubsystemBase {
 
     /**
      * runs both the top and bottom motors at the given velocity (in rotations per 100 ms)
+     * (-) velocity is outtake (in current design) (i think)
      */
     public void run(double speed) {
         topMotor.setVelocity(0, speed);
