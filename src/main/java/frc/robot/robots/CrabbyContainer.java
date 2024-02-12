@@ -23,7 +23,10 @@ import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.RunShooter;
 import frc.robot.subsystems.OrangePi;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
@@ -43,6 +46,7 @@ public class CrabbyContainer implements RobotContainer
     protected final CrabbyDashboard dashboard;
     protected final Indexer indexer;
     protected final Intake intake;
+    public static final Shooter shooter = new Shooter();
     public CrabbyContainer()
     {
         map = new CrabbyMap();
@@ -79,6 +83,8 @@ public class CrabbyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new Trigger(() -> driverController.getRightTriggerAxis() > 0.3).onTrue(new RunShooter(-1));
+            new Trigger(() -> driverController.getLeftTriggerAxis() > 0.3).onTrue(new RunShooter(1));
         }
         else
         {
