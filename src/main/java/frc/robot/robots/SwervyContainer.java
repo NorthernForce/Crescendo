@@ -92,8 +92,7 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
-                .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            
+                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
         }
         else
         {
@@ -104,7 +103,7 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverHID, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverHID, XboxController.Button.kY.value)
-                .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
         }
     }
     @Override
