@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.function.Consumer;
 
@@ -9,16 +10,19 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.struct.Pose2dStruct;
+import edu.wpi.first.math.geometry.struct.Twist2dStruct;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoubleArraySubscriber;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.IntegerArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
-import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArraySubscriber;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
+import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
@@ -61,49 +65,29 @@ public class OrangePi extends NFRSubsystem
         }
     }
     protected final NetworkTable table;
-    protected final NetworkTable odometryTable;
-    protected final DoublePublisher odometryX, odometryY, odometryTheta, odometryDeltaX, odometryDeltaY, odometryDeltaTheta;
-    protected final IntegerPublisher odometryStamp;
-    protected final NetworkTable targetPoseTable;
-    protected final DoublePublisher targetPoseX, targetPoseY, targetPoseTheta;
-    protected final IntegerPublisher targetPoseStamp;
+    protected final StructPublisher<Twist2d> odometryPublisher;
+    protected final StructSubscriber<Twist2d> cmdVelSubscriber;
+    protected final StructPublisher<Pose2d> globalPosePublisher, targetPosePublisher;
+    protected final IntegerPublisher odometryStamp, globalPoseStamp, targetPoseStamp;
     protected final BooleanPublisher targetPoseCancel;
-    protected final NetworkTable cmdVelTable;
-    protected final DoubleSubscriber cmdVelX, cmdVelY, cmdVelTheta;
-    protected final NetworkTable poseTable;
-    protected final DoublePublisher poseX, poseY, poseTheta;
-    protected final IntegerPublisher poseStamp;
+    protected final StructSubscriber<Pose2d> poseSubscriber;
     /**
      * Create a new orange pi.
-     * @param config
+     * @param config the configuration for the orange pi.
      */
     public OrangePi(OrangePiConfiguration config)
     {
         super(config);
         table = NetworkTableInstance.getDefault().getTable(config.tableName);
-        odometryTable = table.getSubTable("odometry");
-        odometryX = odometryTable.getDoubleTopic("x").publish();
-        odometryY = odometryTable.getDoubleTopic("y").publish();
-        odometryTheta = odometryTable.getDoubleTopic("theta").publish();
-        odometryDeltaX = odometryTable.getDoubleTopic("vx").publish();
-        odometryDeltaY = odometryTable.getDoubleTopic("vy").publish();
-        odometryDeltaTheta = odometryTable.getDoubleTopic("vtheta").publish();
-        odometryStamp = odometryTable.getIntegerTopic("stamp").publish();
-        targetPoseTable = table.getSubTable("target_pose");
-        targetPoseX = targetPoseTable.getDoubleTopic("x").publish();
-        targetPoseY = targetPoseTable.getDoubleTopic("y").publish();
-        targetPoseTheta = targetPoseTable.getDoubleTopic("theta").publish();
-        targetPoseStamp = targetPoseTable.getIntegerTopic("stamp").publish();
-        targetPoseCancel = targetPoseTable.getBooleanTopic("cancel").publish();
-        cmdVelTable = table.getSubTable("cmd_vel");
-        cmdVelX = cmdVelTable.getDoubleTopic("x").subscribe(0);
-        cmdVelY = cmdVelTable.getDoubleTopic("y").subscribe(0);
-        cmdVelTheta = cmdVelTable.getDoubleTopic("theta").subscribe(0);
-        poseTable = table.getSubTable("pose");
-        poseX = poseTable.getDoubleTopic("x").publish();
-        poseY = poseTable.getDoubleTopic("y").publish();
-        poseTheta = poseTable.getDoubleTopic("theta").publish();
-        poseStamp = poseTable.getIntegerTopic("stamp").publish();
+        odometryPublisher = table.getStructTopic("odometry", new Twist2dStruct()).publish();
+        odometryStamp = table.getIntegerTopic("odometry_stamp").publish();
+        targetPosePublisher = table.getStructTopic("target_pose", new Pose2dStruct()).publish();
+        targetPoseStamp = table.getIntegerTopic("target_pose_stamp").publish();
+        targetPoseCancel = table.getBooleanTopic("target_pose_cancel").publish();
+        globalPosePublisher = table.getStructTopic("global_set_pose", new Pose2dStruct()).publish();
+        globalPoseStamp = table.getIntegerTopic("global_pose_stamp").publish();
+        cmdVelSubscriber = table.getStructTopic("cmd_vel", new Twist2dStruct()).subscribe(new Twist2d());
+        poseSubscriber = table.getStructTopic("pose", new Pose2dStruct()).subscribe(new Pose2d());
     }
     /**
      * Sets the odometry
@@ -112,27 +96,21 @@ public class OrangePi extends NFRSubsystem
      * @param deltaTheta change in angle
      * @param stamp in seconds
      */
-    public void setOdometry(Pose2d pose, double deltaX, double deltaY, Rotation2d deltaTheta, double stamp)
+    public void setOdometry(ChassisSpeeds speeds)
     {
-        odometryX.set(pose.getX());
-        odometryY.set(pose.getY());
-        odometryTheta.set(pose.getRotation().getRadians());
-        odometryDeltaX.set(deltaX);
-        odometryDeltaY.set(deltaY);
-        odometryDeltaTheta.set(deltaTheta.getRadians());
-        odometryStamp.set((long)(stamp * 1e9));
+        odometryPublisher.set(new Twist2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
+        odometryStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
+        NetworkTableInstance.getDefault().flush();
     }
     /**
      * Sends a target pose
      * @param pose the target pose
      * @param stamp in seconds
      */
-    public void sendTargetPose(Pose2d pose, double stamp)
+    public void sendTargetPose(Pose2d pose)
     {
-        targetPoseX.set(pose.getX());
-        targetPoseY.set(pose.getY());
-        targetPoseTheta.set(pose.getRotation().getRadians());
-        targetPoseStamp.set((long)(stamp * 1e9));
+        targetPosePublisher.set(pose);
+        targetPoseStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
     /**
      * Cancels a target pose
@@ -147,19 +125,15 @@ public class OrangePi extends NFRSubsystem
      */
     public Twist2d getCommandVelocity()
     {
-        return new Twist2d(cmdVelX.get(), cmdVelY.get(), cmdVelTheta.get());
+        return cmdVelSubscriber.get();
     }
     /**
-     * Sets the map -> base_link pose
-     * @param pose in meters
-     * @param stamp in seconds
+     * Gets the position recorded by the sensor fusion
+     * @return the pose on the topic "pose" (in meters)
      */
-    public void setPose(Pose2d pose, double stamp)
+    public Pose2d getPose()
     {
-        poseX.set(pose.getX());
-        poseY.set(pose.getY());
-        poseTheta.set(pose.getRotation().getRadians());
-        poseStamp.set((long)(stamp * 1e9));
+        return poseSubscriber.get();
     }
     /**
      * Checks to see if the orange pi is connected
@@ -177,55 +151,136 @@ public class OrangePi extends NFRSubsystem
         }
         return connectionFound;
     }
-    public static record TargetDetection(double area, double tx, double ty, double pitch, double yaw, int fiducialID)
+    /**
+     * This is a record of each target detection
+     * @param area the area of the detection. 0 for apriltags
+     * @param tx the image coordinate x of the tag
+     * @param ty the image coordinate y of the tag
+     * @param pitch the angle of pitch (up/down) in radians
+     * @param yaw the angle of yaw (left/right) in radians
+     * @param depth the depth of the target via depth sensor
+     * @param fiducialID the fiducialID of the target
+     */
+    public static record TargetDetection(double area, double tx, double ty, double pitch, double yaw, double depth, int fiducialID)
     {
+        /**
+         * Calculates distance to target. <li>
+         * (targetHeight - cameraHeight) / tan(pitch + cameraPitch)
+         * @param cameraPitch the pitch of the camera
+         * @param cameraHeight the height of the camera in meters
+         * @param targetHeight the height of the target in meters
+         * @return a distance in meters to the target
+         */
+        public double calculateDistanceWithPitch(Rotation2d cameraPitch, double cameraHeight, double targetHeight)
+        {
+            return (targetHeight - cameraHeight) / Math.tan(pitch + cameraPitch.getRadians());
+        }
+        /**
+         * This calculates the distance to the target using the depth estimation. Gets rid of height as a factor. <li>
+         * sqrt(depth * depth - opposite * opposite)
+         * @param cameraHeight The height of the camera in meters
+         * @param targetHeight The height of the target in meters
+         * @return the distance along the xy plane
+         */
+        public double calculateDistanceWithDepth(double cameraHeight, double targetHeight)
+        {
+            double opposite = cameraHeight - targetHeight;
+            return Math.sqrt(depth * depth - opposite * opposite);
+        }
     }
+    /**
+     * This is a simple struct class for the target detection
+     */
+    public static class TargetDetectionStruct implements Struct<TargetDetection>
+    {
+        @Override
+        public Class<TargetDetection> getTypeClass()
+        {
+            return TargetDetection.class;
+        }
+        @Override
+        public String getTypeString()
+        {
+            return "struct:TargetDetection";
+        }
+        @Override
+        public int getSize()
+        {
+            return Struct.kSizeDouble * 6 + Struct.kSizeInt64;
+        }
+        @Override
+        public String getSchema()
+        {
+            return "double area; double tx; double ty; double pitch; double yaw; double depth; long fiducialID";
+        }
+        @Override
+        public TargetDetection unpack(ByteBuffer buffer)
+        {
+            return new TargetDetection(buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(),
+                buffer.getDouble(), (int)buffer.getLong());
+        }
+        @Override
+        public void pack(ByteBuffer buffer, TargetDetection detection)
+        {
+            buffer.putDouble(detection.area);
+            buffer.putDouble(detection.tx);
+            buffer.putDouble(detection.ty);
+            buffer.putDouble(detection.pitch);
+            buffer.putDouble(detection.yaw);
+            buffer.putDouble(detection.depth);
+            buffer.putLong(detection.fiducialID);
+        }
+    }
+    /**
+     * Each target camera subscribes to a topic for getting target detection structs
+     */
     public class TargetCamera
     {
-        protected final NetworkTable table;
-        protected final DoubleArraySubscriber area;
-        protected final DoubleArraySubscriber tx;
-        protected final DoubleArraySubscriber ty;
-        protected final DoubleArraySubscriber yaw;
-        protected final DoubleArraySubscriber pitch;
-        protected final IntegerArraySubscriber fiducialID;
-        protected final IntegerArraySubscriber stamp;
+        protected final StructArraySubscriber<TargetDetection> detections;
+        /**
+         * Creates a new Target Camera.
+         * @param name topic on nt to subscribe to
+         */
         public TargetCamera(String name)
         {
-            table = OrangePi.this.table.getSubTable(name);
-            area = table.getDoubleArrayTopic("area").subscribe(new double[] {});
-            tx = table.getDoubleArrayTopic("tx").subscribe(new double[] {});
-            ty = table.getDoubleArrayTopic("ty").subscribe(new double[] {});
-            yaw = table.getDoubleArrayTopic("yaw").subscribe(new double[] {});
-            pitch = table.getDoubleArrayTopic("pitch").subscribe(new double[] {});
-            fiducialID = table.getIntegerArrayTopic("fiducial_id").subscribe(new long[] {});
-            stamp = table.getIntegerArrayTopic("stamp").subscribe(new long[] {});
+            detections = table.getStructArrayTopic(name, new TargetDetectionStruct()).subscribe(new TargetDetection[] {});
         }
+        /**
+         * Returns the list of target detections.
+         * @return current detections on Network tables.
+         */
         public TargetDetection[] getDetections()
         {
-            TargetDetection[] detections = new TargetDetection[stamp.get().length];
-            for (int i = 0; i < stamp.get().length; i++)
-            {
-                detections[i] = new TargetDetection(area.get()[i], tx.get()[i], ty.get()[i], yaw.get()[i], pitch.get()[i], (int)fiducialID.get()[i]);
-            }
-            return detections;
+            return detections.get();
         }
     }
+    /**
+     * Each pose supplier supplies to poses/poseName for getting pose estimations via vision.
+     */
     public class PoseSupplier
     {
-        protected final NetworkTable table;
-        protected final DoubleSubscriber x, y, theta;
-        protected final IntegerSubscriber stamp;
+        protected final StructSubscriber<Pose2d> poseSubscriber;
+        /**
+         * Creates a new PoseSupplier
+         * @param name the name of the topic under poses to subscribe to
+         * @param consumer the consumer for the pose estimation
+         */
         public PoseSupplier(String name, Consumer<Pair<Pose2d, Double>> consumer)
         {
-            table = OrangePi.this.table.getSubTable("poses").getSubTable(name);
-            x = table.getDoubleTopic("x").subscribe(0);
-            y = table.getDoubleTopic("y").subscribe(0);
-            theta = table.getDoubleTopic("theta").subscribe(0);
-            stamp = table.getIntegerTopic("stamp").subscribe(0);
-            NetworkTableInstance.getDefault().addListener(stamp, EnumSet.of(Kind.kValueAll), event -> {
-                consumer.accept(Pair.of(new Pose2d(x.get(), y.get(), Rotation2d.fromRadians(theta.get())), (double)stamp.get() / 1e9));
+            poseSubscriber = table.getSubTable("poses").getStructTopic(name, new Pose2dStruct()).subscribe(new Pose2d());
+            NetworkTableInstance.getDefault().addListener(poseSubscriber, EnumSet.of(Kind.kValueAll), event -> {
+                var pose = poseSubscriber.getAtomic();
+                consumer.accept(Pair.of(pose.value, (double)pose.timestamp / 1e9));
             });
         }
+    }
+    /**
+     * Sets the global pose for resetting purposes (start of match for example)
+     * @param pose the pose of the robot at start of match
+     */
+    public void setGlobalPose(Pose2d pose)
+    {
+        globalPosePublisher.set(pose);
+        globalPoseStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
 }

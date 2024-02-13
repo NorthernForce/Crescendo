@@ -14,8 +14,9 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -38,9 +39,10 @@ public class SwervyContainer implements RobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final OrangePi orangePi;
     protected final Field2d field;
-    protected final TargetCamera aprilTagCamera, noteDetectorCamera;
+    protected final TargetCamera aprilTagCamera;
     protected final NFRPigeon2 gyro;
     protected final PoseSupplier aprilTagSupplier;
+    protected final Notifier flushNotifier;
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -68,11 +70,12 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
-        noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
-        aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
-        aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
+        flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
+        flushNotifier.startPeriodic(0.01);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -120,18 +123,16 @@ public class SwervyContainer implements RobotContainer
     public void setInitialPose(Pose2d pose)
     {
         drive.resetPose(pose);
+        orangePi.setGlobalPose(pose);
     }
     @Override
     public void periodic()
     {
-        var chassisSpeeds = drive.getChassisSpeeds();
-        orangePi.setOdometry(drive.getOdometryPose(), chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond,
-            Rotation2d.fromRadians(chassisSpeeds.omegaRadiansPerSecond), Timer.getFPGATimestamp());
-        orangePi.setPose(drive.getEstimatedPose(), Timer.getFPGATimestamp());
-        field.setRobotPose(drive.getEstimatedPose());
+        orangePi.setOdometry(drive.getChassisSpeeds());
+        field.setRobotPose(orangePi.getPose());
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(), Commands.none()));
+        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(5, 5, new Rotation2d(2)), Commands.none()));
     }
 }
