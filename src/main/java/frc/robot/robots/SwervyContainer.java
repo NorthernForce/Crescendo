@@ -26,6 +26,7 @@ import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.SwerveModuleHelpers;
 import frc.robot.utils.SwerveModuleSetState;
+import frc.robot.commands.DriveWithVelocities;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
@@ -91,6 +92,8 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverController, XboxController.Button.kA.value)
+                .whileTrue(new DriveWithVelocities(drive, setStateCommands, () -> 0.25, () -> 0, true, false));
         }
         else
         {

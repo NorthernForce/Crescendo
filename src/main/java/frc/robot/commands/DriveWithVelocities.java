@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -10,8 +12,8 @@ import frc.robot.utils.SwerveModuleSetState;
 
 public class DriveWithVelocities extends Command {
 
-    private double Vx;
-    private double Vy;
+    private DoubleSupplier Vx;
+    private DoubleSupplier Vy;
     private NFRSwerveDrive drive;
     private SwerveModuleSetState[] setStateCommands;
     private boolean useFieldRelative;
@@ -20,7 +22,7 @@ public class DriveWithVelocities extends Command {
     /** Creates a new DriveWithVelocities. 
      * 
     */
-    public DriveWithVelocities(NFRSwerveDrive drive, SwerveModuleSetState[] setStateCommands, double Vx, double Vy, boolean useFieldRelative, boolean useOptimization) {
+    public DriveWithVelocities(NFRSwerveDrive drive, SwerveModuleSetState[] setStateCommands, DoubleSupplier Vx, DoubleSupplier Vy, boolean useFieldRelative, boolean useOptimization) {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drive);
         this.drive = drive;
@@ -47,7 +49,7 @@ public class DriveWithVelocities extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        ChassisSpeeds speeds = new ChassisSpeeds(Vx, Vy, 0);
+        ChassisSpeeds speeds = new ChassisSpeeds(Vx.getAsDouble(), Vy.getAsDouble(), 0);
         if (useFieldRelative)
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
         speeds = ChassisSpeeds.discretize(speeds, 0.02);
