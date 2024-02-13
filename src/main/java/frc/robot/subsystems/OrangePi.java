@@ -100,6 +100,7 @@ public class OrangePi extends NFRSubsystem
     {
         odometryPublisher.set(new Twist2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
         odometryStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
+        NetworkTableInstance.getDefault().flush();
     }
     /**
      * Sends a target pose
