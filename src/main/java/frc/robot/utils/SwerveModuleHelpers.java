@@ -65,7 +65,6 @@ public class SwerveModuleHelpers
         NFRTalonFX turnMotor = new NFRTalonFX(canbus, turnConfig, turnID);
 
         NFRCANCoder cancoder = new NFRCANCoder(canbus, cancoderID);
-        cancoder.setAbsoluteConversionFactor((Mk3SwerveConstants.kWheelCircumference / Mk3SwerveConstants.kDriveGearRatioSlow) * 0.1); //TODO doing this could easily mess something up most be reviewed
         try
         {
             turnMotor.setSelectedEncoder(cancoder);
