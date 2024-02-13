@@ -5,7 +5,6 @@ import java.util.Map;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
-import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 
@@ -26,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.SwerveModuleHelpers;
+import frc.robot.utils.SwerveModuleSetState;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
@@ -36,7 +36,7 @@ import frc.robot.subsystems.OrangePi.TargetCamera;
 public class SwervyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
-    protected final NFRSwerveModuleSetState[] setStateCommands;
+    protected final SwerveModuleSetState[] setStateCommands;
     protected final OrangePi orangePi;
     protected final Field2d field;
     protected final TargetCamera aprilTagCamera;
@@ -59,11 +59,11 @@ public class SwervyContainer implements RobotContainer
         };
         gyro = new NFRPigeon2(13);
         drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
-        setStateCommands = new NFRSwerveModuleSetState[] {
-            new NFRSwerveModuleSetState(modules[0], 0, false),
-            new NFRSwerveModuleSetState(modules[1], 0, false),
-            new NFRSwerveModuleSetState(modules[2], 0, false),
-            new NFRSwerveModuleSetState(modules[3], 0, false)
+        setStateCommands = new SwerveModuleSetState[] {
+            new SwerveModuleSetState(modules[0], 1, 0, false),
+            new SwerveModuleSetState(modules[1], 1, 0, false),
+            new SwerveModuleSetState(modules[2], 1, 0, false),
+            new SwerveModuleSetState(modules[3], 1, 0, false)
         };
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));

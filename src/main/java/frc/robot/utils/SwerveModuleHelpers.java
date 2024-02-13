@@ -34,18 +34,25 @@ public class SwerveModuleHelpers
             .withGearboxes(DCMotor.getFalcon500(1), DCMotor.getFalcon500(1))
             .withMOIs(1.2, 1.2)
             .withMaxSpeed(Mk3SwerveConstants.kDriveMaxSpeed);
+        
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.CurrentLimits.SupplyCurrentLimit = 60;
         driveConfig.CurrentLimits.SupplyCurrentThreshold = 90;
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         driveConfig.Slot0.kP = Mk3SwerveConstants.kDriveP;
+        driveConfig.Slot1.kS = 0.05;//TODO set this val. THESE ARE WILD SHOT IN THE DARK GUESSES. Exercise caution when testing.
+        driveConfig.Slot1.kV = 0.2;//TODO set this val
+        driveConfig.Slot1.kP = 0.1; //TODO set this val
+        driveConfig.Slot1.kI = 0; //TODO set this val
+        driveConfig.Slot1.kD = 0; //TODO set this val. Also put these values in the other factory when ready and confirmed.
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.1;
-        NFRTalonFX driveMotor = new NFRTalonFX(canbus, driveConfig, driveID);
+        NFRTalonFX driveMotor = new NFRTalonFX(canbus, driveConfig, driveID); 
         driveMotor.getSelectedEncoder().setConversionFactor(Mk3SwerveConstants.kWheelCircumference /
             Mk3SwerveConstants.kDriveGearRatioSlow);
         driveMotor.setInverted(invertDrive);
+
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
         turnConfig.CurrentLimits.SupplyCurrentLimit = 60;
         turnConfig.CurrentLimits.SupplyCurrentThreshold = 90;
@@ -56,7 +63,9 @@ public class SwerveModuleHelpers
         driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.4;
         turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
         NFRTalonFX turnMotor = new NFRTalonFX(canbus, turnConfig, turnID);
+
         NFRCANCoder cancoder = new NFRCANCoder(canbus, cancoderID);
+        cancoder.setAbsoluteConversionFactor(Mk3SwerveConstants.kWheelCircumference / Mk3SwerveConstants.kDriveGearRatioSlow); //TODO doing this could easily mess something up most be reviewed
         try
         {
             turnMotor.setSelectedEncoder(cancoder);
