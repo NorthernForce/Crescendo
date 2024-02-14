@@ -66,7 +66,7 @@ public class SwervyContainer implements RobotContainer
             new NFRSwerveModuleSetState(modules[3], 0, false)
         };
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
-        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive));
+        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).runsWhenDisabled());
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
