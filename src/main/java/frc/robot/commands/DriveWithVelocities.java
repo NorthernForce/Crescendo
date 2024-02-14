@@ -3,9 +3,11 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
+import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.utils.SwerveModuleSetState;
@@ -36,8 +38,7 @@ public class DriveWithVelocities extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        for (SwerveModuleSetState command : setStateCommands)
-        {
+        for (SwerveModuleSetState command : setStateCommands) {
             command.schedule();
         }
     }
