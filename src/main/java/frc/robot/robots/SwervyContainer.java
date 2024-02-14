@@ -5,6 +5,7 @@ import java.util.Map;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
+import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 
@@ -37,6 +38,7 @@ import frc.robot.subsystems.OrangePi.TargetCamera;
 public class SwervyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
+    // protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final SwerveModuleSetState[] setStateCommands;
     protected final OrangePi orangePi;
     protected final Field2d field;
@@ -60,6 +62,12 @@ public class SwervyContainer implements RobotContainer
         };
         gyro = new NFRPigeon2(13);
         drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
+        // setStateCommands = new NFRSwerveModuleSetState[] {
+        //     new NFRSwerveModuleSetState(modules[0], 0, false),
+        //     new NFRSwerveModuleSetState(modules[1], 0, false),
+        //     new NFRSwerveModuleSetState(modules[2], 0, false),
+        //     new NFRSwerveModuleSetState(modules[3], 0, false)
+        // };
         setStateCommands = new SwerveModuleSetState[] {
             new SwerveModuleSetState(modules[0], 1, 0, false),
             new SwerveModuleSetState(modules[1], 1, 0, false),
@@ -71,8 +79,15 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
-        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
+
+        Shuffleboard.getTab("Debug").addDouble("module 0 velocity", drive.getModules()[0]::getVelocity);
+        Shuffleboard.getTab("Debug").addDouble("module 1 velocity", drive.getModules()[1]::getVelocity);
+        Shuffleboard.getTab("Debug").addDouble("module 2 velocity", drive.getModules()[2]::getVelocity);
+        Shuffleboard.getTab("Debug").addDouble("module 3 velocity", drive.getModules()[3]::getVelocity);
+        
+        noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
+        aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
+        aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});

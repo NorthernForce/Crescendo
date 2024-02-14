@@ -40,10 +40,6 @@ public class DriveWithVelocities extends Command {
         {
             command.schedule();
         }
-        Shuffleboard.getTab("Debug").addDouble("module 0 velocity", drive.getModules()[0]::getVelocity);
-        Shuffleboard.getTab("Debug").addDouble("module 1 velocity", drive.getModules()[1]::getVelocity);
-        Shuffleboard.getTab("Debug").addDouble("module 2 velocity", drive.getModules()[2]::getVelocity);
-        Shuffleboard.getTab("Debug").addDouble("module 3 velocity", drive.getModules()[3]::getVelocity);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -54,8 +50,7 @@ public class DriveWithVelocities extends Command {
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
         speeds = ChassisSpeeds.discretize(speeds, 0.02);
         SwerveModuleState[] states = drive.toModuleStates(speeds);
-        for (int i = 0; i < states.length; i++)
-        {
+        for (int i = 0; i < states.length; i++) {
             setStateCommands[i].setTargetState(useOptimization ? SwerveModuleState.optimize(states[i],
                 drive.getModules()[i].getRotation()) : states[i], true);
         }
@@ -64,8 +59,7 @@ public class DriveWithVelocities extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        for (SwerveModuleSetState command : setStateCommands)
-        {
+        for (SwerveModuleSetState command : setStateCommands) {
             command.cancel();
         }
     }
