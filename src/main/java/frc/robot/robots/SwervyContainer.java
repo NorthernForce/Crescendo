@@ -2,6 +2,8 @@ package frc.robot.robots;
 
 import java.util.List;
 import java.util.Map;
+
+import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
@@ -29,6 +31,7 @@ import frc.robot.subsystems.OrangePi.TargetCamera;
 
 public class SwervyContainer implements RobotContainer
 {
+    protected final NFRRotatingArmJoint wristJoint;
     protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
@@ -80,6 +83,7 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new NFRRotatingArmJointWithJoystick(wristJoint, () -> driverController.getLeftY());
           
                 
         }
@@ -93,6 +97,7 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            
         }
     }
     @Override
