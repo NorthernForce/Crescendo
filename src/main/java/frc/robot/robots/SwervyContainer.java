@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.utils.RobotContainer;
 import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
@@ -53,7 +52,7 @@ public class SwervyContainer implements NFRRobotContainer
     public SwervyContainer()
     {
         map = new SwervyMap();
-        drive = new SwerveDrive(SwervyConstants.Drive.config, map.modules, SwervyConstants.Drive.offsets, map.gyro);
+        drive = new SwerveDrive(SwervyConstants.DriveConstants.config, map.modules, SwervyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[]{
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
@@ -66,7 +65,7 @@ public class SwervyContainer implements NFRRobotContainer
             new NFRSwerveModuleSetState(map.modules[2], 1, 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 1, 0, false)
         };
-        orangePi = new OrangePi(SwervyConstants.OrangePi.config);
+        orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
@@ -139,7 +138,7 @@ public class SwervyContainer implements NFRRobotContainer
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
         routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose, 
             new PPHolonomicDriveController(new PIDConstants(0.2, 0, 0), new PIDConstants(0.0, 0, 0), 3.7,
-            SwervyConstants.Drive.offsets[0].getDistance(new Translation2d()))));
+            SwervyConstants.DriveConstants.offsets[0].getDistance(new Translation2d()))));
         return routines;
     }
     public Dashboard getDashboard(){
