@@ -42,10 +42,10 @@ public class CrabbyContainer implements RobotContainer
     public CrabbyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
-            SwerveModuleHelpers.createMk3Slow("Front Left", 1, 5, 9, false, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Front Right", 2, 6, 10, true, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Back Left", 3, 7, 11, false, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Back Right", 4, 8, 12, true, "drive")
+            SwerveModuleHelpers.createMk4iL3("Front Left", 1, 5, 9, false, "drive"),
+            SwerveModuleHelpers.createMk4iL3("Front Right", 2, 6, 10, true, "drive"),
+            SwerveModuleHelpers.createMk4iL3("Back Left", 3, 7, 11, false, "drive"),
+            SwerveModuleHelpers.createMk4iL3("Back Right", 4, 8, 12, true, "drive")
         };
         Translation2d[] offsets = new Translation2d[] {
             new Translation2d(0.225425, 0.307975),
