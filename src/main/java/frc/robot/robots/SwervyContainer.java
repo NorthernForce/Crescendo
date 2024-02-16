@@ -36,6 +36,7 @@ import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
+import frc.robot.subsystems.Indexer;
 
 public class SwervyContainer implements RobotContainer
 {
@@ -49,6 +50,7 @@ public class SwervyContainer implements RobotContainer
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
     protected final SwervyDashboard dashboard;
+    protected final Indexer indexer;
     public SwervyContainer()
     {
         map = new SwervyMap();
@@ -78,6 +80,7 @@ public class SwervyContainer implements RobotContainer
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
+        indexer = new Indexer();
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
