@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
+
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class SwervyConstants
@@ -12,5 +14,6 @@ public class SwervyConstants
             new Translation2d(-0.581025, 0.581025),
             new Translation2d(-0.581025, -0.581025)
         };
+        public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
     }
 }

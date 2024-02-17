@@ -6,7 +6,6 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
-import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -43,7 +42,7 @@ public class SwervyContainer implements RobotContainer
     public SwervyContainer()
     {
         map = new SwervyMap();
-        drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), map.modules, SwervyConstants.Drive.offsets, map.gyro);
+        drive = new SwerveDrive(SwervyConstants.Drive.config, map.modules, SwervyConstants.Drive.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
