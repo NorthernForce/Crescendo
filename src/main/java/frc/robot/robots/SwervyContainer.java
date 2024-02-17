@@ -40,6 +40,7 @@ public class SwervyContainer implements RobotContainer
     protected final SwerveDrive drive;
     // protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final NFRSwerveModuleSetState[] setStateCommands;
+    protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
     protected final OrangePi orangePi;
     protected final Field2d field;
     protected final TargetCamera aprilTagCamera;
@@ -70,11 +71,18 @@ public class SwervyContainer implements RobotContainer
         //     new NFRSwerveModuleSetState(modules[3], 0, false)
         // };
         setStateCommands = new NFRSwerveModuleSetState[] {
-            new SwerveModuleSetState(modules[0], 1, 0, false),
-            new SwerveModuleSetState(modules[1], 1, 0, false),
-            new SwerveModuleSetState(modules[2], 1, 0, false),
-            new SwerveModuleSetState(modules[3], 1, 0, false)
+            new NFRSwerveModuleSetState(modules[0], 0, false),
+            new NFRSwerveModuleSetState(modules[1], 0, false),
+            new NFRSwerveModuleSetState(modules[2], 0, false),
+            new NFRSwerveModuleSetState(modules[3], 0, false)
         };
+        setStateCommandsVelocity = new NFRSwerveModuleSetState[] {  //used when setting a velocity in m/s
+            new NFRSwerveModuleSetState(modules[0], 1, 0, false),
+            new NFRSwerveModuleSetState(modules[1], 1, 0, false),
+            new NFRSwerveModuleSetState(modules[2], 1, 0, false),
+            new NFRSwerveModuleSetState(modules[3], 1, 0, false)
+        };
+
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
@@ -110,7 +118,7 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
             new JoystickButton(driverController, XboxController.Button.kA.value)
-                .whileTrue(new DriveWithVelocities(drive, setStateCommands, () -> setPoint.getDouble(0), () -> 0, true, false));
+                .whileTrue(new DriveWithVelocities(drive, setStateCommandsVelocity, () -> setPoint.getDouble(0), () -> 0, true, false));
         }
         else
         {
