@@ -41,11 +41,11 @@ public class SwerveModuleHelpers
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         driveConfig.Slot0.kP = Mk3SwerveConstants.kDriveP;
-        driveConfig.Slot1.kS = 0.01;//TODO set this val. THESE ARE WILD SHOT IN THE DARK GUESSES. Exercise caution when testing.
-        driveConfig.Slot1.kV = 0.01;//TODO set this val
-        driveConfig.Slot1.kP = 0.03; //TODO set this val
-        driveConfig.Slot1.kI = 0.02; //TODO set this val
-        driveConfig.Slot1.kD = 0; //TODO set this val. Also put these values in the other factory when ready and confirmed.
+        driveConfig.Slot1.kS = 0.01;
+        driveConfig.Slot1.kV = 0.01;
+        driveConfig.Slot1.kP = 0.03; 
+        driveConfig.Slot1.kI = 0.02;
+        driveConfig.Slot1.kD = 0;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.1;
         NFRTalonFX driveMotor = new NFRTalonFX(canbus, driveConfig, driveID); 
