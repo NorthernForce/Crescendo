@@ -39,7 +39,7 @@ public class SwervyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
     // protected final NFRSwerveModuleSetState[] setStateCommands;
-    protected final SwerveModuleSetState[] setStateCommands;
+    protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final OrangePi orangePi;
     protected final Field2d field;
     protected final TargetCamera aprilTagCamera;
@@ -69,7 +69,7 @@ public class SwervyContainer implements RobotContainer
         //     new NFRSwerveModuleSetState(modules[2], 0, false),
         //     new NFRSwerveModuleSetState(modules[3], 0, false)
         // };
-        setStateCommands = new SwerveModuleSetState[] {
+        setStateCommands = new NFRSwerveModuleSetState[] {
             new SwerveModuleSetState(modules[0], 1, 0, false),
             new SwerveModuleSetState(modules[1], 1, 0, false),
             new SwerveModuleSetState(modules[2], 1, 0, false),
