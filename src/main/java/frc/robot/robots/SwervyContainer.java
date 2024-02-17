@@ -14,6 +14,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
@@ -35,7 +36,6 @@ import frc.robot.subsystems.OrangePi.TargetCamera;
 public class SwervyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
-    // protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
     protected final OrangePi orangePi;
@@ -43,6 +43,7 @@ public class SwervyContainer implements RobotContainer
     protected final TargetCamera aprilTagCamera;
     protected final NFRPigeon2 gyro;
     protected final PoseSupplier aprilTagSupplier;
+    protected final Notifier flushNotifier;
 
     public SwervyContainer()
     {
@@ -78,10 +79,8 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
-        
-        noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
-        aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
-        aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
