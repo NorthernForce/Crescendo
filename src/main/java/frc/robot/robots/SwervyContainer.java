@@ -37,12 +37,14 @@ public class SwervyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
+    protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
     protected final OrangePi orangePi;
     protected final Field2d field;
     protected final TargetCamera aprilTagCamera;
     protected final NFRPigeon2 gyro;
     protected final PoseSupplier aprilTagSupplier;
     protected final Notifier flushNotifier;
+
     public SwervyContainer()
     {
         NFRSwerveModule[] modules = new NFRSwerveModule[] {
@@ -65,6 +67,13 @@ public class SwervyContainer implements RobotContainer
             new NFRSwerveModuleSetState(modules[2], 0, false),
             new NFRSwerveModuleSetState(modules[3], 0, false)
         };
+        setStateCommandsVelocity = new NFRSwerveModuleSetState[] {  //used when setting a velocity in m/s
+            new NFRSwerveModuleSetState(modules[0], 1, 0, false),
+            new NFRSwerveModuleSetState(modules[1], 1, 0, false),
+            new NFRSwerveModuleSetState(modules[2], 1, 0, false),
+            new NFRSwerveModuleSetState(modules[3], 1, 0, false)
+        };
+
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
