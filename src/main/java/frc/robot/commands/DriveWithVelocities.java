@@ -5,15 +5,11 @@ import java.util.function.Supplier;
 
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
-import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.utils.SwerveModuleSetState;
 
 public class DriveWithVelocities extends Command {
 

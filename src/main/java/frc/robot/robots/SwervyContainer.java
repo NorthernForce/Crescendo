@@ -14,7 +14,6 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,8 +25,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.SwerveModuleHelpers;
-import frc.robot.utils.SwerveModuleSetState;
-import frc.robot.commands.DriveWithVelocities;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
@@ -46,7 +43,6 @@ public class SwervyContainer implements RobotContainer
     protected final TargetCamera aprilTagCamera;
     protected final NFRPigeon2 gyro;
     protected final PoseSupplier aprilTagSupplier;
-    private GenericEntry setPoint;
 
     public SwervyContainer()
     {
@@ -64,12 +60,6 @@ public class SwervyContainer implements RobotContainer
         };
         gyro = new NFRPigeon2(13);
         drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
-        // setStateCommands = new NFRSwerveModuleSetState[] {
-        //     new NFRSwerveModuleSetState(modules[0], 0, false),
-        //     new NFRSwerveModuleSetState(modules[1], 0, false),
-        //     new NFRSwerveModuleSetState(modules[2], 0, false),
-        //     new NFRSwerveModuleSetState(modules[3], 0, false)
-        // };
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(modules[0], 0, false),
             new NFRSwerveModuleSetState(modules[1], 0, false),
@@ -88,12 +78,6 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
-
-        Shuffleboard.getTab("Debug").addDouble("module 0 velocity", drive.getModules()[0]::getVelocity);
-        Shuffleboard.getTab("Debug").addDouble("module 1 velocity", drive.getModules()[1]::getVelocity);
-        Shuffleboard.getTab("Debug").addDouble("module 2 velocity", drive.getModules()[2]::getVelocity);
-        Shuffleboard.getTab("Debug").addDouble("module 3 velocity", drive.getModules()[3]::getVelocity);
-        setPoint = Shuffleboard.getTab("Debug").add("set point", 0).getEntry();
         
         noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
         aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
@@ -117,8 +101,6 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            new JoystickButton(driverController, XboxController.Button.kA.value)
-                .whileTrue(new DriveWithVelocities(drive, setStateCommandsVelocity, () -> setPoint.getDouble(0), () -> 0, true, false));
         }
         else
         {
