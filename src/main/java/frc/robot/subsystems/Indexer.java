@@ -11,7 +11,8 @@ public class Indexer extends SubsystemBase {
     private DigitalInput beamBreak; //Beam break sensor to stop note intake
 
     /**
-     * Wrapper class for SparkMax and beam break
+     * Wrapper class for SparkMax and beam break.
+     * Handles intaking and shooting of indexer
      */
     public Indexer(){
         indexerMotor = new NFRSparkMax(MotorType.kBrushless, 0); //TODO: Find primaryID
@@ -21,7 +22,7 @@ public class Indexer extends SubsystemBase {
     /**
      * Intake method that has internal interation
      */
-    public void ContinuousIntake(){
+    public void intake(){
         while(beamBreak.get()){
             indexerMotor.set(1);
         }
@@ -31,32 +32,10 @@ public class Indexer extends SubsystemBase {
     /**
      * Outtake method that has internal iteration
      */
-    public void ContinuousShoot(){
+    public void shoot(){
         while(!beamBreak.get()){
             indexerMotor.set(1);
         }
         indexerMotor.set(0);
-    }
-
-    /**
-     * Intake method that requires external iteration
-     */
-    public void SingleIntake(){
-        if(beamBreak.get()){
-            indexerMotor.set(1);
-        } else {
-            indexerMotor.set(0);
-        }
-    }
-
-    /**
-     * Outtake method that requires external iteration
-     */
-    public void SingleShoot(){
-        if(!beamBreak.get()){
-            indexerMotor.set(1);
-        } else {
-            indexerMotor.set(0);
-        }
     }
 }

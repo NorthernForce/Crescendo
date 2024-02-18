@@ -32,6 +32,7 @@ import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
+import frc.robot.commands.Intake;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
@@ -96,6 +97,7 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            
         }
         else
         {
@@ -107,6 +109,8 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverHID, XboxController.Button.kX.value)
+                .onTrue(new Intake(indexer));
         }
     }
     @Override
