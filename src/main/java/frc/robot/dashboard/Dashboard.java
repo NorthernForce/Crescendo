@@ -55,9 +55,13 @@ public abstract class Dashboard
      */
     protected void displayAutonomousRoutines(String name, List<AutonomousRoutine> routines)
     {
-        for (var routine : routines)
+        if (routines.size() != 0)
         {
-            autoChooser.addOption(routine.name(), routine);
+            autoChooser.addOption(routines.get(0).name(), routines.get(0));
+        }
+        for (int i = 1; i < routines.size(); i++)
+        {
+            autoChooser.addOption(routines.get(i).name(), routines.get(i));
         }
         addSendable(name, autoChooser);
     }
