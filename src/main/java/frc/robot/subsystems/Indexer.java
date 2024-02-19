@@ -20,14 +20,14 @@ public class Indexer extends SubsystemBase {
     }
 
     /**
-     * Intake method that has internal interation
+     * Starts the motor with speed 0.5
      */
     public void startMotor(){
-        indexerMotor.set(0.25);
+        indexerMotor.set(0.5);
     }
 
     /**
-     * Outtake method that has internal iteration
+     * Stops the motor
      */
     public void stopMotor(){
         indexerMotor.set(0);
