@@ -1,6 +1,7 @@
 package frc.robot.robots;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
@@ -28,7 +29,10 @@ import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
+import frc.robot.commands.FollowNote;
 import frc.robot.subsystems.OrangePi;
+import frc.robot.subsystems.Xavier;
+import frc.robot.subsystems.Xavier.XavierConfiguration;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
@@ -39,6 +43,7 @@ public class SwervyContainer implements RobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
     protected final OrangePi orangePi;
+    protected final Xavier xavier;
     protected final Field2d field;
     protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
@@ -62,8 +67,11 @@ public class SwervyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[3], 1, 0, false)
         };
         orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
+        xavier = new Xavier(new XavierConfiguration("xavier", "note_detection"));
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
-        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
+        Shuffleboard.getTab("General").addString("Radian List", () -> Arrays.toString(xavier.getRadians()));
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
@@ -89,6 +97,8 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverController, XboxController.Button.kA.value)
+                .whileTrue(new FollowNote(xavier, drive, setStateCommands, true));
         }
         else
         {
