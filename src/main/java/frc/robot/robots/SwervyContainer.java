@@ -81,7 +81,7 @@ public class SwervyContainer implements RobotContainer
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
-        indexer = new Indexer();
+        indexer = new Indexer(14, 4);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -97,6 +97,8 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverController, XboxController.Button.kX.value)
+                .onTrue(new Intake(indexer));
             
         }
         else
@@ -109,8 +111,6 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            new JoystickButton(driverHID, XboxController.Button.kX.value)
-                .onTrue(new Intake(indexer));
         }
     }
     @Override

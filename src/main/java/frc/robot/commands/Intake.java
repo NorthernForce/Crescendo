@@ -11,21 +11,16 @@ public class Intake extends Command {
 
     @Override
     public void initialize() {
-        
-    }
-
-    @Override
-    public void execute(){
-        indexer.intake();
+        indexer.startMotor();
     }
 
     @Override
     public void end(boolean interrupted) {
-
+        indexer.stopMotor();
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return !indexer.getBeamBreakState();
     }
 }
