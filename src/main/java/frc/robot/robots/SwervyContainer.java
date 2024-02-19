@@ -32,7 +32,10 @@ import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
-import frc.robot.commands.Intake;
+import frc.robot.utils.SwerveModuleHelpers;
+import frc.robot.commands.IndexerIntake;
+import frc.robot.gyros.NFRPigeon2;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
@@ -98,7 +101,7 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
             new JoystickButton(driverController, XboxController.Button.kX.value)
-                .onTrue(new Intake(indexer));
+                .onTrue(new IndexerIntake(indexer));
             
         }
         else
