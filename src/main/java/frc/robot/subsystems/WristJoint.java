@@ -1,41 +1,28 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-
-import org.northernforce.encoders.NFRAbsoluteEncoder;
-import org.northernforce.encoders.NFRCANCoder;
 import org.northernforce.motors.MotorEncoderMismatchException;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
-import org.northernforce.subsystems.arm.NFRRotatingArmJoint.NFRRotatingArmJointConfiguration;
-
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-public class WristJoint extends SubsystemBase
+public class WristJoint extends NFRRotatingArmJoint
 {
-    private NFRRotatingArmJoint wristJoint;
-    private int m_pin;
+
     
-    public WristJoint()
+    public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig)
     {
-        this(14);
+        this(wristController, wristConfig, 14);
     }
-    public WristJoint(int neoNum)
+    public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig, int neoNum)
     {
+        super(new NFRRotatingArmJointConfiguration("wristConfig"), new NFRSparkMax(MotorType.kBrushless, neoNum), Optional.empty());
         System.out.println("Made WristJoint object");
-        NFRSparkMax wristController = new NFRSparkMax(MotorType.kBrushless, neoNum);
-        NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig");
         try {
             wristController.setSelectedEncoder(wristController.getAbsoluteEncoder().get());
         } catch (MotorEncoderMismatchException e) {
             e.printStackTrace();
-        }
-        wristJoint = new NFRRotatingArmJoint(wristConfig, wristController, Optional.empty());
-
-        m_pin = neoNum;
+        }        
+        
 
     }
     public double getAmpAngle(boolean useAbsolutePositioning)
@@ -51,16 +38,4 @@ public class WristJoint extends SubsystemBase
         System.out.println("Fetching the angle using a formula from distance. Angle = " + ampAngle);
         return ampAngle; 
     }
-    public NFRRotatingArmJoint getMotor()
-    {
-        System.out.println("Fetching arm");
-        return wristJoint;
-    }
-    public double getGearRatio()
-    {
-        double gearRatio = 4; //TODO properly tune gear ratio
-        System.out.println("Fetching gear ratio (" + gearRatio + ")");
-        return gearRatio; 
-    }
-     
 }
