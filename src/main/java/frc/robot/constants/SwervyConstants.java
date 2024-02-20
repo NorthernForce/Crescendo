@@ -9,6 +9,7 @@ public class SwervyConstants
 {
     public static class Drive
     {
+        /** X/Y offsets of each swerve module front left -> back right */
         public static final Translation2d[] offsets = new Translation2d[] {
             new Translation2d(0.581025, 0.581025),
             new Translation2d(0.581025, -0.581025),
