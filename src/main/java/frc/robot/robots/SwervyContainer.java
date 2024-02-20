@@ -8,6 +8,12 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+import org.northernforce.motors.NFRSparkMax;
+import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
+import org.northernforce.subsystems.arm.NFRRotatingArmJoint.NFRRotatingArmJointConfiguration;
+
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,9 +29,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
+import frc.robot.commands.NFRWristJointCommand;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.WristJoint;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 
@@ -40,8 +48,10 @@ public class SwervyContainer implements RobotContainer
     protected final PoseSupplier aprilTagSupplier;
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
+    protected final WristJoint wristJoint;
     public SwervyContainer()
     {
+        wristJoint = new WristJoint(new NFRSparkMax(MotorType.kBrushless, 14), new NFRRotatingArmJointConfiguration("wristConfig"));
         map = new SwervyMap();
         drive = new SwerveDrive(SwervyConstants.Drive.config, map.modules, SwervyConstants.Drive.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
@@ -83,7 +93,7 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
             new JoystickButton(driverController, XboxController.Button.kA.value)
-                .onTrue(new NFRWristJointCommand(wrist, true)); //TODO ask about april tag distances     
+                .onTrue(new NFRWristJointCommand(wristJoint, true)); //TODO ask about april tag distances     
         }
         else
         {
