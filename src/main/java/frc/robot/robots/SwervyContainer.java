@@ -148,10 +148,4 @@ public class SwervyContainer implements RobotContainer
     public List<AutonomousRoutine> getAutonomousRoutines() {
         return List.of(new AutonomousRoutine("Do nothing", new Pose2d(5, 5, new Rotation2d(2)), Commands.none()));
     }
-    @Override
-    public void periodic()
-    {
-
-        
-    }
 }
