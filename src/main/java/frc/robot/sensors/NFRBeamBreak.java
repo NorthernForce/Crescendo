@@ -23,7 +23,7 @@ public class NFRBeamBreak
         return !initialConveyorSensor.get();
     }
 
-    public BeamStatus GetStatus()
+    public BeamStatus getStatus()
     {
         return (initialConveyorSensor.get() == true ? BeamStatus.Intact : BeamStatus.Broken);
     }
