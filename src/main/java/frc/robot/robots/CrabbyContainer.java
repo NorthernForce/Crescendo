@@ -3,8 +3,6 @@ package frc.robot.robots;
 import java.util.List;
 import java.util.Map;
 
-import org.northernforce.commands.NFRRotatingArmJointSetAngle;
-import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
@@ -22,14 +20,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.NFRRotatingArmJointSetAngleWithGear;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
@@ -92,8 +87,6 @@ public class CrabbyContainer implements RobotContainer
                 () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), true, true));
-                new JoystickButton(driverController, XboxController.Button.kX.value)
-                    .onTrue(new NFRRotatingArmJointSetAngleWithGear(wristJoint,new Rotation2d(90), new Rotation2d(0.5), 0, false,4));
                 
         }
         else

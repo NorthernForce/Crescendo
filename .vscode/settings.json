@@ -26,9 +26,13 @@
     },
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
+<<<<<<< HEAD
   "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable",
   "cSpell.words": [
     "Deadband",
     "NFRCAN"
   ]
+=======
+  "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable"
+>>>>>>> 18b3a6b (First command and subsystem for wrist)
 }
