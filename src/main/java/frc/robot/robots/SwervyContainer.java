@@ -136,7 +136,7 @@ public class SwervyContainer implements RobotContainer
     public List<AutonomousRoutine> getAutonomousRoutines() {
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
-        routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose,
+        routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose,
             new PPHolonomicDriveController(new PIDConstants(0.2), new PIDConstants(0.2), 1, 0.3)));
         return routines;
     }
