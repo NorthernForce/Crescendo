@@ -12,15 +12,17 @@ public class IndexerIntake extends Command {
     @Override
     public void initialize() {
         indexer.startMotor();
+        System.out.println("IndexerIntake Command initialized");
     }
 
     @Override
     public void end(boolean interrupted) {
         indexer.stopMotor();
+        System.out.println("IndexerIntake Command ended");
     }
 
     @Override
     public boolean isFinished() {
-        return !indexer.getBeamBreakState();
+        return indexer.getBeamBreak().beamBroken();
     }
 }

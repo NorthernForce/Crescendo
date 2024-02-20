@@ -14,8 +14,8 @@ public class Indexer extends SubsystemBase {
      * Wrapper class for SparkMax and beam break.
      * Handles intaking and shooting of indexer
      */
-    public Indexer(int motorId, int beamBreakPin){
-        indexerMotor = new NFRSparkMax(MotorType.kBrushless, motorId); //TODO: Find primaryID
+    public Indexer(int neoNum, int beamBreakPin){
+        indexerMotor = new NFRSparkMax(MotorType.kBrushless, neoNum); //TODO: Find primaryID
         beamBreak = new NFRBeamBreak(beamBreakPin); //TODO: Find channel
     }
 
