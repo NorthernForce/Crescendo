@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,7 +17,7 @@ public class TurnToTarget extends Command
 {
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
-    protected final ProfiledPIDController controller;
+    protected final PIDController controller;
     protected final DoubleSupplier xSupplier, ySupplier, thetaSupplier;
     protected final Supplier<Optional<TargetDetection>> targetSupplier;
     protected final boolean optimize, fieldRelative;
@@ -26,13 +26,13 @@ public class TurnToTarget extends Command
      * a target.
      * @param drive the swerve drive subsystem
      * @param setStateCommands the commands to set the state of each swerve module
-     * @param controller the profiled pid controller to calculate closed-loop feedback
+     * @param controller the pid controller to calculate closed-loop feedback
      * @param xSupplier the x supplier (field relative optional)
-     * @param ySupplier
-     * @param thetaSupplier
-     * @param targetSupplier
+     * @param ySupplier the y supplier (field relative optional)
+     * @param thetaSupplier the theta supplier to be used in the absense of a target
+     * @param targetSupplier the supplier for a target (ie an apriltag to turn to face)
      */
-    public TurnToTarget(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, ProfiledPIDController controller,
+    public TurnToTarget(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, PIDController controller,
         DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier thetaSupplier, Supplier<Optional<TargetDetection>> targetSupplier,
         boolean optimize, boolean fieldRelative)
     {
@@ -50,12 +50,11 @@ public class TurnToTarget extends Command
     @Override
     public void initialize()
     {
-        controller.reset(0);
+        controller.reset();
         for (var command : setStateCommands)
         {
             command.schedule();
         }
-        controller.setGoal(0);
     }
     @Override
     public void execute()
@@ -89,7 +88,7 @@ public class TurnToTarget extends Command
     @Override
     public boolean isFinished()
     {
-        return targetSupplier.get().isPresent() && controller.atGoal();
+        return targetSupplier.get().isPresent() && controller.atSetpoint();
     }
     @Override
     public void end(boolean interrupted)
