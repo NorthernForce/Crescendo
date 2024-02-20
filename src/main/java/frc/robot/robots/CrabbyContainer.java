@@ -8,20 +8,17 @@ import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
-import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.gyros.NFRPigeon2;
+import frc.robot.constants.CrabbyConstants;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
@@ -29,38 +26,26 @@ import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
-import frc.robot.utils.SwerveModuleHelpers;
 
 public class CrabbyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
-    protected final NFRPigeon2 gyro;
 
     protected final OrangePi orangePi;
     protected final TargetCamera aprilTagCamera, noteDetectorCamera;
     protected final PoseSupplier aprilTagSupplier;
+    protected final CrabbyMap map;
     public CrabbyContainer()
     {
-        NFRSwerveModule[] modules = new NFRSwerveModule[] {
-            SwerveModuleHelpers.createMk4iL3("Front Left", 1, 5, 9, false, "drive"),
-            SwerveModuleHelpers.createMk4iL3("Front Right", 2, 6, 10, true, "drive"),
-            SwerveModuleHelpers.createMk4iL3("Back Left", 3, 7, 11, false, "drive"),
-            SwerveModuleHelpers.createMk4iL3("Back Right", 4, 8, 12, true, "drive")
-        };
-        Translation2d[] offsets = new Translation2d[] {
-            new Translation2d(0.225425, 0.307975),
-            new Translation2d(0.225425, -0.307975),
-            new Translation2d(-0.225425, 0.307975),
-            new Translation2d(-0.225425, -0.307975)
-        };
-        gyro = new NFRPigeon2(13);
-        drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
+        map = new CrabbyMap();
+        
+        drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), map.modules, CrabbyConstants.Drive.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
-            new NFRSwerveModuleSetState(modules[0], 0, false),
-            new NFRSwerveModuleSetState(modules[1], 0, false),
-            new NFRSwerveModuleSetState(modules[2], 0, false),
-            new NFRSwerveModuleSetState(modules[3], 0, false)
+            new NFRSwerveModuleSetState(map.modules[0], 0, false),
+            new NFRSwerveModuleSetState(map.modules[1], 0, false),
+            new NFRSwerveModuleSetState(map.modules[2], 0, false),
+            new NFRSwerveModuleSetState(map.modules[3], 0, false)
         };
 
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
