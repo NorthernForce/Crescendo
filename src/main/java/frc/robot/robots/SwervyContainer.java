@@ -14,16 +14,13 @@ import com.pathplanner.lib.util.PIDConstants;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
-<<<<<<< HEAD
 import edu.wpi.first.math.controller.PIDController;
-=======
 import edu.wpi.first.math.filter.LinearFilter;
->>>>>>> a93458c (TMP!)
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
