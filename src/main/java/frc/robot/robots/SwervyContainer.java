@@ -24,7 +24,6 @@ import frc.robot.utils.RobotContainer;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 
@@ -55,8 +54,7 @@ public class SwervyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[2], 1, 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 1, 0, false)
         };
-
-        orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
+        orangePi = new OrangePi(SwervyConstants.OrangePi.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         field = new Field2d();
