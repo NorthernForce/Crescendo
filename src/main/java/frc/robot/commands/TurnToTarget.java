@@ -31,6 +31,8 @@ public class TurnToTarget extends Command
      * @param ySupplier the y supplier (field relative optional)
      * @param thetaSupplier the theta supplier to be used in the absense of a target
      * @param targetSupplier the supplier for a target (ie an apriltag to turn to face)
+     * @param optimize whether to optimize each swerve module (cut to the quickest possible state)
+     * @param fieldRelative whether the translational control will be relative to the field or the robot
      */
     public TurnToTarget(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, PIDController controller,
         DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier thetaSupplier, Supplier<Optional<TargetDetection>> targetSupplier,
