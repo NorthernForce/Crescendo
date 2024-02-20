@@ -1,5 +1,6 @@
 package frc.robot.robots;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
@@ -133,10 +134,11 @@ public class SwervyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        var autos = Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose,
-            new PPHolonomicDriveController(new PIDConstants(0.2), new PIDConstants(0.2), 1, 0.3));
-        autos.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
-        return autos;
+        ArrayList<AutonomousRoutine> routines = new ArrayList<>();
+        routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
+        routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose,
+            new PPHolonomicDriveController(new PIDConstants(0.2), new PIDConstants(0.2), 1, 0.3)));
+        return routines;
     }
     @Override
     public Dashboard getDashboard()
