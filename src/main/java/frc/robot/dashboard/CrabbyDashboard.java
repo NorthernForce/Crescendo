@@ -22,7 +22,7 @@ public class CrabbyDashboard extends Dashboard
         addSendable("Field", field);
     }
     /**
-     * Updates the robot pose
+     * Updates the robot pose to be put on the dashboard
      * @param pose the new pose
      */
     public void updateRobotPose(Pose2d pose)
