@@ -1,11 +1,14 @@
 package frc.robot.dashboard;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.utils.AutonomousRoutine;
@@ -17,6 +20,8 @@ public abstract class Dashboard
 {
     protected final NetworkTable table;
     protected final SendableChooser<AutonomousRoutine> autoChooser;
+    protected final Map<String, SendableBuilderImpl> sendables;
+    protected final Notifier notifier = new Notifier(this::periodic);
     /**
      * Creates a new Dashboard
      * @param tablePath the path to the table
@@ -25,6 +30,8 @@ public abstract class Dashboard
     {
         table = NetworkTableInstance.getDefault().getTable(tablePath);
         autoChooser = new SendableChooser<>();
+        sendables = new HashMap<>();
+        notifier.startPeriodic(0.02);
     }
     /**
      * Adds a sendable to the dashboard
@@ -39,6 +46,7 @@ public abstract class Dashboard
         SendableRegistry.publish(sendable, builder);
         builder.startListeners();
         subTable.getEntry(".name").setString(name);
+        sendables.put(name, builder);
     }
     /**
      * Displays autonomous routines with a name. Intended for internal use
@@ -65,5 +73,12 @@ public abstract class Dashboard
     public AutonomousRoutine getSelectedRoutine()
     {
         return autoChooser.getSelected();
+    }
+    public void periodic()
+    {
+        for (var sendable : sendables.entrySet())
+        {
+            sendable.getValue().update();
+        }
     }
 }
