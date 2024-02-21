@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.constants.SwervyConstants;
+import frc.robot.dashboard.Dashboard;
+import frc.robot.dashboard.SwervyDashboard;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
@@ -40,6 +42,7 @@ public class SwervyContainer implements RobotContainer
     protected final PoseSupplier aprilTagSupplier;
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
+    protected final SwervyDashboard dashboard;
     public SwervyContainer()
     {
         map = new SwervyMap();
@@ -68,6 +71,7 @@ public class SwervyContainer implements RobotContainer
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
+        dashboard = new SwervyDashboard();
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -126,5 +130,10 @@ public class SwervyContainer implements RobotContainer
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
         return List.of(new AutonomousRoutine("Do nothing", new Pose2d(5, 5, new Rotation2d(2)), Commands.none()));
+    }
+    @Override
+    public Dashboard getDashboard()
+    {
+        return dashboard;
     }
 }
