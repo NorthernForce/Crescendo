@@ -111,7 +111,7 @@ public class CrabbyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(), Commands.none()));
+        return List.of(new AutonomousRoutine("Do nothing", Pose2d::new, Commands.none()));
     }
     @Override
     public Dashboard getDashboard()

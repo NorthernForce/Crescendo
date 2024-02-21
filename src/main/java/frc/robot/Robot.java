@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
     routine = dashboard.getSelectedRoutine();
     if (routine != null)
     {
-      container.setInitialPose(routine.startingPose());
+      container.setInitialPose(routine.startingPose().get());
       routine.command().schedule();
     }
   }

@@ -1,5 +1,6 @@
 package frc.robot.robots;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
@@ -7,11 +8,15 @@ import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PIDConstants;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
@@ -23,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
+import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
@@ -129,7 +135,12 @@ public class SwervyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(5, 5, new Rotation2d(2)), Commands.none()));
+        ArrayList<AutonomousRoutine> routines = new ArrayList<>();
+        routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
+        routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose,
+            new PPHolonomicDriveController(new PIDConstants(0.2, 0, 0), new PIDConstants(0.0, 0, 0), 3.7,
+                SwervyConstants.Drive.offsets[0].getDistance(new Translation2d()))));
+        return routines;
     }
     @Override
     public Dashboard getDashboard()
