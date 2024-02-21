@@ -6,6 +6,8 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -65,6 +67,7 @@ public class SwervyContainer implements RobotContainer
         });
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
         flushNotifier.startPeriodic(0.01);
+        CameraServer.startAutomaticCapture();
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
