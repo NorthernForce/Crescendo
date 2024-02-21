@@ -142,6 +142,7 @@ public class SwervyContainer implements RobotContainer
     {
         orangePi.setOdometry(drive.getChassisSpeeds());
         field.setRobotPose(orangePi.getPose());
+        System.out.println(indexer.getBeamBreakState());
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {

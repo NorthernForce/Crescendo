@@ -21,6 +21,6 @@ public class IndexerShoot extends Command {
 
     @Override
     public boolean isFinished() {
-        return indexer.getBeamBreakState();
+        return indexer.getBeamBreak().beamIntact();
     }
 }
