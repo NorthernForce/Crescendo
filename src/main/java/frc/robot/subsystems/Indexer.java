@@ -20,10 +20,11 @@ public class Indexer extends SubsystemBase {
     }
 
     /**
-     * Starts the motor with speed 0.5
+     * Starts the motor
+     * @param speed Speed to start the motor at
      */
-    public void startMotor(){
-        indexerMotor.set(0.5);
+    public void startMotor(double speed){
+        indexerMotor.set(speed);
     }
 
     /**

@@ -5,13 +5,15 @@ import frc.robot.subsystems.Indexer;
 
 public class IndexerShoot extends Command {
     Indexer indexer;
-    public IndexerShoot(Indexer indexer){
+    double speed;
+    public IndexerShoot(Indexer indexer, double speed){
         this.indexer = indexer;
+        this.speed = speed;
     }
 
     @Override
     public void initialize() {
-        indexer.startMotor();
+        indexer.startMotor(speed);
     }
 
     @Override
