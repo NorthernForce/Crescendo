@@ -10,6 +10,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -55,6 +56,8 @@ public class NFRSwerveDriveFollowPath extends Command
         this.setStateCommands = setStateCommands;
         this.tolerance = tolerance;
         this.shouldFlipPath = shouldFlipPath;
+        controller.setEnabled(true);
+        addRequirements(drive);
     }
     @Override
     public void initialize()
@@ -65,12 +68,17 @@ public class NFRSwerveDriveFollowPath extends Command
         }
         if (shouldFlipPath.getAsBoolean())
         {
-            trajectory = path.flipPath().getTrajectory(drive.getChassisSpeeds(), drive.getRotation());
+            trajectory = path.flipPath().getTrajectory(drive.getChassisSpeeds(), Rotation2d.fromRadians(
+                MathUtil.angleModulus(drive.getRotation().getRadians())));
         }
         else
         {
-            trajectory = path.getTrajectory(drive.getChassisSpeeds(), drive.getRotation());
+            trajectory = path.getTrajectory(drive.getChassisSpeeds(), Rotation2d.fromRadians(
+                MathUtil.angleModulus(drive.getRotation().getRadians())));
         }
+        controller.reset(poseSupplier.get(),
+            drive.getChassisSpeeds());
+        timer.restart();
     }
     @Override
     public void execute()
@@ -93,7 +101,6 @@ public class NFRSwerveDriveFollowPath extends Command
     @Override
     public boolean isFinished()
     {
-        return timer.hasElapsed(trajectory.getTotalTimeSeconds()) && poseSupplier.get().getTranslation()
-            .getDistance(trajectory.getEndState().positionMeters) < tolerance;
+        return timer.hasElapsed(trajectory.getTotalTimeSeconds());
     }
 }
