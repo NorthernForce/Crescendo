@@ -1,22 +1,16 @@
 package frc.robot.robots;
 import java.util.List;
 import java.util.Map;
-
-
-
+import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
-
-import edu.wpi.first.hal.simulation.DIODataJNI;
-import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,9 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
-import frc.robot.commands.NFRWristJointCommand;
 import frc.robot.constants.SwervyConstants;
-import frc.robot.sensors.NFRBeamBreak;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
@@ -68,6 +60,7 @@ public class SwervyContainer implements RobotContainer
         orangePi = new OrangePi(SwervyConstants.OrangePi.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addDouble("Degrees of wrist", () -> wristJoint.getRotation().getDegrees());
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
@@ -91,8 +84,8 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            new JoystickButton(driverController, XboxController.Button.kA.value)
-                .onTrue(new NFRWristJointCommand(wristJoint, true)); //TODO ask about april tag distances     
+            // wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(wristJoint, () -> 0.5));
+            
         }
         else
         {

@@ -17,5 +17,8 @@ public class SwervyMap
         SwerveModuleHelpers.createMk3Slow("Back Right", 4, 8, 12, true, "drive")
     };
     public final NFRPigeon2 gyro = new NFRPigeon2(13);
-    public final NFRSparkMax wristSparkMax = new NFRSparkMax(MotorType.kBrushless, 14);
+    public final NFRSparkMax wristSparkMax = new NFRSparkMax(MotorType.kBrushless, 14, 15);
+    {
+        wristSparkMax.setFollowerOppose(0);
+    }
 }

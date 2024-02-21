@@ -24,6 +24,6 @@ public class SwervyConstants
     }
     public static class Wrist
     {
-        public static final NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig");
+        public static final NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig").withUseLimits(false);
     }
 }
