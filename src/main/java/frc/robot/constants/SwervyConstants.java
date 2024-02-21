@@ -1,5 +1,5 @@
 package frc.robot.constants;
-
+import org.northernforce.subsystems.arm.NFRRotatingArmJoint.NFRRotatingArmJointConfiguration;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,5 +21,9 @@ public class SwervyConstants
     public static class OrangePi
     {
         public static final OrangePiConfiguration config = new OrangePiConfiguration("orangepi", "xavier");
+    }
+    public static class Wrist
+    {
+        public static final NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig");
     }
 }

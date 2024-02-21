@@ -8,17 +8,15 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
-import org.northernforce.motors.NFRSparkMax;
-import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
-import org.northernforce.subsystems.arm.NFRRotatingArmJoint.NFRRotatingArmJointConfiguration;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
+import edu.wpi.first.hal.simulation.DIODataJNI;
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
@@ -31,6 +29,7 @@ import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.commands.NFRWristJointCommand;
 import frc.robot.constants.SwervyConstants;
+import frc.robot.sensors.NFRBeamBreak;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
@@ -51,8 +50,8 @@ public class SwervyContainer implements RobotContainer
     protected final WristJoint wristJoint;
     public SwervyContainer()
     {
-        wristJoint = new WristJoint(new NFRSparkMax(MotorType.kBrushless, 14), new NFRRotatingArmJointConfiguration("wristConfig"));
         map = new SwervyMap();
+        wristJoint = new WristJoint(map.wristSparkMax, SwervyConstants.Wrist.wristConfig);
         drive = new SwerveDrive(SwervyConstants.Drive.config, map.modules, SwervyConstants.Drive.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
