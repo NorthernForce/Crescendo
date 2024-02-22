@@ -268,11 +268,6 @@ public class Autos
         return S3CV2.getRoutine(drive, setStateCommands, poseSupplier, controller,
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
-    public static AutonomousRoutine getS2T(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller)
-    {
-        return S2T.getRoutine(drive, setStateCommands, poseSupplier, controller,
-            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
-    }
     /**
      * Gets the list of autonomous routines.
      * Includes S1.CS.V1, S1.CS.V2
@@ -341,7 +336,8 @@ public class Autos
             getS3SV1(drive, setStateCommands, poseSupplier, controller, false),
             getS3SV2(drive, setStateCommands, poseSupplier, controller, false),
             getS3CV1(drive, setStateCommands, poseSupplier, controller, false),
-            getS3CV2(drive, setStateCommands, poseSupplier, controller, false)
+            getS3CV2(drive, setStateCommands, poseSupplier, controller, false),
+            getS2T(drive, setStateCommands, poseSupplier, controller, false)
         );
     }
 }
