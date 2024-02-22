@@ -109,7 +109,7 @@ public class Autos
     public static AutonomousRoutine getS1CSV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
         PPHolonomicDriveController controller, boolean ignoreCommands)
     {
-        return S1CSV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+        return S1CSV2.getRoutine(drive, setStateCommands, poseSupplier, controller,
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
     /**
