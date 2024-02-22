@@ -20,8 +20,8 @@
         "y": 7.0
       },
       "prevControl": {
-        "x": 1.5506250274033286,
-        "y": 7.933208945844975
+        "x": 1.7417161732471615,
+        "y": 6.883421410361339
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,8 +34,8 @@
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0
+    "maxAngularVelocity": 240.0,
+    "maxAngularAcceleration": 240.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -117.6372728607764,
+    "rotation": 60.958217291693614,
     "velocity": 0
   },
   "useDefaultConstraints": true
