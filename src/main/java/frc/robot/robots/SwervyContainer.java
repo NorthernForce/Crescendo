@@ -3,16 +3,15 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
-import org.northernforce.util.NFRRobotContainer;
+
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PIDConstants;
-import edu.wpi.first.cameraserver.CameraServer;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,18 +25,19 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.RobotContainer;
 import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.utils.AutonomousRoutine;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 
-public class SwervyContainer implements NFRRobotContainer
+public class SwervyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
@@ -53,13 +53,13 @@ public class SwervyContainer implements NFRRobotContainer
     {
         map = new SwervyMap();
         drive = new SwerveDrive(SwervyConstants.DriveConstants.config, map.modules, SwervyConstants.DriveConstants.offsets, map.gyro);
-        setStateCommands = new NFRSwerveModuleSetState[]{
+        setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
             new NFRSwerveModuleSetState(map.modules[2], 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 0, false)
         };
-        setStateCommandsVelocity = new NFRSwerveModuleSetState[] {
+        setStateCommandsVelocity = new NFRSwerveModuleSetState[] {  //used when setting a velocity in m/s
             new NFRSwerveModuleSetState(map.modules[0], 1, 0, false),
             new NFRSwerveModuleSetState(map.modules[1], 1, 0, false),
             new NFRSwerveModuleSetState(map.modules[2], 1, 0, false),
@@ -133,15 +133,18 @@ public class SwervyContainer implements NFRRobotContainer
         orangePi.setOdometry(drive.getChassisSpeeds());
         field.setRobotPose(orangePi.getPose());
     }
+    @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
         routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose, 
-            new PPHolonomicDriveController(new PIDConstants(0.2, 0, 0), new PIDConstants(0.0, 0, 0), 3.7,
+            new PPHolonomicDriveController(new PIDConstants(0.2, 0, 0), new PIDConstants(0.0, 0, 0), 3.7,    
             SwervyConstants.DriveConstants.offsets[0].getDistance(new Translation2d()))));
         return routines;
     }
-    public Dashboard getDashboard(){
+    @Override
+    public Dashboard getDashboard()
+    {
         return dashboard;
     }
 }
