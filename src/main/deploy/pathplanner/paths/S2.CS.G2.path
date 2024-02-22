@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9045123807922586,
-        "y": 4.109517305630104
+        "x": 2.6205455836837603,
+        "y": 4.099362999651926
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9045123807922586,
-        "y": 4.810667177680737
+        "x": 2.6205455836837603,
+        "y": 4.800512871702559
       },
       "isLocked": false,
       "linkedName": "S1.CS.G2"
@@ -20,8 +20,8 @@
         "y": 5.531293435066112
       },
       "prevControl": {
-        "x": 2.8947741881248894,
-        "y": 5.015169223695506
+        "x": 2.538120066980875,
+        "y": 5.452079746752087
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S2.CS.V1MPT - Done",
+  "folder": null,
   "previewStartingState": null,
   "useDefaultConstraints": false
 }
