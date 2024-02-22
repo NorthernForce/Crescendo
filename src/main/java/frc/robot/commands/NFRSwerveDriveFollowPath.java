@@ -67,7 +67,6 @@ public class NFRSwerveDriveFollowPath extends Command
         this.tolerance = tolerance;
         this.shouldFlipPath = shouldFlipPath;
         this.untriggeredMarkers = new ArrayList<>();
-        controller.setEnabled(true);
         this.ignoreCommands = ignoreCommands;
         addRequirements(drive);
     }
