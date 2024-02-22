@@ -67,7 +67,6 @@ public class NFRSwerveDriveFollowPath extends Command
         this.tolerance = tolerance;
         this.shouldFlipPath = shouldFlipPath;
         this.untriggeredMarkers = new ArrayList<>();
-        controller.setEnabled(true);
         this.ignoreCommands = ignoreCommands;
         addRequirements(drive);
     }
@@ -107,6 +106,7 @@ public class NFRSwerveDriveFollowPath extends Command
     {
         var currentPose = poseSupplier.get();
         ChassisSpeeds targetChassisSpeeds = controller.calculateRobotRelativeSpeeds(currentPose, trajectory.sample(timer.get()));
+        targetChassisSpeeds.omegaRadiansPerSecond = MathUtil.applyDeadband(targetChassisSpeeds.omegaRadiansPerSecond, 0.1);
         SwerveModuleState[] states = drive.toModuleStates(targetChassisSpeeds);
         for (int i = 0; i < states.length; i++)
         {
