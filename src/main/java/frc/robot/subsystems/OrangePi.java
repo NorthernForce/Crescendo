@@ -257,6 +257,18 @@ public class OrangePi extends NFRSubsystem
         {
             return detections.get();
         }
+        public Optional<TargetDetection> getSpeakerTag()
+        {
+            int targetId = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7;
+            for (var detection : getDetections())
+            {
+                if (detection.fiducialID == targetId)
+                {
+                    return Optional.of(detection);
+                }
+            }
+            return Optional.empty();
+        }
         /**
          * Get a specific tag detection if present
          * @param fiducialID the tag id
