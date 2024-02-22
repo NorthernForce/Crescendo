@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.871886958983879,
-        "y": 6.094071763949192
+        "x": 2.877019243598897,
+        "y": 6.3716076342804095
       },
       "isLocked": false,
       "linkedName": "S1.CS.V1.1.end"
@@ -28,7 +28,13 @@
       "linkedName": "S1.CS.V1.2.end"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -90.49985827332553,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
@@ -57,8 +63,8 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
-    "rotateFast": false
+    "rotation": -89.18023301119668,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": null,
