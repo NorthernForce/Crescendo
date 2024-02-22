@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import org.northernforce.motors.NFRSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.sensors.NFRBeamBreak;
@@ -14,9 +13,9 @@ public class Indexer extends SubsystemBase {
      * Wrapper class for SparkMax and beam break.
      * Handles intaking and shooting of indexer
      */
-    public Indexer(int neoNum, int beamBreakPin){
-        indexerMotor = new NFRSparkMax(MotorType.kBrushless, neoNum); //TODO: Find primaryID
-        beamBreak = new NFRBeamBreak(beamBreakPin); //TODO: Find channel
+    public Indexer(NFRSparkMax motor, NFRBeamBreak beamBreak){
+        indexerMotor = motor;
+        this.beamBreak = beamBreak;
     }
 
     /**
