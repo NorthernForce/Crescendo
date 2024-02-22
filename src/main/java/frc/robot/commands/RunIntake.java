@@ -9,7 +9,6 @@ public class RunIntake extends Command {
 
     /** Creates a new RunIntake command
      * @param intake the intake subsystem
-     * @param beamBreakPin the digital pin of the beam break used in the intake
      * @param speed raw speed value for intake motors
      */
     public RunIntake(Intake intake, double speed) {

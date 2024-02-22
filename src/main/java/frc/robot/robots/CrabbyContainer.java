@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
@@ -39,6 +41,8 @@ public class CrabbyContainer implements RobotContainer
     protected final PoseSupplier aprilTagSupplier;
     protected final CrabbyMap map;
     protected final CrabbyDashboard dashboard;
+    protected final Indexer indexer;
+    protected final Intake intake;
     public CrabbyContainer()
     {
         map = new CrabbyMap();
@@ -58,6 +62,8 @@ public class CrabbyContainer implements RobotContainer
         aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
         aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {});
         dashboard = new CrabbyDashboard();
+        indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
+        intake = map.intake;
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
