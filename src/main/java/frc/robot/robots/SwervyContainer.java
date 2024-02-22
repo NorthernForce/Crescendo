@@ -14,6 +14,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -32,6 +33,7 @@ import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
@@ -93,7 +95,12 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            
+            new JoystickButton(driverController, XboxController.Button.kX.value)
+                .whileTrue(new TurnToTarget(drive, setStateCommands, new PIDController(0.25, 0, 0), 
+                    () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
+                    () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
+                    aprilTagCamera::getSpeakerTag, true, true));
         }
         else
         {
