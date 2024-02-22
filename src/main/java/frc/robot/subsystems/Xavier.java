@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import org.northernforce.subsystems.NFRSubsystem;
 
-import edu.wpi.first.networktables.FloatArraySubscriber;
+import edu.wpi.first.networktables.FloatSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -30,7 +30,7 @@ public class Xavier extends NFRSubsystem
     }
     protected final NetworkTableInstance instance;
     protected final NetworkTable table;
-    protected final FloatArraySubscriber xRadSubscriber;
+    protected final FloatSubscriber xRadSubscriber;
     /**
      * Create a new Xavier subsystem
      * @param config the configuration for this subsystem
@@ -40,13 +40,13 @@ public class Xavier extends NFRSubsystem
         super(config);
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable(config.tableName);
-        xRadSubscriber = table.getFloatArrayTopic("notes_rad").subscribe(new float[0]);
+        xRadSubscriber = table.getFloatTopic("note_rad").subscribe(0);
     }
     /**
-     * Gets an array of radians on the x axis relative to the center of robot of predicted notes
-     * @return x radians of notes relative to center of robot
+     * Gets the radian of the note the Xavier is most confident about
+     * @return x radian of note relative to center of robot
      */
-    public float[] getRadians()
+    public float getRadian()
     {
         return xRadSubscriber.get();
     }

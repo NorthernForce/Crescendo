@@ -1,7 +1,6 @@
 package frc.robot.robots;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
@@ -71,7 +70,7 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
-        Shuffleboard.getTab("General").addString("Radian List", () -> Arrays.toString(xavier.getRadians()));
+        Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getRadian);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");

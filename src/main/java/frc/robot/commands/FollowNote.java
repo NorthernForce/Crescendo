@@ -46,11 +46,11 @@ public class FollowNote extends Command {
     @Override
     public void execute() {
         ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
-        float[] radians = xavier.getRadians();
-        if (radians.length == 0) {
+        float radian = xavier.getRadian();
+        if (radian == 0) {
             pid.reset();
         } else {
-            speeds = new ChassisSpeeds(.5, 0, pid.calculate(radians[0]));
+            speeds = new ChassisSpeeds(.5, 0, pid.calculate(radian));
         }
         speeds = ChassisSpeeds.discretize(speeds, 0.02);
         SwerveModuleState[] states = drive.toModuleStates(speeds);
