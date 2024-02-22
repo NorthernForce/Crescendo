@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
+import frc.robot.commands.NFRWristContinuous;
+import frc.robot.commands.NFRWristJointCommand;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
@@ -98,6 +100,18 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
             
+        }
+        if (manipulatorHID instanceof XboxController)
+        {
+            XboxController manipulatorController = (XboxController)manipulatorHID;
+            wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -manipulatorController.getLeftY()));
+            new JoystickButton(manipulatorController, XboxController.Button.kA.value)
+                .whileTrue(new NFRWristContinuous(wristJoint, manipulatorController));
+
+
+        }
+        else
+        {
         }
     }
     @Override

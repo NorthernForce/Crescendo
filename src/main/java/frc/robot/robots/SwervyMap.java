@@ -3,6 +3,7 @@ package frc.robot.robots;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.gyros.NFRPigeon2;
@@ -20,5 +21,6 @@ public class SwervyMap
     public final NFRSparkMax wristSparkMax = new NFRSparkMax(MotorType.kBrushless, 14, 15);
     {
         wristSparkMax.setFollowerOppose(0);
+        wristSparkMax.setIdleMode(IdleMode.kBrake);
     }
 }

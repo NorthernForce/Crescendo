@@ -8,9 +8,9 @@ import frc.robot.subsystems.WristJoint;
 public class NFRWristJointCommand extends NFRRotatingArmJointSetAngle
 {
 
-    public NFRWristJointCommand(WristJoint wrist, boolean useAbsolutePositioning) 
+    public NFRWristJointCommand(WristJoint wrist, boolean useAbsolutePositioning, double distance) 
     {
-        super(wrist, new Rotation2d(wrist.getAmpAngle(useAbsolutePositioning)), new Rotation2d(0.5), 0, false);
+        super(wrist, new Rotation2d(wrist.getAmpAngle(useAbsolutePositioning, distance)), new Rotation2d(0.5), 0, false);
     }
     
     
