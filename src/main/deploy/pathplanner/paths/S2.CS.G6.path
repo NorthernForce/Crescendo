@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.849117069527141,
-        "y": 4.8009289850133685
+        "x": 6.528633738071048,
+        "y": 3.967925915762546
       },
       "isLocked": false,
       "linkedName": "S2.CS.G6"
@@ -20,15 +20,21 @@
         "y": 4.1
       },
       "prevControl": {
-        "x": 6.157068731693808,
-        "y": 3.895497953985231
+        "x": 5.080550430818124,
+        "y": 4.319538733943539
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "S2.CS.return"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.45,
+      "rotationDegrees": -26.406076400230912,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -43,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S2.CS.V1MPT - Done",
+  "folder": null,
   "previewStartingState": null,
   "useDefaultConstraints": false
 }
