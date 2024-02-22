@@ -99,8 +99,22 @@ public class Autos
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
     }
     /**
+     * Gets the AutonomousRoutine struct for S1CSV2
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S1CSV2
+     */
+    public static AutonomousRoutine getS1CSV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S1CSV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+    /**
      * Gets the list of autonomous routines.
-     * Includes S1.CS.V1
+     * Includes S1.CS.V1, S1.CS.V2
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
      * @param poseSupplier the supplier for pose estimation
@@ -111,7 +125,8 @@ public class Autos
         Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller)
     {
         return List.of(
-            getS1CSV1(drive, setStateCommands, poseSupplier, controller, true), 
+            getS1CSV1(drive, setStateCommands, poseSupplier, controller, true),
+            getS1CSV2(drive, setStateCommands, poseSupplier, controller, true), 
             getS1LV1(drive, setStateCommands, poseSupplier, controller), 
             getS1LV2(drive, setStateCommands, poseSupplier, controller),
             getS2CV1(drive, setStateCommands, poseSupplier, controller),
@@ -121,7 +136,7 @@ public class Autos
     }
     /**
      * Gets the list of autonomous routines.
-     * Includes S1.CS.V1
+     * Includes S1.CS.V1, S1.CS.V2
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
      * @param poseSupplier the supplier for pose estimation
@@ -132,6 +147,7 @@ public class Autos
         Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, Indexer indexer, double speed)
     {
         NamedCommands.registerCommand("intake", new RunFullIntake(indexer, intake, speed));
-        return List.of(getS1CSV1(drive, setStateCommands, poseSupplier, controller, false));
+        return List.of(getS1CSV1(drive, setStateCommands, poseSupplier, controller, false),
+            getS1CSV2(drive, setStateCommands, poseSupplier, controller, false));
     }
 }
