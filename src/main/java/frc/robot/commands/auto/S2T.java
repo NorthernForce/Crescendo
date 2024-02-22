@@ -17,14 +17,14 @@ import frc.robot.utils.AutonomousRoutine;
 
 public class S2T extends SequentialCommandGroup{
     protected static final PathPlannerPath[] paths = new PathPlannerPath[] {
-        PathPlannerPath.fromPathFile("S2.T1_start.path"),
-        PathPlannerPath.fromPathFile("S2.T1_end.path"),
-        PathPlannerPath.fromPathFile("S2.T2_start.path"),
-        PathPlannerPath.fromPathFile("S2.T2_end.path"),
-        PathPlannerPath.fromPathFile("S2.T3_start.path"),
-        PathPlannerPath.fromPathFile("S2.T3_end.path"),
-        PathPlannerPath.fromPathFile("S2.T4_start.path"),
-        PathPlannerPath.fromPathFile("S2.T4_end.path")
+        PathPlannerPath.fromPathFile("S2.T1_start"),
+        PathPlannerPath.fromPathFile("S2.T1_end"),
+        PathPlannerPath.fromPathFile("S2.T2_start"),
+        PathPlannerPath.fromPathFile("S2.T2_end"),
+        PathPlannerPath.fromPathFile("S2.T3_start"),
+        PathPlannerPath.fromPathFile("S2.T3_end"),
+        PathPlannerPath.fromPathFile("S2.T4_start"),
+        PathPlannerPath.fromPathFile("S2.T4_end")
     };
     public S2T(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
         PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
