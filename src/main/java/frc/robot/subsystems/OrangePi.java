@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.northernforce.subsystems.NFRSubsystem;
@@ -23,10 +24,12 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.dashboard.Dashboard.Alert;
 import frc.robot.dashboard.Dashboard.AlertType;
 import frc.robot.utils.AlertProvider;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
@@ -258,6 +261,30 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         public TargetDetection[] getDetections()
         {
             return detections.get();
+        }
+        /**
+         * Get a specific tag detection if present
+         * @param fiducialID the tag id
+         * @return tag detection if present in latest frame
+         */
+        public Optional<TargetDetection> getTarget(int fiducialID)
+        {
+            for (var detection : getDetections())
+            {
+                if (detection.fiducialID == fiducialID)
+                {
+                    return Optional.of(detection);
+                }
+            }
+            return Optional.empty();
+        }
+        /**
+         * Gets the speaker tag if within the frame of the camera
+         * @return speaker tag, if present
+         */
+        public Optional<TargetDetection> getSpeakerTag()
+        {
+            return getTarget(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7);
         }
     }
     /**
