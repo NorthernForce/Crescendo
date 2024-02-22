@@ -13,6 +13,7 @@ public class RampShooter extends Command {
      * Creates a new command to ramp a shooter up to a dynamic speed, then finishes when at that speed
      * @param shooter the shooter
      * @param targetSpeed target speed in rps
+     * @param tolerance tolerance before shooter is considered ramped in rps
      */
     public RampShooter(Shooter shooter, DoubleSupplier targetSpeed, double tolerance)
     {
