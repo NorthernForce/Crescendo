@@ -83,8 +83,8 @@ public class SwervyContainer implements RobotContainer
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
-        indexer = new Indexer(14, 4);
-        intake = new Intake(14, 0);
+        indexer = new Indexer(14, 5); //TODO: Get motor and pin number
+        intake = new Intake(15); //TODO: Get motor numbers
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -101,7 +101,7 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
             new JoystickButton(driverController, XboxController.Button.kX.value)
-                .onTrue(new RunFullIntake(indexer, intake, 1));
+                .onTrue(new RunFullIntake(indexer, intake, 0.25));
             
         }
         else
@@ -142,7 +142,6 @@ public class SwervyContainer implements RobotContainer
     {
         orangePi.setOdometry(drive.getChassisSpeeds());
         field.setRobotPose(orangePi.getPose());
-        System.out.println(indexer.getBeamBreakState());
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
