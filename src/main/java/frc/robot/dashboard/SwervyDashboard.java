@@ -47,7 +47,6 @@ public class SwervyDashboard extends Dashboard
             
             setCurrentAutonomousRoutine(autoChooser.getSelected());
         }
-        displayAutonomousRoutines("autonomous", routines);
     }
     public void setCurrentAutonomousRoutine(AutonomousRoutine routine)
     {
