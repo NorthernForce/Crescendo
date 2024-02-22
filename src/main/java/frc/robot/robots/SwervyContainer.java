@@ -1,55 +1,84 @@
 package frc.robot.robots;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
-import org.northernforce.subsystems.drive.NFRSwerveDrive;
-import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
-import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 import org.northernforce.util.NFRRobotContainer;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PIDConstants;
+import edu.wpi.first.cameraserver.CameraServer;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.utils.RobotContainer;
+import frc.robot.commands.auto.Autos;
+import frc.robot.constants.SwervyConstants;
+import frc.robot.dashboard.Dashboard;
+import frc.robot.dashboard.SwervyDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.utils.SwerveModuleHelpers;
-import frc.robot.gyros.NFRPigeon2;
+import frc.robot.utils.AutonomousRoutine;
+import frc.robot.subsystems.OrangePi;
+import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.OrangePi.PoseSupplier;
+import frc.robot.subsystems.OrangePi.TargetCamera;
 
 public class SwervyContainer implements NFRRobotContainer
 {
-    protected final NFRSwerveDrive drive;
+    protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
+    protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
+    protected final OrangePi orangePi;
+    protected final Field2d field;
+    protected final TargetCamera aprilTagCamera;
+    protected final PoseSupplier aprilTagSupplier;
+    protected final Notifier flushNotifier;
+    protected final SwervyMap map;
+    protected final SwervyDashboard dashboard;
     public SwervyContainer()
     {
-        NFRSwerveModule[] modules = new NFRSwerveModule[] {
-            SwerveModuleHelpers.createMk3Slow("Front Left", 1, 5, 9, false, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Front Right", 2, 6, 10, true, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Back Left", 3, 7, 11, false, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Back Right", 4, 8, 12, true, "drive")
+        map = new SwervyMap();
+        drive = new SwerveDrive(SwervyConstants.Drive.config, map.modules, SwervyConstants.Drive.offsets, map.gyro);
+        setStateCommands = new NFRSwerveModuleSetState[]{
+            new NFRSwerveModuleSetState(map.modules[0], 0, false),
+            new NFRSwerveModuleSetState(map.modules[1], 0, false),
+            new NFRSwerveModuleSetState(map.modules[2], 0, false),
+            new NFRSwerveModuleSetState(map.modules[3], 0, false)
         };
-        Translation2d[] offsets = new Translation2d[] {
-            new Translation2d(0.581025, 0.581025),
-            new Translation2d(0.581025, -0.581025),
-            new Translation2d(-0.581025, 0.581025),
-            new Translation2d(-0.581025, -0.581025)
+        setStateCommandsVelocity = new NFRSwerveModuleSetState[] {
+            new NFRSwerveModuleSetState(map.modules[0], 1, 0, false),
+            new NFRSwerveModuleSetState(map.modules[1], 1, 0, false),
+            new NFRSwerveModuleSetState(map.modules[2], 1, 0, false),
+            new NFRSwerveModuleSetState(map.modules[3], 1, 0, false)
         };
-        NFRPigeon2 gyro = new NFRPigeon2(13);
-        drive = new NFRSwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
-        setStateCommands = new NFRSwerveModuleSetState[] {
-            new NFRSwerveModuleSetState(modules[0], 0, false),
-            new NFRSwerveModuleSetState(modules[1], 0, false),
-            new NFRSwerveModuleSetState(modules[2], 0, false),
-            new NFRSwerveModuleSetState(modules[3], 0, false)
-        };
-        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive));
+        orangePi = new OrangePi(SwervyConstants.OrangePi.config);
+        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
+        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        field = new Field2d();
+        Shuffleboard.getTab("General").add("Field", field);
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
+            drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
+        });
+        flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
+        flushNotifier.startPeriodic(0.01);
+        CameraServer.startAutomaticCapture();
+        dashboard = new SwervyDashboard();
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -86,7 +115,7 @@ public class SwervyContainer implements NFRRobotContainer
     @Override
     public Map<String, Pose2d> getStartingLocations()
     {
-        return Map.of("Simple Starting Location", new Pose2d());
+        return Map.of("Simple Starting Location", new Pose2d(5, 5, Rotation2d.fromDegrees(0)));
     }
     @Override
     public Pair<String, Command> getDefaultAutonomous()
@@ -97,5 +126,23 @@ public class SwervyContainer implements NFRRobotContainer
     public void setInitialPose(Pose2d pose)
     {
         drive.resetPose(pose);
+        orangePi.setGlobalPose(pose);
+    }
+    @Override
+    public void periodic()
+    {
+        orangePi.setOdometry(drive.getChassisSpeeds());
+        field.setRobotPose(orangePi.getPose());
+    }
+    public List<AutonomousRoutine> getAutonomousRoutines() {
+        ArrayList<AutonomousRoutine> routines = new ArrayList<>();
+        routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
+        routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose, 
+            new PPHolonomicDriveController(new PIDConstants(0.2, 0, 0), new PIDConstants(0.0, 0, 0), 3.7,
+            SwervyConstants.Drive.offsets[0].getDistance(new Translation2d()))));
+        return routines;
+    }
+    public Dashboard getDashboard(){
+        return dashboard;
     }
 }
