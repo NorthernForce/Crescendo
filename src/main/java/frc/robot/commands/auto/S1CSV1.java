@@ -3,6 +3,7 @@ package frc.robot.commands.auto;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
@@ -42,7 +43,8 @@ public class S1CSV1 extends SequentialCommandGroup
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[2], poseSupplier, controller,
                 () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[3], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath)
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
+            new NFRSwerveDriveStop(drive, setStateCommands, true)
         );
     }
     /**

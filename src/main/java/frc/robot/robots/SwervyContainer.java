@@ -138,7 +138,7 @@ public class SwervyContainer implements RobotContainer
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
         routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose,
-            new PPHolonomicDriveController(new PIDConstants(0.2, 0, 0), new PIDConstants(0.0, 0, 0), 3.7,
+            new PPHolonomicDriveController(new PIDConstants(1,0,0.2), new PIDConstants(4, 0, 0), 6,
                 SwervyConstants.Drive.offsets[0].getDistance(new Translation2d()))));
         return routines;
     }
