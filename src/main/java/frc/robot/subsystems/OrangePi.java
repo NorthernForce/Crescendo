@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.geometry.struct.Twist2dStruct;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -268,6 +269,23 @@ public class OrangePi extends NFRSubsystem
                 if (detection.fiducialID == fiducialID)
                 {
                     return Optional.of(detection);
+                }
+            }
+            return Optional.empty();
+        }
+        /**
+         * Gets the distance to the speaker using the depth camera. Needs the height of the depth camera.
+         * @param cameraHeight the height in meters of the depth camera
+         * @return the distance from the camera to the speaker along the xy plane
+         */
+        public Optional<Double> getDistanceToSpeaker(double cameraHeight)
+        {
+            int targetId = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7;
+            for (var detection : getDetections())
+            {
+                if (detection.fiducialID == targetId)
+                {
+                    return Optional.of(detection.calculateDistanceWithDepth(cameraHeight, Units.inchesToMeters(57)));
                 }
             }
             return Optional.empty();

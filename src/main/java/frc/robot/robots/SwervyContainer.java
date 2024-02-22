@@ -14,8 +14,11 @@ import com.pathplanner.lib.util.PIDConstants;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
+<<<<<<< HEAD
 import edu.wpi.first.math.controller.PIDController;
+=======
 import edu.wpi.first.math.filter.LinearFilter;
+>>>>>>> a93458c (TMP!)
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -99,7 +102,7 @@ public class SwervyContainer implements RobotContainer
             var detections = aprilTagCamera.getDetections();
             for (int i = 0; i < detections.length; i++)
             {
-                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 7)
+                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 8)
                 {
                     return detections[i].calculateDistanceWithPitch(Rotation2d.fromDegrees(0), Units.inchesToMeters(17),
                         Units.inchesToMeters(57));
@@ -107,11 +110,11 @@ public class SwervyContainer implements RobotContainer
             }
             return 0;
         });
-        Shuffleboard.getTab("General").addDouble("Depth-Based Distance", () -> {
+        Shuffleboard.getTab("General").addDouble("Depth", () -> {
             var detections = aprilTagCamera.getDetections();
             for (int i = 0; i < detections.length; i++)
             {
-                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 7)
+                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 8)
                 {
                     return filter.calculate(detections[i].calculateDistanceWithDepth(Units.inchesToMeters(17),
                         Units.inchesToMeters(57)));
