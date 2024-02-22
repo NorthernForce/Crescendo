@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6205455836837603,
-        "y": 4.800512871702559
+        "x": 1.8937995653769089,
+        "y": 4.909781606600251
       },
       "isLocked": false,
       "linkedName": "S1.CS.G2"
@@ -28,7 +28,13 @@
       "linkedName": "S2.CS.G6"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 40.66875648758719,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
