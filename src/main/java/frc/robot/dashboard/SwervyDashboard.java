@@ -12,6 +12,7 @@ import frc.robot.utils.AutonomousRoutine;
 public class SwervyDashboard extends Dashboard
 {
     protected final Field2d field;
+    protected final Field2d autoField;
     /**
      * Creates a new SwervyDashboard
      */
@@ -19,7 +20,9 @@ public class SwervyDashboard extends Dashboard
     {
         super("FWC");
         field = new Field2d();
-        addSendable("Field", field);
+        autoField = new Field2d();
+        addSendable("field", field);
+        addSendable("auto_field", autoField);
     }
     /**
      * Updates the robot pose
@@ -32,6 +35,22 @@ public class SwervyDashboard extends Dashboard
     @Override
     public void displayAutonomousRoutines(List<AutonomousRoutine> routines)
     {
-        displayAutonomousRoutines("Autonomous", routines);
+        displayAutonomousRoutines("autonomous", routines);
+        autoChooser.onChange(routine -> {
+            if (routine != null)
+            {
+                setCurrentAutonomousRoutine(routine);
+            }
+        });
+        if (autoChooser.getSelected() != null)
+        {
+            
+            setCurrentAutonomousRoutine(autoChooser.getSelected());
+        }
+        displayAutonomousRoutines("autonomous", routines);
+    }
+    public void setCurrentAutonomousRoutine(AutonomousRoutine routine)
+    {
+        autoField.setRobotPose(routine.startingPose().get());
     }
 }
