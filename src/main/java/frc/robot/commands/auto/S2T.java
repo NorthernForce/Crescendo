@@ -3,6 +3,7 @@ package frc.robot.commands.auto;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
@@ -45,8 +46,10 @@ public class S2T extends SequentialCommandGroup{
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[6], poseSupplier, controller,
                 () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[7], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath)
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
+            new NFRSwerveDriveStop(drive, setStateCommands, true)
         );
+
     }
     /**
      * Gets the AutonomousRoutine struct for S1CSV1

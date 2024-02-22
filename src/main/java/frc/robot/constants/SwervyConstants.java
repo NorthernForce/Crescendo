@@ -21,8 +21,8 @@ public class SwervyConstants
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
         public static final PPHolonomicDriveController holonomicDriveController = new PPHolonomicDriveController(
-            new PIDConstants(1, 0, 0.2), // X/Y pid constants
-            new PIDConstants(4, 0, 0), // Rotational pid constants
+            new PIDConstants(10, 0, 0), // X/Y pid constants
+            new PIDConstants(5, 0, 0), // Rotational pid constants
             6, // Max Module Speed
             offsets[0].getDistance(new Translation2d())); // Distance from center
     }
