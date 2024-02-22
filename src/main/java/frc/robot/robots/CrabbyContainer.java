@@ -63,7 +63,7 @@ public class CrabbyContainer implements RobotContainer
         aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {});
         dashboard = new CrabbyDashboard();
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
-        intake = map.intake;
+        intake = new Intake(map.intakeMotor);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)

@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.sensors.NFRBeamBreak;
-import frc.robot.subsystems.Intake;
 import frc.robot.utils.SwerveModuleHelpers;
 
 public class CrabbyMap {
@@ -19,7 +18,7 @@ public class CrabbyMap {
         SwerveModuleHelpers.createMk4iL3("Back Right", 4, 8, 12, true, "drive")
     };
     public final NFRGyro gyro = new NFRPigeon2(13);
-    public final Intake intake = new Intake(17, 18, 19, 20); // TODO: set actual intake motors
+    public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 17, 18, 19, 20);
     public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16);
     public final NFRBeamBreak indexerBeamBreak = new NFRBeamBreak(0);
 }
