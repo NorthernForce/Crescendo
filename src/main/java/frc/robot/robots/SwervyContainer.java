@@ -76,6 +76,17 @@ public class SwervyContainer implements RobotContainer
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
+        Shuffleboard.getTab("General").addDouble("Angle", () -> {
+            var tag = aprilTagCamera.getSpeakerTag();
+            if (tag.isPresent())
+            {
+                return tag.get().yaw();
+            }
+            else
+            {
+                return 0;
+            }
+        });
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
