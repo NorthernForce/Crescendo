@@ -35,13 +35,13 @@ public abstract class Dashboard
         table = NetworkTableInstance.getDefault().getTable(tablePath);
         autoChooser = new SendableChooser<>();
         sendables = new HashMap<>();
-        notifier.startPeriodic(0.02);
         infos = new HashMap<>();
         warnings = new HashMap<>();
         errors = new HashMap<>();
         infoPublishers = table.getStringArrayTopic("infos").publish();
         warningPublishers = table.getStringArrayTopic("warnings").publish();
         errorPublishers = table.getStringArrayTopic("errors").publish();
+        notifier.startPeriodic(0.02);
     }
     /**
      * Adds a sendable to the dashboard
