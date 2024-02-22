@@ -32,13 +32,10 @@ import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
-import frc.robot.commands.RunFullIntake;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
-import frc.robot.subsystems.Intake;
 
 public class SwervyContainer implements RobotContainer
 {
@@ -52,8 +49,6 @@ public class SwervyContainer implements RobotContainer
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
     protected final SwervyDashboard dashboard;
-    protected final Indexer indexer;
-    protected final Intake intake;
     public SwervyContainer()
     {
         map = new SwervyMap();
@@ -83,8 +78,6 @@ public class SwervyContainer implements RobotContainer
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
-        indexer = new Indexer(14, 5); //TODO: Get motor and pin number
-        intake = new Intake(15); //TODO: Get motor numbers
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -100,8 +93,6 @@ public class SwervyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            new JoystickButton(driverController, XboxController.Button.kX.value)
-                .onTrue(new RunFullIntake(indexer, intake, 0.25));
             
         }
         else
