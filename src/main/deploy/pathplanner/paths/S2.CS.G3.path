@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 2.9045123807922586,
+        "x": 2.670844151873489,
         "y": 4.109517305630104
       },
       "prevControl": {
-        "x": 2.544199252099572,
+        "x": 2.3105310231808027,
         "y": 4.099779112962734
       },
       "nextControl": null,
@@ -30,7 +30,25 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -43,7 +61,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S2.CS.V1MPT - Done",
+  "folder": null,
   "previewStartingState": null,
   "useDefaultConstraints": false
 }
