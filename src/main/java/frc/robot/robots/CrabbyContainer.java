@@ -12,19 +12,23 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.IndexerShoot;
+import frc.robot.commands.RampShooter;
+import frc.robot.commands.RestShooter;
 import frc.robot.constants.CrabbyConstants;
+import frc.robot.constants.CrabbyConstants.IndexerConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.RunShooter;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
@@ -46,11 +50,12 @@ public class CrabbyContainer implements RobotContainer
     protected final CrabbyDashboard dashboard;
     protected final Indexer indexer;
     protected final Intake intake;
-    public static final Shooter shooter = new Shooter();
+    protected final Shooter shooter;
+    protected final GenericEntry shootingSpeedEntry;
+    protected final GenericEntry shootingToleranceEntry;
     public CrabbyContainer()
     {
         map = new CrabbyMap();
-        
         drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), map.modules, CrabbyConstants.Drive.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
@@ -68,6 +73,9 @@ public class CrabbyContainer implements RobotContainer
         dashboard = new CrabbyDashboard();
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
         intake = map.intake;
+        shooter = new Shooter(map.shooterTop, map.shooterBottom);
+        shootingSpeedEntry = Shuffleboard.getTab("General").add("Shooter Speed", 0.0).getEntry();
+        shootingToleranceEntry = Shuffleboard.getTab("General").add("Shooting Tolerance", 10.0).getEntry();
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -83,8 +91,6 @@ public class CrabbyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            new Trigger(() -> driverController.getRightTriggerAxis() > 0.3).onTrue(new RunShooter(-1));
-            new Trigger(() -> driverController.getLeftTriggerAxis() > 0.3).onTrue(new RunShooter(1));
         }
         else
         {
@@ -96,6 +102,15 @@ public class CrabbyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+        }
+        if (manipulatorHID instanceof XboxController)
+        {
+            XboxController manipulatorController = (XboxController)manipulatorHID;
+            new Trigger(() -> manipulatorController.getLeftTriggerAxis() > 0.3)
+                .whileTrue(new RampShooter(shooter, () -> shootingSpeedEntry.getDouble(0), shootingToleranceEntry.getDouble(0)))
+                .whileFalse(new RestShooter(shooter));
+            new Trigger(() -> manipulatorController.getRightTriggerAxis() > 0.3)
+                .onTrue(new IndexerShoot(indexer, IndexerConstants.indexerShootSpeed));
         }
     }
     @Override

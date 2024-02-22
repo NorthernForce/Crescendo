@@ -2,10 +2,12 @@ package frc.robot.robots;
 
 import org.northernforce.gyros.NFRGyro;
 import org.northernforce.motors.NFRSparkMax;
+import org.northernforce.motors.NFRTalonFX;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import frc.robot.constants.CrabbyConstants;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.sensors.NFRBeamBreak;
 import frc.robot.subsystems.Intake;
@@ -22,4 +24,6 @@ public class CrabbyMap {
     public final Intake intake = new Intake(17, 18, 19, 20); // TODO: set actual intake motors
     public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16);
     public final NFRBeamBreak indexerBeamBreak = new NFRBeamBreak(0);
+    public final NFRTalonFX shooterTop = new NFRTalonFX(CrabbyConstants.ShooterConstants.motorConfig, 21);
+    public final NFRTalonFX shooterBottom = new NFRTalonFX(CrabbyConstants.ShooterConstants.motorConfig, 22);
 }
