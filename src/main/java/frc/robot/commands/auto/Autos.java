@@ -30,6 +30,21 @@ public class Autos
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
     }
     /**
+     * Gets the AutonomousRoutine struct for S1LS
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S1LS
+     */
+    public static AutonomousRoutine getS1LS(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller)
+    {
+        return S1LS.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
+    }
+
+    /**
      * Gets the list of autonomous routines.
      * Includes S1.CS.V1
      * @param drive the drive subsystem
@@ -41,6 +56,8 @@ public class Autos
     public static List<AutonomousRoutine> getRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
         Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller)
     {
-        return List.of(getS1CSV1(drive, setStateCommands, poseSupplier, controller));
+        return List.of(
+            getS1CSV1(drive, setStateCommands, poseSupplier, controller),
+            getS1LS(drive, setStateCommands, poseSupplier, controller));
     }
 }
