@@ -107,18 +107,7 @@ public class SwervyContainer implements RobotContainer
             }
             return 0;
         });
-        Shuffleboard.getTab("General").addDouble("Depth", () -> {
-            var detections = aprilTagCamera.getDetections();
-            for (int i = 0; i < detections.length; i++)
-            {
-                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 8)
-                {
-                    return filter.calculate(detections[i].calculateDistanceWithDepth(Units.inchesToMeters(17),
-                        Units.inchesToMeters(57)));
-                }
-            }
-            return 0;
-        });
+        Shuffleboard.getTab("General").addDouble("Depth", () -> aprilTagCamera.getDistanceToSpeaker(Units.inchesToMeters(15)).orElse(0.));
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
