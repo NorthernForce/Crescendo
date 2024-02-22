@@ -8,15 +8,11 @@ import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.util.PIDConstants;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
@@ -138,8 +134,7 @@ public class SwervyContainer implements RobotContainer
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
         routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose,
-            new PPHolonomicDriveController(new PIDConstants(0.2, 0, 0), new PIDConstants(0.0, 0, 0), 3.7,
-                SwervyConstants.DriveConstants.offsets[0].getDistance(new Translation2d()))));
+            SwervyConstants.DriveConstants.holonomicDriveController));
         return routines;
     }
     @Override
