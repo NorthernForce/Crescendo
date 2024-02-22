@@ -78,30 +78,8 @@ public class SwervyContainer implements RobotContainer
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
-        Shuffleboard.getTab("General").addDouble("Distance", () -> {
-            var detections = aprilTagCamera.getDetections();
-            for (int i = 0; i < detections.length; i++)
-            {
-                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 7)
-                {
-                    return detections[i].calculateDistanceWithPitch(Rotation2d.fromDegrees(0), Units.inchesToMeters(17),
-                        Units.inchesToMeters(57));
-                }
-            }
-            return 0;
-        });
-        Shuffleboard.getTab("General").addDouble("Depth-Based Distance", () -> {
-            var detections = aprilTagCamera.getDetections();
-            for (int i = 0; i < detections.length; i++)
-            {
-                if (detections[i].fiducialID() == 4 || detections[i].fiducialID() == 7)
-                {
-                    return filter.calculate(detections[i].calculateDistanceWithDepth(Units.inchesToMeters(17),
-                        Units.inchesToMeters(57)));
-                }
-            }
-            return 0;
-        });
+        Shuffleboard.getTab("General").addDouble("Distance",
+            () -> aprilTagCamera.getDistanceToSpeaker(Units.inchesToMeters(15)).orElse(0.));
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
