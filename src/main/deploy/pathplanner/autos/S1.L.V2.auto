@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 0.7853670538059491,
-      "y": 6.54
+      "y": 6.535871436730487
     },
     "rotation": 60.0
   },
@@ -14,37 +14,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S1.L.V1.1"
+            "pathName": "S1.L.1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1.L.V1.2"
+            "pathName": "S1.L.2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1.L.V1.3"
+            "pathName": "S1.L.3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1.L.V1.4"
+            "pathName": "S1.L.4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1.L.V1.5"
+            "pathName": "S1.L.5"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1.L.V1.6.V1"
+            "pathName": "S1.L.6.V2"
           }
         }
       ]

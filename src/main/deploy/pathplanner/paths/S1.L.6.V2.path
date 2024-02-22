@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.8097588631180563,
-        "y": 7.382701999095163
+        "x": 1.25,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 1.816588141846804,
-        "y": 6.877335373167856
+        "x": 1.782683740842296,
+        "y": 5.55
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0,
+    "rotation": 0.0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": null,
+  "folder": "S1.L.V2",
   "previewStartingState": {
     "rotation": 180.0,
     "velocity": 0
