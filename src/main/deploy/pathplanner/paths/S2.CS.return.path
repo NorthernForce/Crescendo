@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.401052429856371,
-        "y": 6.544065472472582
+        "x": 6.03260679549633,
+        "y": 6.4836834203058284
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 6.690138362483131
       },
       "prevControl": {
-        "x": 6.342094392373844,
-        "y": 6.4758981238009925
+        "x": 5.613402013634385,
+        "y": 6.411091766565974
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0,
-      "rotationDegrees": 0,
+      "waypointRelativePos": 0.45,
+      "rotationDegrees": -27.708921141802964,
       "rotateFast": false
     }
   ],
@@ -49,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S2.CS.V1MPT - Done",
+  "folder": null,
   "previewStartingState": null,
   "useDefaultConstraints": false
 }
