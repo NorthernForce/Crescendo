@@ -13,6 +13,7 @@ import org.northernforce.motors.NFRTalonFX;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.commands.OrchestraCommand;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
@@ -123,6 +125,12 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kA.value)
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
+            new JoystickButton(driverController, XboxController.Button.kX.value)
+                .whileTrue(new TurnToTarget(drive, setStateCommands, new PIDController(0.25, 0, 0), 
+                    () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
+                    () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
+                    aprilTagCamera::getSpeakerTag, true, true));
         }
         else
         {
