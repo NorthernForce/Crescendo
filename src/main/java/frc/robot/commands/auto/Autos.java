@@ -89,6 +89,11 @@ public class Autos
         return S1CSV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
     }
+    public static AutonomousRoutine getS2T(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller)
+    {
+        return S2T.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
+    }
     /**
      * Gets the list of autonomous routines.
      * Includes S1.CS.V1
