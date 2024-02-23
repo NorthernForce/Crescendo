@@ -17,9 +17,11 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -31,6 +33,8 @@ import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.TurnToTarget;
+import frc.robot.FieldConstants;
+import frc.robot.commands.DriveWithOrangePi;
 import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
@@ -153,6 +157,10 @@ public class SwervyContainer implements RobotContainer
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                     () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
                     aprilTagCamera::getSpeakerTag, true, true));
+            new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
+                .whileTrue(new DriveWithOrangePi(drive, setStateCommands, orangePi,
+                    () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.AmpPositions.redAmp
+                        : FieldConstants.AmpPositions.blueAmp, 0.1, Rotation2d.fromDegrees(10)));
         }
         else
         {
