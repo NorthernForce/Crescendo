@@ -18,6 +18,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.PurgeIntake;
+import frc.robot.commands.RumbleController;
+import frc.robot.commands.RunFullIntake;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
@@ -78,6 +82,10 @@ public class CrabbyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
+                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
+            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .onTrue(new RumbleController(driverController, 0.5, 0.5));
         }
         else
         {
@@ -89,6 +97,17 @@ public class CrabbyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+        }
+        if (manipulatorHID instanceof XboxController)
+        {
+            XboxController manipulatorController = (XboxController)manipulatorHID;
+            new Trigger(() -> manipulatorController.getLeftTriggerAxis() > 0.4)
+                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
+            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .onTrue(new RumbleController(manipulatorController, 0.5, 0.5));
+            new JoystickButton(manipulatorController, XboxController.Button.kX.value)
+                .whileTrue(new PurgeIntake(intake, indexer, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
+                    CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         }
     }
     @Override
