@@ -114,6 +114,20 @@ public class Autos
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
     /**
+     * Gets the AutonomousRoutine struct for S3LSV1
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S3LSV1
+     */
+    public static AutonomousRoutine getS3LSV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S3LSV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+    /**
      * Gets the list of autonomous routines.
      * Includes S1.CS.V1, S1.CS.V2
      * @param drive the drive subsystem
@@ -132,7 +146,8 @@ public class Autos
             getS1LV2(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, true),
-            getS2T(drive, setStateCommands, poseSupplier, controller, true)
+            getS2T(drive, setStateCommands, poseSupplier, controller, true),
+            getS3LSV1(drive, setStateCommands, poseSupplier, controller, true)
         );
     }
     /**
@@ -155,7 +170,8 @@ public class Autos
             getS1LV2(drive, setStateCommands, poseSupplier, controller, false),
             getS2CV1(drive, setStateCommands, poseSupplier, controller, false),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, false),
-            getS2T(drive, setStateCommands, poseSupplier, controller, false)
+            getS2T(drive, setStateCommands, poseSupplier, controller, false),
+            getS3LSV1(drive, setStateCommands, poseSupplier, controller, false)
         );
     }
 }
