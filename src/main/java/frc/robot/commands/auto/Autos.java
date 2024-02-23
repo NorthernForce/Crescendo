@@ -43,10 +43,10 @@ public class Autos
      * @return an AutonomousRoutine for S1LV1
      */
     public static AutonomousRoutine getS1LV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
-        PPHolonomicDriveController controller)
+        PPHolonomicDriveController controller, boolean ignoreCommands)
     {
         return S1LV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
-            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
 
     /**
@@ -58,10 +58,10 @@ public class Autos
      * @return an AutonomousRoutine for S1LV1
      */
     public static AutonomousRoutine getS2CV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
-        PPHolonomicDriveController controller)
+        PPHolonomicDriveController controller, boolean ignoreCommands)
     {
         return S2CV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
-            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
 
     /**
@@ -73,10 +73,10 @@ public class Autos
      * @return an AutonomousRoutine for S1LV1
      */
     public static AutonomousRoutine getS2CV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
-        PPHolonomicDriveController controller)
+        PPHolonomicDriveController controller, boolean ignoreCommands)
     {
         return S2CV2.getRoutine(drive, setStateCommands, poseSupplier, controller,
-            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
 
     /**
@@ -88,15 +88,16 @@ public class Autos
      * @return an AutonomousRoutine for S1LV2
      */
     public static AutonomousRoutine getS1LV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
-        PPHolonomicDriveController controller)
+        PPHolonomicDriveController controller, boolean ignoreCommands)
     {
         return S1LV2.getRoutine(drive, setStateCommands, poseSupplier, controller,
-            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
-    public static AutonomousRoutine getS2T(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller)
+    public static AutonomousRoutine getS2T(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
     {
         return S2T.getRoutine(drive, setStateCommands, poseSupplier, controller,
-            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
     /**
      * Gets the AutonomousRoutine struct for S1CSV2
@@ -127,11 +128,11 @@ public class Autos
         return List.of(
             getS1CSV1(drive, setStateCommands, poseSupplier, controller, true),
             getS1CSV2(drive, setStateCommands, poseSupplier, controller, true), 
-            getS1LV1(drive, setStateCommands, poseSupplier, controller), 
-            getS1LV2(drive, setStateCommands, poseSupplier, controller),
-            getS2CV1(drive, setStateCommands, poseSupplier, controller),
-            getS2CV2(drive, setStateCommands, poseSupplier, controller),
-            getS2T(drive, setStateCommands, poseSupplier, controller)
+            getS1LV1(drive, setStateCommands, poseSupplier, controller, true), 
+            getS1LV2(drive, setStateCommands, poseSupplier, controller, true),
+            getS2CV1(drive, setStateCommands, poseSupplier, controller, true),
+            getS2CV2(drive, setStateCommands, poseSupplier, controller, true),
+            getS2T(drive, setStateCommands, poseSupplier, controller, true)
         );
     }
     /**
@@ -147,7 +148,14 @@ public class Autos
         Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, Indexer indexer, double speed)
     {
         NamedCommands.registerCommand("intake", new RunFullIntake(indexer, intake, speed));
-        return List.of(getS1CSV1(drive, setStateCommands, poseSupplier, controller, false),
-            getS1CSV2(drive, setStateCommands, poseSupplier, controller, false));
+        return List.of(
+            getS1CSV1(drive, setStateCommands, poseSupplier, controller, false),
+            getS1CSV2(drive, setStateCommands, poseSupplier, controller, false),
+            getS1LV1(drive, setStateCommands, poseSupplier, controller, false), 
+            getS1LV2(drive, setStateCommands, poseSupplier, controller, false),
+            getS2CV1(drive, setStateCommands, poseSupplier, controller, false),
+            getS2CV2(drive, setStateCommands, poseSupplier, controller, false),
+            getS2T(drive, setStateCommands, poseSupplier, controller, false)
+        );
     }
 }
