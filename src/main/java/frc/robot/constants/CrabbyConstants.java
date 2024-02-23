@@ -11,4 +11,14 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
     }
+    public static class IntakeConstants
+    {
+        public static final double intakeSpeed = 1;
+        public static final double intakePurgeSpeed = -1;
+    }
+    public static class IndexerConstants
+    {
+        public static final double indexerSpeed = 1;
+        public static final double indexerPurgeSpeed = -1;
+    }
 }
