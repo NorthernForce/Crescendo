@@ -6,10 +6,11 @@ import frc.robot.subsystems.Intake;
 
 public class RunFullIntake extends ParallelDeadlineGroup{
 
-    public RunFullIntake(Indexer indexer, Intake intake, double speed){
+    public RunFullIntake(Indexer indexer, Intake intake, double intakeSpeed, double indexerSpeed)
+    {
         super(
-            new IndexerIntake(indexer, speed),
-            new RunIntake(intake, speed)
+            new IndexerIntake(indexer, indexerSpeed),
+            new RunIntake(intake, intakeSpeed)
         );
     }
 
