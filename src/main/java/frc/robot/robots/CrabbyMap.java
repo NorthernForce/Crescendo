@@ -17,7 +17,7 @@ public class CrabbyMap {
         SwerveModuleHelpers.createMk4iL3("Back Left", 3, 7, 11, false, "drive"),
         SwerveModuleHelpers.createMk4iL3("Back Right", 4, 8, 12, true, "drive")
     };
-    public final NFRGyro gyro = new NFRPigeon2(13);
+    public final NFRGyro gyro = new NFRPigeon2(1);
     public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 17, 18, 19, 20);
     {
         intakeMotor.setFollowerOppose(0);
