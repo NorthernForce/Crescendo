@@ -28,7 +28,13 @@
       "linkedName": "S3.LS.V1.guesswhosbackbackagain"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8,
+      "rotationDegrees": 40.98177053623892,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -43,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S3.LS.V1 - Done",
+  "folder": null,
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
