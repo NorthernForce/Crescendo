@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
@@ -13,6 +15,7 @@ public class FollowNote extends Command {
     private Xavier xavier;
     private NFRSwerveDrive drive;
     private NFRSwerveModuleSetState[] setStateCommands;
+    private DoubleSupplier strafeSupplier;
     private PIDController pid;
     private boolean useOptimization;
 
@@ -21,16 +24,18 @@ public class FollowNote extends Command {
      * @param xavier the Xavier subsystem
      * @param drive the Drive subsystem
      * @param setStateCommands the array of SetState command you want to use
+     * @param strafeSupplier a supplier which returns the direction of strafe (if any)
      * @param useOptimization whether to use swerve optimization (recommended)
      */
-    public FollowNote(Xavier xavier, NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, boolean useOptimization) {
+    public FollowNote(Xavier xavier, NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, DoubleSupplier strafeSupplier, boolean useOptimization) {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drive);
         addRequirements(xavier);
         this.xavier = xavier;
         this.drive = drive;
         this.setStateCommands = setStateCommands;
-        this.pid = new PIDController(.25, 0, 0);
+        this.strafeSupplier = strafeSupplier;
+        this.pid = new PIDController(.35, 0, 0);
         this.useOptimization = useOptimization;
     }
 
@@ -50,7 +55,7 @@ public class FollowNote extends Command {
         if (radian == 0) {
             pid.reset();
         } else {
-            speeds = new ChassisSpeeds(.5, 0, pid.calculate(radian));
+            speeds = new ChassisSpeeds(.5, strafeSupplier.getAsDouble() * 0.5, pid.calculate(radian));
         }
         speeds = ChassisSpeeds.discretize(speeds, 0.02);
         SwerveModuleState[] states = drive.toModuleStates(speeds);

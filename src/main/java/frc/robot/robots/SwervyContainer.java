@@ -97,7 +97,8 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
             new JoystickButton(driverController, XboxController.Button.kA.value)
-                .whileTrue(new FollowNote(xavier, drive, setStateCommands, true));
+                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
         }
         else
         {
@@ -110,7 +111,8 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
             new JoystickButton(driverHID, XboxController.Button.kA.value)
-                .whileTrue(new FollowNote(xavier, drive, setStateCommands, true));
+                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
+                    () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1), true));
         }
     }
     @Override
