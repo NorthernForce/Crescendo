@@ -37,7 +37,7 @@ public class CrabbyContainer implements RobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
 
     protected final OrangePi orangePi;
-    protected final TargetCamera aprilTagCamera, noteDetectorCamera;
+    protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
     protected final CrabbyMap map;
     protected final CrabbyDashboard dashboard;
@@ -58,9 +58,8 @@ public class CrabbyContainer implements RobotContainer
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
-        noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
-        aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
-        aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {});
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
         dashboard = new CrabbyDashboard();
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
         intake = new Intake(map.intakeMotor);
@@ -110,6 +109,8 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void setInitialPose(Pose2d pose)
     {
+        orangePi.setGlobalPose(pose);
+        drive.resetPose(pose);
     }
     @Override
     public void periodic()
