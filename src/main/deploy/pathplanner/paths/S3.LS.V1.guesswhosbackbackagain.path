@@ -39,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -43.77126927011516,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S3.LS.V1 - Done",
+  "folder": null,
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
