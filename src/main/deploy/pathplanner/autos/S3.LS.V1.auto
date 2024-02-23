@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.LS.V1.outcenter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.LS.V1.G8"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.LS.V1.backout.cut"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.LS.V1.G7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.LS.V1.superback.cut"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.LS.V1.G6"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.LS.V1.guesswhosbackbackagain"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
