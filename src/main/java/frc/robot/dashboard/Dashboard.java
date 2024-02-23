@@ -136,8 +136,8 @@ public abstract class Dashboard
                     errorStrings.add(alert.message);
             }
         }
-        infoPublishers.set((String[])infoStrings.toArray());
-        warningPublishers.set((String[])infoStrings.toArray());
-        errorPublishers.set((String[])errorStrings.toArray());
+        infoPublishers.set(infoStrings.toArray(new String[infoStrings.size()]));
+        warningPublishers.set(warningStrings.toArray(new String[warningStrings.size()]));
+        errorPublishers.set(errorStrings.toArray(new String[errorStrings.size()]));
     }
 }

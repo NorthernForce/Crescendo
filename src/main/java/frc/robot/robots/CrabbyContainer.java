@@ -71,6 +71,7 @@ public class CrabbyContainer implements RobotContainer
         dashboard = new CrabbyDashboard();
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
         intake = new Intake(map.intakeMotor);
+        dashboard.register(orangePi);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
