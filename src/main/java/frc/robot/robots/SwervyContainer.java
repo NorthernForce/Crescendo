@@ -20,8 +20,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,7 +47,6 @@ public class SwervyContainer implements RobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
     protected final OrangePi orangePi;
     protected final Xavier xavier;
-    protected final Field2d field;
     protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
     protected final Notifier flushNotifier;
@@ -75,9 +72,7 @@ public class SwervyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[2], 1, 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 1, 0, false)
         };
-        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
-        field = new Field2d();
-        Shuffleboard.getTab("General").add("Field", field);
+        dashboard.addCalibrateCommand(new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
         orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
@@ -85,8 +80,7 @@ public class SwervyContainer implements RobotContainer
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
         dashboard.register(orangePi);
-        Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
-        Shuffleboard.getTab("General").addDouble("Distance",
+        dashboard.addDouble("distance",
             () ->
             {
                 var distance =
@@ -97,17 +91,27 @@ public class SwervyContainer implements RobotContainer
                 }
                 return lastRecordedDistance;
             });
+        dashboard.addDouble("angle", () -> {
+            var tag = aprilTagCamera.getSpeakerTag();
+            if (tag.isPresent())
+            {
+                return tag.get().yaw();
+            }
+            else
+            {
+                return 0;
+            }
+        });
 
         xavier = new Xavier(SwervyConstants.XavierConstants.config);
-        Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
-        Shuffleboard.getTab("General").addDouble("Note Yaw", () -> Math.toDegrees(xavier.getYawRadians()));
+        dashboard.addDouble("note_yaw", () -> Math.toDegrees(xavier.getYawRadians()));
+        dashboard.register(xavier);
 
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
         musicChooser.addOption("The Office", "the-office.chrp");
-        Shuffleboard.getTab("General").add("Music Selector", musicChooser);
-        Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
+        dashboard.addMusicPlayingCommand(new ProxyCommand(() -> {
             return new OrchestraCommand(musicChooser.getSelected(), List.of(
                 (NFRTalonFX)map.modules[0].getDriveController(),
                 (NFRTalonFX)map.modules[0].getTurnController(),
@@ -119,6 +123,7 @@ public class SwervyContainer implements RobotContainer
                 (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
                 .ignoringDisable(true);
         }));
+        dashboard.addMusicChooser(musicChooser);
         
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
         flushNotifier.startPeriodic(0.01);
@@ -198,8 +203,6 @@ public class SwervyContainer implements RobotContainer
     {
         orangePi.setOdometry(drive.getChassisSpeeds());
         orangePi.setIMU(drive.getRotation());
-        NetworkTableInstance.getDefault().flush();
-        field.setRobotPose(orangePi.getPose());
         dashboard.updateRobotPose(orangePi.getPose());
     }
     @Override

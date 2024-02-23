@@ -17,10 +17,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -72,12 +71,11 @@ public class CrabbyContainer implements RobotContainer
     protected final Shooter shooter;
     protected boolean manualWrist;
     protected double lastRecordedDistance = 0;
-    protected final GenericEntry shooterSpeed;
+    protected final NetworkTableEntry shooterSpeed;
     protected final TargetingCalculator targetingCalculator;
     public CrabbyContainer()
     {
         dashboard = new CrabbyDashboard();
-
         map = new CrabbyMap();
 
         intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
@@ -85,10 +83,10 @@ public class CrabbyContainer implements RobotContainer
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
         wristJoint.setDefaultCommand(new NFRWristContinuous(wristJoint, () -> Optional.of(0.0))
             .alongWith(Commands.runOnce(() -> manualWrist = false)));
-        Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
-        Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
-        // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
+        dashboard.addDouble("wrist_angle", () -> wristJoint.getRotation().getDegrees());
+        dashboard.addBoolean("manual_wrist", () -> manualWrist);
+        // dashboard.addSendable("calibrate_wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
@@ -103,14 +101,13 @@ public class CrabbyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[2], 0, 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 0, 0, false)
         };
-        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
+        dashboard.addCalibrateCommand(new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
         orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
         dashboard.register(orangePi);
-        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
-        Shuffleboard.getTab("General").addDouble("Distance",
+        dashboard.addDouble("distance",
             () ->
             {
                 var distance =
@@ -121,22 +118,34 @@ public class CrabbyContainer implements RobotContainer
                 }
                 return lastRecordedDistance;
             });
+        dashboard.addDouble("pitch",
+            () ->
+            {
+                var speakerTag = aprilTagCamera.getSpeakerTag();
+                if (speakerTag.isPresent())
+                {
+                    return speakerTag.get().pitch();
+                }
+                return 0;
+            });
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
-        
+        dashboard.register(xavier);
+        dashboard.addDouble("note_yaw", xavier.getYawRadians());
+
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
         shooter.setDefaultCommand(new RestShooter(shooter));
-        shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
+        shooterSpeed = dashboard.addDouble("Shooter Speed", 30);
         targetingCalculator = new TargetingCalculator("/home/lvuser/speedData.csv");
-        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0,
+        dashboard.addSendable("register_shooter_data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0,
             () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
 
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
         musicChooser.addOption("The Office", "the-office.chrp");
-        Shuffleboard.getTab("General").add("Music Selector", musicChooser);
-        Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
+        dashboard.addMusicChooser(musicChooser);
+        dashboard.addMusicPlayingCommand(new ProxyCommand(() -> {
             return new OrchestraCommand(musicChooser.getSelected(), List.of(
                 (NFRTalonFX)map.modules[0].getDriveController(),
                 (NFRTalonFX)map.modules[0].getTurnController(),
@@ -148,7 +157,6 @@ public class CrabbyContainer implements RobotContainer
                 (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
                 .ignoringDisable(true);
         }));
-        
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)

@@ -4,6 +4,8 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.utils.AutonomousRoutine;
 
 /**
@@ -51,5 +53,29 @@ public class SwervyDashboard extends Dashboard
     public void setCurrentAutonomousRoutine(AutonomousRoutine routine)
     {
         autoField.setRobotPose(routine.startingPose().get());
+    }
+    /**
+     * Displays the command to calibrate the swerve drive on the dashboard
+     * @param command the command to calibrate the swerve drive
+     */
+    public void addCalibrateCommand(Command command)
+    {
+        addSendable("calibrate_swerve", command);
+    }
+    /**
+     * Displays the command to play music on the dashboard
+     * @param command the command to play music
+     */
+    public void addMusicPlayingCommand(Command command)
+    {
+        addSendable("play_music", command);
+    }
+    /**
+     * Displays the chooser for the music on the dashboard
+     * @param command the chooser for the music
+     */
+    public void addMusicChooser(SendableChooser<String> chooser)
+    {
+        addSendable("music_selector", chooser);
     }
 }

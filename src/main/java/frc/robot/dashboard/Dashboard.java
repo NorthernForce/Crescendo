@@ -5,8 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringArrayPublisher;
 import edu.wpi.first.util.sendable.Sendable;
@@ -28,6 +33,8 @@ public abstract class Dashboard
     protected final Notifier notifier = new Notifier(this::periodic);
     protected final List<Alert> alerts;
     protected final StringArrayPublisher infoPublishers, warningPublishers, errorPublishers;
+    protected final Map<DoublePublisher, DoubleSupplier> doubleMap;
+    protected final Map<BooleanPublisher, BooleanSupplier> booleanMap;
     protected int alertId = 0;
     /**
      * Creates a new Dashboard
@@ -42,6 +49,8 @@ public abstract class Dashboard
         infoPublishers = table.getStringArrayTopic("infos").publish();
         warningPublishers = table.getStringArrayTopic("warnings").publish();
         errorPublishers = table.getStringArrayTopic("errors").publish();
+        doubleMap = new HashMap<>();
+        booleanMap = new HashMap<>();
         notifier.startPeriodic(0.02);
     }
     /**
@@ -139,5 +148,36 @@ public abstract class Dashboard
         infoPublishers.set(infoStrings.toArray(new String[infoStrings.size()]));
         warningPublishers.set(warningStrings.toArray(new String[warningStrings.size()]));
         errorPublishers.set(errorStrings.toArray(new String[errorStrings.size()]));
+        doubleMap.forEach((publisher, supplier) -> publisher.set(supplier.getAsDouble()));
+        booleanMap.forEach((publisher, supplier) -> publisher.set(supplier.getAsBoolean()));
+    }
+    /**
+     * Publishes a double every 50ms.
+     * @param path the path for the topic
+     * @param supplier the double supplier
+     */
+    public void addDouble(String path, DoubleSupplier supplier)
+    {
+        doubleMap.put(table.getDoubleTopic(path).publish(), supplier);
+    }
+    /**
+     * Publishes a double every 50ms.
+     * @param path the path for the topic
+     * @param supplier the double supplier
+     */
+    public NetworkTableEntry addDouble(String path, double value)
+    {
+        NetworkTableEntry entry = table.getEntry(path);
+        entry.setDouble(value);
+        return entry;
+    }
+    /**
+     * Publishes a double every 50ms.
+     * @param path the path for the topic
+     * @param supplier the double supplier
+     */
+    public void addBoolean(String path, BooleanSupplier supplier)
+    {
+        booleanMap.put(table.getBooleanTopic(path).publish(), supplier);
     }
 }
