@@ -145,9 +145,9 @@ public class Autos
      * @return an list of AutonomousRoutines
      */
     public static List<AutonomousRoutine> getRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
-        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, Indexer indexer, double speed)
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, Indexer indexer, double intakeSpeed, double indexerSpeed)
     {
-        NamedCommands.registerCommand("intake", new RunFullIntake(indexer, intake, speed));
+        NamedCommands.registerCommand("intake", new RunFullIntake(indexer, intake, intakeSpeed, indexerSpeed));
         return List.of(
             getS1CSV1(drive, setStateCommands, poseSupplier, controller, false),
             getS1CSV2(drive, setStateCommands, poseSupplier, controller, false),
