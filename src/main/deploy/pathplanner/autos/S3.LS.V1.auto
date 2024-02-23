@@ -8,12 +8,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S3.LS.V1.outcenter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "S3.LS.V1.G8"
           }
         },

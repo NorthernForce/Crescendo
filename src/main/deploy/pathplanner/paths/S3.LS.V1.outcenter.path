@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 6.020734034350632,
-        "y": 1.5094198634423373
+        "x": 0.7106252175467316,
+        "y": 4.370215147837704
       },
       "prevControl": {
-        "x": 4.560005134245145,
-        "y": 1.5483726341118174
+        "x": -0.7501036825587549,
+        "y": 4.409167918507183
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S3.LS.V1 - Done",
+  "folder": null,
   "previewStartingState": null,
   "useDefaultConstraints": false
 }

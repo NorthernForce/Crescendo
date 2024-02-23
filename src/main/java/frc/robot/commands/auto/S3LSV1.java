@@ -20,7 +20,6 @@ import frc.robot.utils.AutonomousRoutine;
 public class S3LSV1 extends SequentialCommandGroup
 {
     protected static final PathPlannerPath[] paths = new PathPlannerPath[] {
-        PathPlannerPath.fromPathFile("S3.LS.V1.outcenter"),
         PathPlannerPath.fromPathFile("S3.LS.V1.G8"),
         PathPlannerPath.fromPathFile("S3.LS.V1.backout.cut"),
         PathPlannerPath.fromPathFile("S3.LS.V1.G7"),
