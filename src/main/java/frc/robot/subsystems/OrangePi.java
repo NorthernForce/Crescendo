@@ -14,7 +14,6 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.geometry.struct.Twist2dStruct;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -27,6 +26,7 @@ import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.FieldConstants;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
@@ -258,18 +258,18 @@ public class OrangePi extends NFRSubsystem
             return detections.get();
         }
         /**
-         * Gets the distance to the speaker using the depth camera. Needs the height of the depth camera.
-         * @param cameraHeight the height in meters of the depth camera
+         * Gets the distance to the speaker without using the depth camera. Needs the height of the apriltag camera.
+         * @param cameraHeight the height in meters of the apriltag camera
          * @return the distance from the camera to the speaker along the xy plane
          */
-        public Optional<Double> getDistanceToSpeaker(double cameraHeight)
+        public Optional<Double> getDistanceToSpeaker(double cameraHeight, Rotation2d cameraPitch)
         {
             int targetId = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7;
             for (var detection : getDetections())
             {
                 if (detection.fiducialID == targetId)
                 {
-                    return Optional.of(detection.calculateDistanceWithDepth(cameraHeight, Units.inchesToMeters(57)));
+                    return Optional.of(detection.calculateDistanceWithPitch(cameraPitch, cameraHeight, FieldConstants.SpeakerConstants.speakerHeight));
                 }
             }
             return Optional.empty();

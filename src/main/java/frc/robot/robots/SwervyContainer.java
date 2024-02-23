@@ -11,11 +11,9 @@ import org.northernforce.commands.NFRSwerveModuleSetState;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
@@ -45,12 +43,10 @@ public class SwervyContainer implements RobotContainer
     protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
     protected final Notifier flushNotifier;
-    protected final LinearFilter filter;
     protected final SwervyMap map;
     protected final SwervyDashboard dashboard;
     public SwervyContainer()
     {
-        filter = LinearFilter.movingAverage(100);
         map = new SwervyMap();
         drive = new SwerveDrive(SwervyConstants.DriveConstants.config, map.modules, SwervyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
@@ -79,7 +75,8 @@ public class SwervyContainer implements RobotContainer
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
         Shuffleboard.getTab("General").addDouble("Distance",
-            () -> aprilTagCamera.getDistanceToSpeaker(Units.inchesToMeters(15)).orElse(0.));
+            () -> aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch)
+                .orElse(0.));
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
