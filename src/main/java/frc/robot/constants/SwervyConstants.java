@@ -4,7 +4,9 @@ import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfigura
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PIDConstants;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.Xavier.XavierConfiguration;
 
@@ -29,6 +31,8 @@ public class SwervyConstants
     public static class OrangePiConstants
     {
         public static final OrangePiConfiguration config = new OrangePiConfiguration("orangepi", "xavier");
+        public static final double cameraHeight = Units.inchesToMeters(17);
+        public static final Rotation2d cameraPitch = Rotation2d.fromDegrees(0);
     }
     public static class XavierConstants
     {
