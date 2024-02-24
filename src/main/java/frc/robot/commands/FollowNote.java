@@ -51,7 +51,7 @@ public class FollowNote extends Command {
     @Override
     public void execute() {
         ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
-        float radian = xavier.getRadian();
+        float radian = xavier.getYawRadians();
         if (radian == 0) {
             pid.reset();
         } else {

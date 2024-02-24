@@ -70,7 +70,7 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
-        Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getRadian);
+        Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getYawRadians);
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");

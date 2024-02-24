@@ -46,7 +46,7 @@ public class Xavier extends NFRSubsystem
      * Gets the radian of the note the Xavier is most confident about
      * @return x radian of note relative to center of robot
      */
-    public float getRadian()
+    public float getYawRadians()
     {
         return xRadSubscriber.get();
     }
