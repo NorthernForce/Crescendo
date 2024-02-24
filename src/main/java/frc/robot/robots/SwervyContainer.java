@@ -79,7 +79,7 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
         Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getYawRadians);
-        Shuffleboard.getTab("General").addString("Manual Wrist Positioning", () -> manualWrist ? "Automatic" : "Manual");
+        Shuffleboard.getTab("General").addString("Manual Wrist Positioning", () -> manualWrist ? "Manual" : "Automatic");
 
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
