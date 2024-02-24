@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.345764895563007,
-        "y": 2.931195992878345
+        "x": 3.112663924401923,
+        "y": 2.525914519421632
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.0274383822789,
-        "y": 4.206899232303804
+        "x": 3.7943374111178163,
+        "y": 3.8016177588470907
       },
       "isLocked": false,
       "linkedName": "S3.S.4.centerline"
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S3.S.V2G8 - Done",
+  "folder": null,
   "previewStartingState": null,
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

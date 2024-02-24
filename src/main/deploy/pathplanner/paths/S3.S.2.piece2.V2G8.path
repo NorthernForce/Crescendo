@@ -28,18 +28,7 @@
       "linkedName": "S3.S.2.piece2.V2G8"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0,
-      "rotationDegrees": -93.12213046211576,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 0.15,
-      "rotationDegrees": -90.62298156559261,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -54,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S3.S.V2G8 - Done",
+  "folder": null,
   "previewStartingState": null,
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
