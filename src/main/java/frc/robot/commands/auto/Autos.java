@@ -65,10 +65,10 @@ public class Autos
      * @param controller the controller for following the path
      * @return an AutonomousRoutine for S3SV1G7
      */
-    public static AutonomousRoutine getS3SV1G7(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+    public static AutonomousRoutine getS3SV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
         PPHolonomicDriveController controller)
     {
-        return S3SV1G7.getRoutine(drive, setStateCommands, poseSupplier, controller,
+        return S3SV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red);
     }
 
@@ -88,6 +88,6 @@ public class Autos
             getS1CSV1(drive, setStateCommands, poseSupplier, controller),
             getS1LS(drive, setStateCommands, poseSupplier, controller),
             getS2CS(drive, setStateCommands, poseSupplier, controller),
-            getS3SV1G7(drive, setStateCommands, poseSupplier, controller));
+            getS3SV1(drive, setStateCommands, poseSupplier, controller));
     }
 }

@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.NFRSwerveDriveFollowPath;
 import frc.robot.utils.AutonomousRoutine;
 
-public class S3SV1G7 extends SequentialCommandGroup
+public class S3SV1 extends SequentialCommandGroup
 {
     protected static final PathPlannerPath[] paths = new PathPlannerPath[] {
         PathPlannerPath.fromPathFile("S3.S.1.V1G7"),
@@ -33,7 +33,7 @@ public class S3SV1G7 extends SequentialCommandGroup
      * @param controller the controller for following the path
      * @param shouldFlipPath whether to flip the routine based on alliance
      */
-    public S3SV1G7(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+    public S3SV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
         PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
     {
         IntFunction<NFRSwerveDriveFollowPath> path = idx -> new NFRSwerveDriveFollowPath(
@@ -59,8 +59,8 @@ public class S3SV1G7 extends SequentialCommandGroup
     public static AutonomousRoutine getRoutine(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
         Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
     {
-        return new AutonomousRoutine(S3SV1G7.class.getSimpleName(),
+        return new AutonomousRoutine(S3SV1.class.getSimpleName(),
             () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),
-            new S3SV1G7(drive, setStateCommands, poseSupplier, controller, shouldFlipPath));
+            new S3SV1(drive, setStateCommands, poseSupplier, controller, shouldFlipPath));
     }
 }
