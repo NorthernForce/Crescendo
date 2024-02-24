@@ -7,6 +7,7 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+import org.northernforce.motors.NFRTalonFX;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.FollowNote;
+import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunFullIntake;
@@ -66,6 +68,17 @@ public class CrabbyContainer implements RobotContainer
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").add("Crab Rave",
+            new OrchestraCommand("crab-rave.chrp", List.of(
+                (NFRTalonFX)map.modules[0].getDriveController(),
+                (NFRTalonFX)map.modules[0].getTurnController(),
+                (NFRTalonFX)map.modules[1].getDriveController(),
+                (NFRTalonFX)map.modules[1].getTurnController(),
+                (NFRTalonFX)map.modules[2].getDriveController(),
+                (NFRTalonFX)map.modules[2].getTurnController(),
+                (NFRTalonFX)map.modules[3].getDriveController(),
+                (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
+                .ignoringDisable(true));
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
         dashboard = new CrabbyDashboard();
