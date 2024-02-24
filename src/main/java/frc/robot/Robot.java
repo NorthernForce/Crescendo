@@ -8,10 +8,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.robots.CrabbyContainer;
+import frc.robot.dashboard.Dashboard;
 import frc.robot.robots.SwervyContainer;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
@@ -24,7 +23,7 @@ import frc.robot.utils.RobotContainer;
  */
 public class Robot extends TimedRobot {
   private RobotContainer container;
-  private SendableChooser<AutonomousRoutine> autoChooser;
+  private Dashboard dashboard;
   private AutonomousRoutine routine;
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -35,12 +34,8 @@ public class Robot extends TimedRobot {
     container = (RobotContainer)new NFRRobotChooser(() -> new CrabbyContainer(), Map.of(
       "Crabby", () -> new CrabbyContainer(),
       "Swervy", () -> new SwervyContainer())).getNFRRobotContainer();
-    autoChooser = new SendableChooser<>();
-    for (var auto : container.getAutonomousRoutines())
-    {
-      autoChooser.addOption(auto.name(), auto);
-    }
-    Shuffleboard.getTab("Autonomous").add("Autonomous routine?", autoChooser);
+    dashboard = container.getDashboard();
+    dashboard.displayAutonomousRoutines(container.getAutonomousRoutines());
   }
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -65,10 +60,10 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    routine = autoChooser.getSelected();
+    routine = dashboard.getSelectedRoutine();
     if (routine != null)
     {
-      container.setInitialPose(routine.startingPose());
+      container.setInitialPose(routine.startingPose().get());
       routine.command().schedule();
     }
   }

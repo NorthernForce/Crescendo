@@ -10,72 +10,78 @@ import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint.NFRRotatingArmJointConfiguration;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
-import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
-
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import org.northernforce.commands.NFRSwerveDriveCalibrate;
+import org.northernforce.commands.NFRSwerveDriveStop;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.gyros.NFRPigeon2;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.FollowNote;
+import frc.robot.commands.PurgeIntake;
+import frc.robot.commands.RumbleController;
+import frc.robot.commands.RunFullIntake;
+import frc.robot.constants.CrabbyConstants;
+import frc.robot.dashboard.CrabbyDashboard;
+import frc.robot.dashboard.Dashboard;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
+import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
-import frc.robot.utils.SwerveModuleHelpers;
 
 public class CrabbyContainer implements RobotContainer
 {
-    protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final SwerveDrive drive;
-    protected final Field2d field;
+    protected final NFRSwerveModuleSetState[] setStateCommands;
+
     protected final OrangePi orangePi;
-    protected final TargetCamera aprilTagCamera, noteDetectorCamera;
+    protected final Xavier xavier;
+    protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
-    protected final NFRPigeon2 gyro;
     protected final NFRRotatingArmJoint wristJoint;
+    protected final CrabbyMap map;
+    protected final CrabbyDashboard dashboard;
+    protected final Indexer indexer;
+    protected final Intake intake;
     public CrabbyContainer()
     {
+        map = new CrabbyMap();
         NFRSparkMax wristController = new NFRSparkMax(MotorType.kBrushless, 14);
         NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig");
         wristJoint = new NFRRotatingArmJoint(wristConfig, wristController, java.util.Optional.empty());
-        gyro = new NFRPigeon2(13);
-        NFRSwerveModule[] modules = new NFRSwerveModule[] {
-            SwerveModuleHelpers.createMk3Slow("Front Left", 1, 5, 9, false, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Front Right", 2, 6, 10, true, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Back Left", 3, 7, 11, false, "drive"),
-            SwerveModuleHelpers.createMk3Slow("Back Right", 4, 8, 12, true, "drive")
-        };
-        Translation2d[] offsets = new Translation2d[] {
-            new Translation2d(0.581025, 0.581025),
-            new Translation2d(0.581025, -0.581025),
-            new Translation2d(-0.581025, 0.581025),
-            new Translation2d(-0.581025, -0.581025)
-        };
-        drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), modules, offsets, gyro);
+        
+        drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), map.modules, CrabbyConstants.Drive.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
-            new NFRSwerveModuleSetState(modules[0], 0, false),
-            new NFRSwerveModuleSetState(modules[1], 0, false),
-            new NFRSwerveModuleSetState(modules[2], 0, false),
-            new NFRSwerveModuleSetState(modules[3], 0, false)
+            new NFRSwerveModuleSetState(map.modules[0], 0, false),
+            new NFRSwerveModuleSetState(map.modules[1], 0, false),
+            new NFRSwerveModuleSetState(map.modules[2], 0, false),
+            new NFRSwerveModuleSetState(map.modules[3], 0, false)
         };
-        field = new Field2d();
+
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
+        xavier = new Xavier(CrabbyConstants.XavierConstants.config);
+        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
-        noteDetectorCamera = orangePi.new TargetCamera("usb_cam2");
-        aprilTagCamera = orangePi.new TargetCamera("usb_cam1");
-        aprilTagSupplier = orangePi.new PoseSupplier("usb_cam1", estimate -> {});
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
+        dashboard = new CrabbyDashboard();
+        indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
+        intake = new Intake(map.intakeMotor);
+        dashboard.register(orangePi);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -87,15 +93,39 @@ public class CrabbyContainer implements RobotContainer
                 () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), true, true));
-                
+            new JoystickButton(driverController, XboxController.Button.kB.value)
+                .onTrue(Commands.runOnce(drive::clearRotation, drive));
+            new JoystickButton(driverController, XboxController.Button.kY.value)
+                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverHID, XboxController.Button.kA.value)
+                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
+            new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
+                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
+            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .onTrue(new RumbleController(driverController, 0.5, 0.5));
         }
         else
         {
             drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(1), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(5), 0.1, 1), true, true));
-           
+                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(4), 0.1, 1), true, true));
+            new JoystickButton(driverHID, XboxController.Button.kB.value)
+                .onTrue(Commands.runOnce(drive::clearRotation, drive));
+            new JoystickButton(driverHID, XboxController.Button.kY.value)
+                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+        }
+        if (manipulatorHID instanceof XboxController)
+        {
+            XboxController manipulatorController = (XboxController)manipulatorHID;
+            new Trigger(() -> manipulatorController.getLeftTriggerAxis() > 0.4)
+                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
+            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .onTrue(new RumbleController(manipulatorController, 0.5, 0.5));
+            new JoystickButton(manipulatorController, XboxController.Button.kX.value)
+                .whileTrue(new PurgeIntake(intake, indexer, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
+                    CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         }
     }
     @Override
@@ -116,6 +146,8 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void setInitialPose(Pose2d pose)
     {
+        orangePi.setGlobalPose(pose);
+        drive.resetPose(pose);
     }
     @Override
     public void periodic()
@@ -123,6 +155,11 @@ public class CrabbyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(), Commands.none()));
+        return List.of(new AutonomousRoutine("Do nothing", Pose2d::new, Commands.none()));
+    }
+    @Override
+    public Dashboard getDashboard()
+    {
+        return dashboard;
     }
 }

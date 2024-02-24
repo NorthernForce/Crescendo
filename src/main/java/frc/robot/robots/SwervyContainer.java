@@ -1,4 +1,6 @@
 package frc.robot.robots;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -8,6 +10,8 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,8 +28,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.commands.NFRWristContinuous;
+import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
+import frc.robot.dashboard.Dashboard;
+import frc.robot.dashboard.SwervyDashboard;
+import frc.robot.commands.FollowNote;
 import frc.robot.subsystems.OrangePi;
+import frc.robot.subsystems.Xavier;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
@@ -37,19 +46,19 @@ public class SwervyContainer implements RobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
     protected final OrangePi orangePi;
+    protected final Xavier xavier;
     protected final Field2d field;
     protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
     protected final WristJoint wristJoint;
-    protected boolean wristManual;
+    protected final SwervyDashboard dashboard;
     public SwervyContainer()
     {
-        wristManual = false;
         map = new SwervyMap();
         wristJoint = new WristJoint(map.wristSparkMax, SwervyConstants.Wrist.wristConfig);
-        drive = new SwerveDrive(SwervyConstants.Drive.config, map.modules, SwervyConstants.Drive.offsets, map.gyro);
+        drive = new SwerveDrive(SwervyConstants.DriveConstants.config, map.modules, SwervyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
@@ -62,9 +71,12 @@ public class SwervyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[2], 1, 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 1, 0, false)
         };
-        orangePi = new OrangePi(SwervyConstants.OrangePi.config);
+        orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
+        xavier = new Xavier(SwervyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
-        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
+        Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getYawRadians);
         Shuffleboard.getTab("General").addDouble("Degrees of wrist", () -> wristJoint.getRotation().getDegrees());
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
@@ -74,6 +86,9 @@ public class SwervyContainer implements RobotContainer
         });
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
         flushNotifier.startPeriodic(0.01);
+        CameraServer.startAutomaticCapture();
+        dashboard = new SwervyDashboard();
+        dashboard.register(orangePi);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -88,21 +103,24 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
-                .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            // wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(wristJoint, () -> 0.5));
-            
+                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverController, XboxController.Button.kA.value)
+                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
         }
         else
         {
             drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(1), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(5), 0.1, 1), true, true));
+                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(4), 0.1, 1), true, true));
             new JoystickButton(driverHID, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverHID, XboxController.Button.kY.value)
-                .onTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            
+                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverHID, XboxController.Button.kA.value)
+                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
+                    () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1), true));
         }
         if (manipulatorHID instanceof XboxController)
         {
@@ -145,6 +163,15 @@ public class SwervyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", new Pose2d(5, 5, new Rotation2d(2)), Commands.none()));
+        ArrayList<AutonomousRoutine> routines = new ArrayList<>();
+        routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
+        routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose,
+            SwervyConstants.DriveConstants.holonomicDriveController));
+        return routines;
+    }
+    @Override
+    public Dashboard getDashboard()
+    {
+        return dashboard;
     }
 }
