@@ -80,6 +80,7 @@ public class SwervyContainer implements RobotContainer
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
+        dashboard.register(orangePi);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
