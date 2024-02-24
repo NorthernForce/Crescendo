@@ -28,7 +28,13 @@
       "linkedName": "S3.S.1.End"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.85,
+      "rotationDegrees": 29.024643645755827,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -43,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S3.S.V1G7- Done",
+  "folder": null,
   "previewStartingState": null,
   "useDefaultConstraints": false
 }

@@ -28,18 +28,7 @@
       "linkedName": "S3.S.3.centerline"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0,
-      "rotationDegrees": -93.12213046211576,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 0.15,
-      "rotationDegrees": -90.62298156559261,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -50,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 28.36904629327857,
+    "rotation": 42.59887291270714,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S3.S.V1G7- Done",
+  "folder": null,
   "previewStartingState": null,
   "useDefaultConstraints": false
 }
