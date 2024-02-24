@@ -31,7 +31,6 @@ public class Indexer extends SubsystemBase {
      */
     public void stopMotor(){
         indexerMotor.set(0);
-        System.out.println("Motor stopped");
     }
 
     /**
