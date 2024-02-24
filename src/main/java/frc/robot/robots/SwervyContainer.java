@@ -31,7 +31,6 @@ import frc.robot.dashboard.SwervyDashboard;
 import frc.robot.commands.FollowNote;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Xavier;
-import frc.robot.subsystems.Xavier.XavierConfiguration;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
@@ -66,7 +65,7 @@ public class SwervyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[3], 1, 0, false)
         };
         orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
-        xavier = new Xavier(new XavierConfiguration("xavier", "note_detection"));
+        xavier = new Xavier(SwervyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);

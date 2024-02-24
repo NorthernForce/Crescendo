@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.subsystems.Xavier.XavierConfiguration;
 
 public class CrabbyConstants {
     public static class Drive {
@@ -20,5 +21,9 @@ public class CrabbyConstants {
     {
         public static final double indexerSpeed = 1;
         public static final double indexerPurgeSpeed = -1;
+    }
+    public static class XavierConstants
+    {
+        public static final XavierConfiguration config = new XavierConfiguration("xavier", "note_detection");
     }
 }
