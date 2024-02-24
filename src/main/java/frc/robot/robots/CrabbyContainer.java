@@ -74,6 +74,7 @@ public class CrabbyContainer implements RobotContainer
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
         musicChooser.addOption("The Office", "the-office.chrp");
+        musicChooser.addOption("I'm Still Standing", "im-still-standing.chrp");
         Shuffleboard.getTab("General").add("Music Selector", musicChooser);
         Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
             return new OrchestraCommand(musicChooser.getSelected(), List.of(
