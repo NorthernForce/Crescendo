@@ -1,15 +1,20 @@
 package frc.robot.subsystems;
 
+import java.util.List;
+
 import org.northernforce.subsystems.NFRSubsystem;
 
 import edu.wpi.first.networktables.FloatSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.dashboard.Dashboard.Alert;
+import frc.robot.dashboard.Dashboard.AlertType;
+import frc.robot.utils.AlertProvider;
 
 /**
  * Subsystem for note detection running on Xavier coprocessor
  */
-public class Xavier extends NFRSubsystem
+public class Xavier extends NFRSubsystem implements AlertProvider
 {
     /**
      * Configuration class for Xavier subsystem
@@ -31,6 +36,7 @@ public class Xavier extends NFRSubsystem
     protected final NetworkTableInstance instance;
     protected final NetworkTable table;
     protected final FloatSubscriber xRadSubscriber;
+    protected final Alert xavierDisconnected;
     /**
      * Create a new Xavier subsystem
      * @param config the configuration for this subsystem
@@ -41,6 +47,7 @@ public class Xavier extends NFRSubsystem
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable(config.tableName);
         xRadSubscriber = table.getFloatTopic("note_rad").subscribe(0);
+        xavierDisconnected = new Alert(AlertType.kError, "Xavier is disconnected");
     }
     /**
      * Gets the radian of the note the Xavier is most confident about
@@ -64,5 +71,15 @@ public class Xavier extends NFRSubsystem
             }
         }
         return false;
+    }
+    @Override
+    public void periodic()
+    {
+        xavierDisconnected.shouldDisplay().set(!isConnected());
+    }
+    @Override
+    public List<Alert> getPossibleAlerts()
+    {
+        return List.of(xavierDisconnected);
     }
 }
