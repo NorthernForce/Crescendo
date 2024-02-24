@@ -42,4 +42,9 @@ public class OrchestraCommand extends Command {
     {
         orchestra.stop();
     }
+    @Override
+    public boolean isFinished()
+    {
+        return !orchestra.isPlaying();
+    }
 }
