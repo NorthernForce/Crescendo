@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.FollowNote;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunFullIntake;
@@ -32,6 +33,7 @@ import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 
@@ -41,6 +43,7 @@ public class CrabbyContainer implements RobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
 
     protected final OrangePi orangePi;
+    protected final Xavier xavier;
     protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
     protected final CrabbyMap map;
@@ -60,6 +63,7 @@ public class CrabbyContainer implements RobotContainer
         };
 
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
+        xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
@@ -82,6 +86,9 @@ public class CrabbyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverHID, XboxController.Button.kA.value)
+                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
             new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
                 .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
             new Trigger(() -> indexer.getBeamBreak().beamBroken())
