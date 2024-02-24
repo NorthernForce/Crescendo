@@ -54,6 +54,8 @@ public class SwervyContainer implements RobotContainer
     protected final SwervyMap map;
     protected final WristJoint wristJoint;
     protected final SwervyDashboard dashboard;
+    protected boolean manualWrist;
+
     public SwervyContainer()
     {
         map = new SwervyMap();
@@ -77,7 +79,8 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
         Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getYawRadians);
-        Shuffleboard.getTab("General").addDouble("Degrees of wrist", () -> wristJoint.getRotation().getDegrees());
+        Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
+
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
@@ -126,9 +129,9 @@ public class SwervyContainer implements RobotContainer
         {
             XboxController manipulatorController = (XboxController)manipulatorHID;
             new JoystickButton(manipulatorController, XboxController.Button.kB.value)
-                .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)));
+                .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
             new JoystickButton(manipulatorController, XboxController.Button.kA.value)
-                .toggleOnTrue(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)));
+                .toggleOnTrue(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)).alongWith(Commands.runOnce(() -> manualWrist = false)));
         }
         else
         {

@@ -53,8 +53,10 @@ public class CrabbyContainer implements RobotContainer
     protected final CrabbyDashboard dashboard;
     protected final Indexer indexer;
     protected final Intake intake;
+    protected boolean manualWrist;
     public CrabbyContainer()
     {
+        manualWrist = false;
         map = new CrabbyMap();
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.Wrist.wristConfig);
         
@@ -70,6 +72,8 @@ public class CrabbyContainer implements RobotContainer
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
+        Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
         dashboard = new CrabbyDashboard();
