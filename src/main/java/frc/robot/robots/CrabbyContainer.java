@@ -6,12 +6,7 @@ import java.util.Map;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
-import org.northernforce.motors.NFRSparkMax;
-import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
-import org.northernforce.subsystems.arm.NFRRotatingArmJoint.NFRRotatingArmJointConfiguration;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import edu.wpi.first.math.MathUtil;
@@ -36,6 +31,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.WristJoint;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
@@ -52,7 +48,7 @@ public class CrabbyContainer implements RobotContainer
     protected final Xavier xavier;
     protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
-    protected final NFRRotatingArmJoint wristJoint;
+    protected final WristJoint wristJoint;
     protected final CrabbyMap map;
     protected final CrabbyDashboard dashboard;
     protected final Indexer indexer;
@@ -60,9 +56,7 @@ public class CrabbyContainer implements RobotContainer
     public CrabbyContainer()
     {
         map = new CrabbyMap();
-        NFRSparkMax wristController = new NFRSparkMax(MotorType.kBrushless, 14);
-        NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig");
-        wristJoint = new NFRRotatingArmJoint(wristConfig, wristController, java.util.Optional.empty());
+        wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.Wrist.wristConfig);
         
         drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), map.modules, CrabbyConstants.Drive.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {

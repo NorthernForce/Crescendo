@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import org.northernforce.subsystems.arm.NFRRotatingArmJoint.NFRRotatingArmJointConfiguration;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.Xavier.XavierConfiguration;
 
@@ -21,6 +23,10 @@ public class CrabbyConstants {
     {
         public static final double indexerSpeed = 1;
         public static final double indexerPurgeSpeed = -1;
+    }
+    public static class Wrist
+    {
+        public static final NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig").withUseLimits(false);
     }
     public static class XavierConstants
     {
