@@ -10,7 +10,7 @@ public class NFRWristJointCommand extends NFRRotatingArmJointSetAngle
 
     public NFRWristJointCommand(WristJoint wrist, boolean useAbsolutePositioning, double distance) 
     {
-        super(wrist, new Rotation2d(wrist.getAmpAngle(useAbsolutePositioning, distance)), new Rotation2d(0.5), 0, false);
+        super(wrist, wrist.getSpeakerAngle(useAbsolutePositioning, distance), new Rotation2d(0.5), 0, false);
     }
     
     

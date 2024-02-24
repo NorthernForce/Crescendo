@@ -4,6 +4,8 @@ import java.util.Optional;
 import org.northernforce.motors.MotorEncoderMismatchException;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 public class WristJoint extends NFRRotatingArmJoint
 {
     public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig)
@@ -21,7 +23,7 @@ public class WristJoint extends NFRRotatingArmJoint
         
 
     }
-    public double getAmpAngle(boolean useAbsolutePositioning, double distance)
+    public Rotation2d getSpeakerAngle(boolean useAbsolutePositioning, double distance)
     {
         if(useAbsolutePositioning)
         {
@@ -30,7 +32,7 @@ public class WristJoint extends NFRRotatingArmJoint
         {
             //TODO use distance parameters to approximate angle needed (ex. if 0 < distance < 5, ampAngle = 55)
         }
-        double ampAngle = 90 * (Math.PI/180); //for now, I will just use random degrees to test el motoro until I get data from ONE PARTICULAR CLAREDITH DYNAMIC DUO. *Ahem* Clare and Meredith...
+        Rotation2d ampAngle = Rotation2d.fromDegrees(90); //for now, I will just use random degrees to test el motoro until I get data from ONE PARTICULAR CLAREDITH DYNAMIC DUO. *Ahem* Clare and Meredith...
         System.out.println("Fetching the angle using a formula from distance. Angle = " + ampAngle);
         return ampAngle; 
     }

@@ -1,6 +1,8 @@
 package frc.robot.robots;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
@@ -22,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.commands.NFRWristContinuous;
-import frc.robot.commands.NFRWristJointCommand;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
@@ -42,8 +43,10 @@ public class SwervyContainer implements RobotContainer
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
     protected final WristJoint wristJoint;
+    protected boolean wristManual;
     public SwervyContainer()
     {
+        wristManual = false;
         map = new SwervyMap();
         wristJoint = new WristJoint(map.wristSparkMax, SwervyConstants.Wrist.wristConfig);
         drive = new SwerveDrive(SwervyConstants.Drive.config, map.modules, SwervyConstants.Drive.offsets, map.gyro);
@@ -104,11 +107,10 @@ public class SwervyContainer implements RobotContainer
         if (manipulatorHID instanceof XboxController)
         {
             XboxController manipulatorController = (XboxController)manipulatorHID;
-            wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -manipulatorController.getLeftY()));
+            new JoystickButton(manipulatorController, XboxController.Button.kB.value)
+                .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)));
             new JoystickButton(manipulatorController, XboxController.Button.kA.value)
-                .whileTrue(new NFRWristContinuous(wristJoint, manipulatorController));
-
-
+                .toggleOnTrue(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)));
         }
         else
         {
