@@ -24,6 +24,10 @@ public class OrchestraCommand extends Command {
         addRequirements(requirements);
         this.talons = talons;
         this.orchestra = new Orchestra(filepath);
+    }
+    @Override
+    public void initialize()
+    {
         for (var talon : talons)
         {
             for (var controller : talon.getMotorControllers())
@@ -31,16 +35,13 @@ public class OrchestraCommand extends Command {
                 orchestra.addInstrument((TalonFX)controller);
             }
         }
-    }
-    @Override
-    public void initialize()
-    {
         orchestra.play();
     }
     @Override
     public void end(boolean interrupted)
     {
         orchestra.stop();
+        orchestra.clearInstruments();
     }
     @Override
     public boolean isFinished()
