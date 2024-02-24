@@ -16,7 +16,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringArrayPublisher;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.utils.AlertProvider;
@@ -30,7 +29,6 @@ public abstract class Dashboard
     protected final NetworkTable table;
     protected final SendableChooser<AutonomousRoutine> autoChooser;
     protected final Map<String, SendableBuilderImpl> sendables;
-    protected final Notifier notifier = new Notifier(this::periodic);
     protected final List<Alert> alerts;
     protected final StringArrayPublisher infoPublishers, warningPublishers, errorPublishers;
     protected final Map<DoublePublisher, DoubleSupplier> doubleMap;
@@ -51,7 +49,6 @@ public abstract class Dashboard
         errorPublishers = table.getStringArrayTopic("errors").publish();
         doubleMap = new HashMap<>();
         booleanMap = new HashMap<>();
-        notifier.startPeriodic(0.02);
     }
     /**
      * Adds a sendable to the dashboard
