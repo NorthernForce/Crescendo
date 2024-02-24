@@ -91,6 +91,10 @@ public class CrabbyConstants {
         public static final double tolerance = 1; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
+    public static class Wrist
+    {
+        public static final NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig").withUseLimits(false);
+    }
     public static class XavierConstants
     {
         public static final XavierConfiguration config = new XavierConfiguration("xavier", "note_detection");
