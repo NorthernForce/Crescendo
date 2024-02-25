@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.geometry.struct.Twist2dStruct;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -74,9 +75,10 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     }
     protected final NetworkTable table;
     protected final StructPublisher<Twist2d> odometryPublisher;
+    protected final DoublePublisher imuPublisher;
     protected final StructSubscriber<Twist2d> cmdVelSubscriber;
     protected final StructPublisher<Pose2d> globalPosePublisher, targetPosePublisher;
-    protected final IntegerPublisher odometryStamp, globalPoseStamp, targetPoseStamp;
+    protected final IntegerPublisher odometryStamp, imuStamp, globalPoseStamp, targetPoseStamp;
     protected final BooleanPublisher targetPoseCancel;
     protected final StructSubscriber<Pose2d> poseSubscriber;
     protected final Alert orangePiMissing;
@@ -95,6 +97,8 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         targetPoseCancel = table.getBooleanTopic("target_pose_cancel").publish();
         globalPosePublisher = table.getStructTopic("global_set_pose", new Pose2dStruct()).publish();
         globalPoseStamp = table.getIntegerTopic("global_pose_stamp").publish();
+        imuPublisher = table.getDoubleTopic("imu").publish();
+        imuStamp = table.getIntegerTopic("imu_stamp").publish();
         cmdVelSubscriber = table.getStructTopic("cmd_vel", new Twist2dStruct()).subscribe(new Twist2d());
         poseSubscriber = table.getStructTopic("pose", new Pose2dStruct()).subscribe(new Pose2d());
         orangePiMissing = new Alert(AlertType.kError, "Orange pi is not connected");
@@ -110,7 +114,16 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     {
         odometryPublisher.set(new Twist2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
         odometryStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
-        NetworkTableInstance.getDefault().flush();
+    }
+    /**
+     * Sets the imu
+     * @param deltaTheta in m/s
+     * @param stamp in seconds
+     */
+    public void setIMU(double deltaTheta)
+    {
+        imuPublisher.set(deltaTheta);
+        imuStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
     /**
      * Sends a target pose

@@ -83,7 +83,7 @@ public class TurnToTarget extends Command
     @Override
     public boolean isFinished()
     {
-        return targetSupplier.get().isPresent() && controller.atSetpoint();
+        return false;
     }
     @Override
     public void end(boolean interrupted)
