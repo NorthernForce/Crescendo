@@ -7,7 +7,9 @@ import java.util.function.Supplier;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,6 +50,7 @@ public class TurnToTarget extends Command
         this.optimize = optimize;
         this.fieldRelative = fieldRelative;
         addRequirements(drive);
+        controller.enableContinuousInput(-Math.PI, Math.PI);
     }
     @Override
     public void initialize()
@@ -64,27 +67,17 @@ public class TurnToTarget extends Command
         var detection = targetSupplier.get();
         if (detection.isPresent())
         {
-            ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(detection.get().yaw()));
-            if (fieldRelative)
-                speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
-            SwerveModuleState[] states = drive.toModuleStates(speeds);
-            for (int i = 0; i < states.length; i++)
-            {
-                setStateCommands[i].setTargetState(optimize ? SwerveModuleState.optimize(states[i],
-                    drive.getModules()[i].getRotation()) : states[i]);
-            }
+            controller.setSetpoint(MathUtil.angleModulus(drive.getRotation().minus(Rotation2d.fromRadians(detection.get().yaw())).getRadians()));
         }
-        else
+        ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(
+            MathUtil.angleModulus(drive.getRotation().getRadians())));
+        if (fieldRelative)
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
+        SwerveModuleState[] states = drive.toModuleStates(speeds);
+        for (int i = 0; i < states.length; i++)
         {
-            ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), thetaSupplier.getAsDouble());
-            if (fieldRelative)
-                speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
-            SwerveModuleState[] states = drive.toModuleStates(speeds);
-            for (int i = 0; i < states.length; i++)
-            {
-                setStateCommands[i].setTargetState(optimize ? SwerveModuleState.optimize(states[i],
-                    drive.getModules()[i].getRotation()) : states[i]);
-            }
+            setStateCommands[i].setTargetState(optimize ? SwerveModuleState.optimize(states[i],
+                drive.getModules()[i].getRotation()) : states[i]);
         }
     }
     @Override
