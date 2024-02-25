@@ -134,7 +134,7 @@ public class SwervyContainer implements RobotContainer
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
             new JoystickButton(driverController, XboxController.Button.kX.value)
-                .whileTrue(new TurnToTarget(drive, setStateCommands, new PIDController(0.25, 0, 0), 
+                .whileTrue(new TurnToTarget(drive, setStateCommands, new PIDController(1, 0, 0), 
                     () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                     () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
@@ -181,6 +181,7 @@ public class SwervyContainer implements RobotContainer
     {
         orangePi.setOdometry(drive.getChassisSpeeds());
         field.setRobotPose(orangePi.getPose());
+        dashboard.updateRobotPose(orangePi.getPose());
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
