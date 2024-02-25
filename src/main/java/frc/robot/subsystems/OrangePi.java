@@ -226,7 +226,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         @Override
         public TargetDetection unpack(ByteBuffer buffer)
         {
-            return new TargetDetection(buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(),
+            return new TargetDetection(buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), -buffer.getDouble(), buffer.getDouble(),
                 buffer.getDouble(), (int)buffer.getLong());
         }
         @Override
@@ -235,7 +235,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
             buffer.putDouble(detection.area);
             buffer.putDouble(detection.tx);
             buffer.putDouble(detection.ty);
-            buffer.putDouble(detection.pitch);
+            buffer.putDouble(-detection.pitch);
             buffer.putDouble(detection.yaw);
             buffer.putDouble(detection.depth);
             buffer.putLong(detection.fiducialID);
