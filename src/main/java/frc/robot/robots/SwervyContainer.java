@@ -55,7 +55,7 @@ public class SwervyContainer implements RobotContainer
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
     protected final SwervyDashboard dashboard;
-
+    protected double lastRecordedDistance = 0;
     public SwervyContainer()
     {
         map = new SwervyMap();
@@ -119,8 +119,16 @@ public class SwervyContainer implements RobotContainer
         dashboard = new SwervyDashboard();
         dashboard.register(orangePi);
         Shuffleboard.getTab("General").addDouble("Distance",
-            () -> aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch)
-                .orElse(0.));
+            () ->
+            {
+                var distance =
+                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
+                if (distance.isPresent())
+                {
+                    lastRecordedDistance = distance.get();
+                }
+                return lastRecordedDistance;
+            });
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
