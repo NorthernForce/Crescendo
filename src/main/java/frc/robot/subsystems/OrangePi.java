@@ -117,12 +117,12 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     }
     /**
      * Sets the imu
-     * @param deltaTheta in m/s
+     * @param rotation of the robot
      * @param stamp in seconds
      */
-    public void setIMU(double deltaTheta)
+    public void setIMU(Rotation2d rotation)
     {
-        imuPublisher.set(deltaTheta);
+        imuPublisher.set(rotation.getRadians());
         imuStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
     /**
