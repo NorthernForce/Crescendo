@@ -34,19 +34,19 @@ public class S1LS extends SequentialCommandGroup
      * @param shouldFlipPath whether to flip the routine based on alliance
      */
     public S1LS(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
-        PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
+        PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, boolean ignoreCommands)
     {
         addCommands(
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[0], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, ignoreCommands),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[1], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, ignoreCommands),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[2], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, ignoreCommands),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[3], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, ignoreCommands),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[4], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath),
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, ignoreCommands),
             new NFRSwerveDriveStop(drive, setStateCommands, true)
         );
     }
@@ -60,10 +60,10 @@ public class S1LS extends SequentialCommandGroup
      * @return an AutonomousRoutine for S1LS
      */
     public static AutonomousRoutine getRoutine(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
-        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, boolean ignoreCommands)
     {
         return new AutonomousRoutine(S1LS.class.getSimpleName(),
             () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),
-            new S1LS(drive, setStateCommands, poseSupplier, controller, shouldFlipPath));
+            new S1LS(drive, setStateCommands, poseSupplier, controller, shouldFlipPath, ignoreCommands));
     }
 }

@@ -1,8 +1,10 @@
 package frc.robot.dashboard;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -12,6 +14,7 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.utils.AlertProvider;
 import frc.robot.utils.AutonomousRoutine;
 
 /**
@@ -23,7 +26,7 @@ public abstract class Dashboard
     protected final SendableChooser<AutonomousRoutine> autoChooser;
     protected final Map<String, SendableBuilderImpl> sendables;
     protected final Notifier notifier = new Notifier(this::periodic);
-    protected final HashMap<Integer, Alert> infos, warnings, errors;
+    protected final List<Alert> alerts;
     protected final StringArrayPublisher infoPublishers, warningPublishers, errorPublishers;
     protected int alertId = 0;
     /**
@@ -35,13 +38,11 @@ public abstract class Dashboard
         table = NetworkTableInstance.getDefault().getTable(tablePath);
         autoChooser = new SendableChooser<>();
         sendables = new HashMap<>();
-        notifier.startPeriodic(0.02);
-        infos = new HashMap<>();
-        warnings = new HashMap<>();
-        errors = new HashMap<>();
+        alerts = new ArrayList<>();
         infoPublishers = table.getStringArrayTopic("infos").publish();
         warningPublishers = table.getStringArrayTopic("warnings").publish();
         errorPublishers = table.getStringArrayTopic("errors").publish();
+        notifier.startPeriodic(0.02);
     }
     /**
      * Adds a sendable to the dashboard
@@ -88,70 +89,31 @@ public abstract class Dashboard
     {
         return autoChooser.getSelected();
     }
+    public enum AlertType
+    {
+        kInfo,
+        kWarning,
+        kError
+    }
     /**
      * A class to store a message with an id
-     * @param id unique integer id
      * @param message a simple message to be displayed
+     * @param shouldDisplay a boolean to be changed if needed to be displayed
      */
-    public record Alert(int id, String message)
+    public record Alert(AlertType type, String message, AtomicBoolean shouldDisplay)
     {
+        public Alert(AlertType type, String message)
+        {
+            this(type, message, new AtomicBoolean(false));
+        }
     }
     /**
-     * Creates an alert with an incrementing id
-     * @param message the content of the alert message
-     * @return an {@link Alert} with a unique id and the provided message
+     * Registers all the alerts from an alert provider
+     * @param provider the provider of the alerts
      */
-    public Alert createAlert(String message)
+    public void register(AlertProvider provider)
     {
-        return new Alert(alertId++, message);
-    }
-    /**
-     * Adds info to be displayed
-     * @param alert the alert to be displayed as info
-     */
-    public void addInfo(Alert alert)
-    {
-        infos.put(alert.id, alert);
-    }
-    /**
-     * Removes info
-     * @param alert the alert to remove
-     */
-    public void removeInfo(Alert alert)
-    {
-        infos.remove(alert.id);
-    }
-    /**
-     * Adds warning to be displayed
-     * @param alert the alert to be displayed as warning
-     */
-    public void addWarning(Alert alert)
-    {
-        warnings.put(alert.id, alert);
-    }
-    /**
-     * Removes warning
-     * @param alert the alert to remove
-     */
-    public void removeWarning(Alert alert)
-    {
-        warnings.remove(alert.id);
-    }
-    /**
-     * Adds error to be displayed
-     * @param alert the alert to be displayed as error
-     */
-    public void addError(Alert alert)
-    {
-        errors.put(alert.id, alert);
-    }
-    /**
-     * Removes error
-     * @param alert the alert to remove
-     */
-    public void removeError(Alert alert)
-    {
-        errors.remove(alert.id);
+        alerts.addAll(provider.getPossibleAlerts());
     }
     public void periodic()
     {
@@ -159,26 +121,23 @@ public abstract class Dashboard
         {
             sendable.getValue().update();
         }
-        String[] infoStrings = new String[infos.size()];
-        int i = 0;
-        for (Alert info : infos.values())
+        ArrayList<String> infoStrings = new ArrayList<>();
+        ArrayList<String> warningStrings = new ArrayList<>();
+        ArrayList<String> errorStrings = new ArrayList<>();
+        for (Alert alert : alerts)
         {
-            infoStrings[i++] = info.message;
+            if (alert.shouldDisplay.get())
+            {
+                if (alert.type == AlertType.kInfo)
+                    infoStrings.add(alert.message);
+                if (alert.type == AlertType.kWarning)
+                    warningStrings.add(alert.message);
+                if (alert.type == AlertType.kError)
+                    errorStrings.add(alert.message);
+            }
         }
-        infoPublishers.set(infoStrings);
-        String[] warningStrings = new String[warnings.size()];
-        i = 0;
-        for (Alert warning : warnings.values())
-        {
-            warningStrings[i++] = warning.message;
-        }
-        warningPublishers.set(warningStrings);
-        String[] errorStrings = new String[errors.size()];
-        i = 0;
-        for (Alert error : errors.values())
-        {
-            errorStrings[i++] = error.message;
-        }
-        errorPublishers.set(errorStrings);
+        infoPublishers.set(infoStrings.toArray(new String[infoStrings.size()]));
+        warningPublishers.set(warningStrings.toArray(new String[warningStrings.size()]));
+        errorPublishers.set(errorStrings.toArray(new String[errorStrings.size()]));
     }
 }

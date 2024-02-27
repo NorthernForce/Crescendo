@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import org.northernforce.motors.NFRSparkMax;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -13,8 +11,8 @@ public class Intake extends SubsystemBase {
      * @param primaryMotor the primary motor of the intake (doesn't matter which one)
      * @param followerMotors the follower motors
     */
-    public Intake(int primaryMotor, int... followerMotors) {
-        this.motors = new NFRSparkMax(MotorType.kBrushless, primaryMotor, followerMotors);
+    public Intake(NFRSparkMax motors) {
+        this.motors = motors;
     }
     /**
      * Runs the intake motors

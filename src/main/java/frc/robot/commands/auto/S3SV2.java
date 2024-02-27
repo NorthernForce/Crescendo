@@ -34,11 +34,11 @@ public class S3SV2 extends SequentialCommandGroup
      * @param shouldFlipPath whether to flip the routine based on alliance
      */
     public S3SV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
-        PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
+        PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, boolean ignoreCommands)
     {
         IntFunction<NFRSwerveDriveFollowPath> path = idx -> new NFRSwerveDriveFollowPath(
             drive, setStateCommands, paths[0], poseSupplier, controller,
-            () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath);
+            () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, ignoreCommands);
         addCommands(
             path.apply(0),
             path.apply(1),
@@ -57,10 +57,10 @@ public class S3SV2 extends SequentialCommandGroup
      * @return an AutonomousRoutine for S3SV2
      */
     public static AutonomousRoutine getRoutine(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
-        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, boolean ignoreCommands)
     {
         return new AutonomousRoutine(S3SV2.class.getSimpleName(),
             () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),
-            new S3SV2(drive, setStateCommands, poseSupplier, controller, shouldFlipPath));
+            new S3SV2(drive, setStateCommands, poseSupplier, controller, shouldFlipPath, ignoreCommands));
     }
 }
