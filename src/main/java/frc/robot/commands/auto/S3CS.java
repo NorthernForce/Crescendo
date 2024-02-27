@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.NFRSwerveDriveFollowPath;
 import frc.robot.utils.AutonomousRoutine;
 
-public class S2CS extends SequentialCommandGroup
+public class S3CS extends SequentialCommandGroup
 {
     protected static final PathPlannerPath[] paths = new PathPlannerPath[] {
         PathPlannerPath.fromPathFile("S2.CS.G3"),
@@ -26,14 +26,14 @@ public class S2CS extends SequentialCommandGroup
         PathPlannerPath.fromPathFile("S2.CS.attempt")
     };
     /**
-     * Creates a new S2CS
+     * Creates a new S3CS
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
      * @param poseSupplier the supplier for pose estimation
      * @param controller the controller for following the path
      * @param shouldFlipPath whether to flip the routine based on alliance
      */
-    public S2CS(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+    public S3CS(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
         PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
     {
         addCommands(
@@ -51,19 +51,19 @@ public class S2CS extends SequentialCommandGroup
         );
     }
     /**
-     * Gets the AutonomousRoutine struct for S2CS
+     * Gets the AutonomousRoutine struct for S3CS
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
      * @param poseSupplier the supplier for pose estimation
      * @param controller the controller for following the path
      * @param shouldFlipPath whether to flip the routine based on alliance
-     * @return an AutonomousRoutine for S2CS
+     * @return an AutonomousRoutine for S3CS
      */
     public static AutonomousRoutine getRoutine(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
         Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath)
     {
-        return new AutonomousRoutine(S2CS.class.getSimpleName(),
+        return new AutonomousRoutine(S3CS.class.getSimpleName(),
             () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),
-            new S2CS(drive, setStateCommands, poseSupplier, controller, shouldFlipPath));
+            new S3CS(drive, setStateCommands, poseSupplier, controller, shouldFlipPath));
     }
 }
