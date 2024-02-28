@@ -65,12 +65,12 @@ public class Autos
     }
 
     /**
-     * Gets the AutonomousRoutine struct for S1LV1
+     * Gets the AutonomousRoutine struct for S2CV2
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
      * @param poseSupplier the supplier for pose estimation
      * @param controller the controller for following the path
-     * @return an AutonomousRoutine for S1LV1
+     * @return an AutonomousRoutine for S2CV2
      */
     public static AutonomousRoutine getS2CV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
         PPHolonomicDriveController controller, boolean ignoreCommands)
@@ -114,6 +114,34 @@ public class Autos
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
     /**
+     * Gets the AutonomousRoutine struct for S2LSV1
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S2LSV1
+     */
+    public static AutonomousRoutine getS2LSV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S2LSV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+    /**
+     * Gets the AutonomousRoutine struct for S3LSV1
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S3LSV1
+     */
+    public static AutonomousRoutine getS3LSV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S3LSV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+    /* 
      * Gets the AutonomousRoutine struct for S1LS
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
@@ -129,6 +157,10 @@ public class Autos
     }
     /**
      * Gets the AutonomousRoutine struct for S3CV1
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
      * @return an AutonomousRoutine for S3CV1
      */
     public static AutonomousRoutine getS3CV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
@@ -208,12 +240,12 @@ public class Autos
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
     /**
-     * Gets the AutonomousRoutine struct for S3SV1(G8)
+     * Gets the AutonomousRoutine struct for S3SV2(G8)
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
      * @param poseSupplier the supplier for pose estimation
      * @param controller the controller for following the path
-     * @return an AutonomousRoutine for S3SV1G8
+     * @return an AutonomousRoutine for S3SV2G8
      */
     public static AutonomousRoutine getS3SV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
         PPHolonomicDriveController controller, boolean ignoreCommands)
@@ -223,6 +255,11 @@ public class Autos
     }
 
     /**
+     * @return an AutonomousRoutine for S3CV2
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
      * @return an AutonomousRoutine for S3CV2
      */
     public static AutonomousRoutine getS3CV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
@@ -252,6 +289,8 @@ public class Autos
             getS2CS(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, true),
+            getS2LSV1(drive, setStateCommands, poseSupplier, controller, true),
+            getS3LSV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2SV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2SV2(drive, setStateCommands, poseSupplier, controller, true),
             getS2T(drive, setStateCommands, poseSupplier, controller, true),
@@ -289,6 +328,8 @@ public class Autos
             getS2CV1(drive, setStateCommands, poseSupplier, controller, false),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, false),
             getS2T(drive, setStateCommands, poseSupplier, controller, false),
+            getS2LSV1(drive, setStateCommands, poseSupplier, controller, false),
+            getS3LSV1(drive, setStateCommands, poseSupplier, controller, false),
             getS2SV1(drive, setStateCommands, poseSupplier, controller, false),
             getS2SV2(drive, setStateCommands, poseSupplier, controller, false),
             getS3CS(drive, setStateCommands, poseSupplier, controller, false),
