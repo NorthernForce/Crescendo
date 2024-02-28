@@ -8,31 +8,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S3.CS.G3"
+            "pathName": "S2.S.1.V1G7"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S2.CS.G2"
+            "pathName": "S3.S.2.piece2.V1G7"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S2.CS.G6"
+            "pathName": "S3.S.3.centerlineprep.V1G7"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S2.CS.return"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "S2.CS.attempt"
+            "pathName": "S3.S.4.centerline.V1G7"
           }
         }
       ]

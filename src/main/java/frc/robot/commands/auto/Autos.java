@@ -128,6 +128,48 @@ public class Autos
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
     /**
+     * Gets the AutonomousRoutine struct for S2CS
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S2CS
+     */
+    public static AutonomousRoutine getS2CS(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S2CS.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+    /**
+     * Gets the AutonomousRoutine struct for S2SV1
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S2SV1
+     */
+    public static AutonomousRoutine getS2SV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S2SV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+        /**
+     * Gets the AutonomousRoutine struct for S2SV2
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S2SV2
+     */
+    public static AutonomousRoutine getS2SV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S2SV2.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+    /**
      * Gets the AutonomousRoutine struct for S3CS
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
@@ -188,8 +230,11 @@ public class Autos
             getS1LS(drive, setStateCommands, poseSupplier, controller, true),
             getS1LV1(drive, setStateCommands, poseSupplier, controller, true), 
             getS1LV2(drive, setStateCommands, poseSupplier, controller, true),
+            getS2CS(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, true),
+            getS2SV1(drive, setStateCommands, poseSupplier, controller, true),
+            getS2SV2(drive, setStateCommands, poseSupplier, controller, true),
             getS2T(drive, setStateCommands, poseSupplier, controller, true),
             getS3CS(drive, setStateCommands, poseSupplier, controller, true),
             getS3SV1(drive, setStateCommands, poseSupplier, controller, true),
@@ -219,9 +264,12 @@ public class Autos
             getS1LS(drive, setStateCommands, poseSupplier, controller, false),
             getS1LV1(drive, setStateCommands, poseSupplier, controller, false), 
             getS1LV2(drive, setStateCommands, poseSupplier, controller, false),
+            getS2CS(drive, setStateCommands, poseSupplier, controller, false),
             getS2CV1(drive, setStateCommands, poseSupplier, controller, false),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, false),
             getS2T(drive, setStateCommands, poseSupplier, controller, false),
+            getS2SV1(drive, setStateCommands, poseSupplier, controller, false),
+            getS2SV2(drive, setStateCommands, poseSupplier, controller, false),
             getS3CS(drive, setStateCommands, poseSupplier, controller, false),
             getS3SV1(drive, setStateCommands, poseSupplier, controller, false),
             getS3SV2(drive, setStateCommands, poseSupplier, controller, false)
