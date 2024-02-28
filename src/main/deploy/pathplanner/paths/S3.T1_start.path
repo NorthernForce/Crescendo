@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.25,
-        "y": 5.55
+        "x": 0.6820009636659812,
+        "y": 4.478207616829567
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.20282443645873,
-        "y": 4.818882120510719
+        "x": 1.634825400124713,
+        "y": 3.747089737340287
       },
       "isLocked": false,
       "linkedName": null
@@ -43,9 +43,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "S2.T",
   "previewStartingState": {
-    "rotation": 0.0,
+    "rotation": -60.0,
     "velocity": 0
   },
   "useDefaultConstraints": true
