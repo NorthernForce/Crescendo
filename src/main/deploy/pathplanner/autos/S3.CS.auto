@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.CS.G3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2.CS.G2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2.CS.G6"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2.CS.return"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2.CS.attempt"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -3,53 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.892683405606069,
-        "y": 5.745697602845401
+        "x": 1.379887157922464,
+        "y": 5.5364055635518685
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.425839977124251,
-        "y": 5.593205322620514
-      },
-      "isLocked": false,
-      "linkedName": "S1.CS.V1.2.end"
-    },
-    {
-      "anchor": {
-        "x": 2.1445143331410077,
-        "y": 5.159787441176401
-      },
-      "prevControl": {
-        "x": 2.124680707173246,
-        "y": 5.549530940356555
-      },
-      "nextControl": {
-        "x": 2.1751711228679533,
-        "y": 4.5573618170756385
+        "x": 2.0924884441948093,
+        "y": 5.101394932845256
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.6024176112099373,
-        "y": 4.223877891504893
+        "x": 2.6205455836837603,
+        "y": 4.099362999651926
       },
       "prevControl": {
-        "x": 2.380726377769478,
-        "y": 4.516440422216381
+        "x": 1.834453586131875,
+        "y": 4.512699836411578
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "S1.CS.V1.3.end"
+      "linkedName": "S1.CS.G2"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.85,
+      "rotationDegrees": -16.97849159717647,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 1.35,
+      "waypointRelativePos": 0.5,
       "command": {
         "type": "sequential",
         "data": {
@@ -73,11 +63,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.406481009565375,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null,
+  "previewStartingState": {
+    "rotation": 0.0,
+    "velocity": 0
+  },
   "useDefaultConstraints": true
 }
