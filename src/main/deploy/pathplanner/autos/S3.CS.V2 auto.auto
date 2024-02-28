@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.7612792476769777,
+      "y": 3.024989557088118
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -8,37 +14,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P1 (S3 to G7)"
+            "pathName": "Copy of P1 (S2 to G2)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P2 (G7 to score)"
+            "pathName": "Copy of P2 (G2 to G3)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P3 (G7 score to G6)"
+            "pathName": "Copy of P3 (G3 to G6)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P4 (G6 score)"
+            "pathName": "Copy of P4 (G6 to score)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P5 (G5 from G6 score)"
+            "pathName": "Copy of P5 (G6 score to G5)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P6 (G5 score)"
+            "pathName": "Copy of P6 (G5 score)"
           }
         }
       ]

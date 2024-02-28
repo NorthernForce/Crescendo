@@ -3,13 +3,14 @@
   "robotLength": 0.7,
   "holonomicMode": true,
   "pathFolders": [
+    "S3.CS.V2",
     "S1.L",
     "S1.L.V1",
     "S1.L.V2",
     "S2.C.V1",
     "S2.C.V2",
-    "S3.LS.V2",
-    "S2.CS.V2"
+    "S2.CS.V2",
+    "S4.LS.V2"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.7,
