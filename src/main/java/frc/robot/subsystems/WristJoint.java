@@ -17,6 +17,7 @@ public class WristJoint extends NFRRotatingArmJoint
         } catch (MotorEncoderMismatchException e) {
             e.printStackTrace();
         } 
+        wristController.getAbsoluteEncoder().get().setConversionFactor(1.0/3);
         wristController.getPIDController().setP(0.25);
         wristController.getPIDController().setI(0);
         wristController.getPIDController().setD(0);       
