@@ -160,7 +160,9 @@ public class Autos
             getS1LV2(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, true),
-            getS2T(drive, setStateCommands, poseSupplier, controller, true)
+            getS2T(drive, setStateCommands, poseSupplier, controller, true),
+            getS3CV1(drive, setStateCommands, poseSupplier, controller, true),
+            getS3CV2(drive, setStateCommands, poseSupplier, controller, true)
         );
     }
     /**
