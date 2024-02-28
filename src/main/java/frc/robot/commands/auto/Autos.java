@@ -114,6 +114,34 @@ public class Autos
             () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
     }
     /**
+     * Gets the AutonomousRoutine struct for S3CV1
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S3CV1
+     */
+    public static AutonomousRoutine getS3CV1(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S3CV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+    /**
+     * Gets the AutonomousRoutine struct for S3CV2
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S3CV2
+     */
+    public static AutonomousRoutine getS3CV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S3CV2.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+    /**
      * Gets the list of autonomous routines.
      * Includes S1.CS.V1, S1.CS.V2
      * @param drive the drive subsystem
