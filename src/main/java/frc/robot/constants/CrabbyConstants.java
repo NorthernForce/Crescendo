@@ -91,6 +91,11 @@ public class CrabbyConstants {
         public static final double tolerance = 1; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
+    public static class ClimberConstants
+    {
+        public static final double climberSpeed = 1;
+        public static final double climberCurrentLimit = 10.0; //TODO: Find current limit
+    }
     public static class XavierConstants
     {
         public static final XavierConfiguration config = new XavierConfiguration("xavier", "note_detection");
