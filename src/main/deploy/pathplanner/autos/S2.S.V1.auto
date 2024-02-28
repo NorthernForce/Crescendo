@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2.S.1.V1G7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.S.2.piece2.V1G7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.S.3.centerlineprep.V1G7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.S.4.centerline.V1G7"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

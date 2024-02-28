@@ -7,6 +7,7 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+import org.northernforce.motors.NFRTalonFX;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
@@ -15,9 +16,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.FollowNote;
+import frc.robot.commands.OrchestraCommand;
+import frc.robot.commands.PurgeIntake;
+import frc.robot.commands.RumbleController;
+import frc.robot.commands.RunFullIntake;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
@@ -28,6 +37,7 @@ import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 
@@ -37,6 +47,7 @@ public class CrabbyContainer implements RobotContainer
     protected final NFRSwerveModuleSetState[] setStateCommands;
 
     protected final OrangePi orangePi;
+    protected final Xavier xavier;
     protected final TargetCamera aprilTagCamera;
     protected final PoseSupplier aprilTagSupplier;
     protected final CrabbyMap map;
@@ -56,13 +67,32 @@ public class CrabbyContainer implements RobotContainer
         };
 
         orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
+        xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        SendableChooser<String> musicChooser = new SendableChooser<>();
+        musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
+        musicChooser.addOption("Crab Rave", "crab-rave.chrp");
+        musicChooser.addOption("The Office", "the-office.chrp");
+        Shuffleboard.getTab("General").add("Music Selector", musicChooser);
+        Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
+            return new OrchestraCommand(musicChooser.getSelected(), List.of(
+                (NFRTalonFX)map.modules[0].getDriveController(),
+                (NFRTalonFX)map.modules[0].getTurnController(),
+                (NFRTalonFX)map.modules[1].getDriveController(),
+                (NFRTalonFX)map.modules[1].getTurnController(),
+                (NFRTalonFX)map.modules[2].getDriveController(),
+                (NFRTalonFX)map.modules[2].getTurnController(),
+                (NFRTalonFX)map.modules[3].getDriveController(),
+                (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
+                .ignoringDisable(true);
+        }));
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
         dashboard = new CrabbyDashboard();
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
         intake = new Intake(map.intakeMotor);
+        dashboard.register(orangePi);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -78,6 +108,13 @@ public class CrabbyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            new JoystickButton(driverHID, XboxController.Button.kA.value)
+                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
+            new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
+                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
+            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .onTrue(new RumbleController(driverController, 0.5, 0.5));
         }
         else
         {
@@ -89,6 +126,17 @@ public class CrabbyContainer implements RobotContainer
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+        }
+        if (manipulatorHID instanceof XboxController)
+        {
+            XboxController manipulatorController = (XboxController)manipulatorHID;
+            new Trigger(() -> manipulatorController.getLeftTriggerAxis() > 0.4)
+                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
+            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .onTrue(new RumbleController(manipulatorController, 0.5, 0.5));
+            new JoystickButton(manipulatorController, XboxController.Button.kX.value)
+                .whileTrue(new PurgeIntake(intake, indexer, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
+                    CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         }
     }
     @Override
