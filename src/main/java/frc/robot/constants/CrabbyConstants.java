@@ -94,6 +94,7 @@ public class CrabbyConstants {
     public static class ClimberConstants
     {
         public static final double climberSpeed = 1;
+        public static final double climberReverseSpeed = -1;
         public static final double climberCurrentLimit = 10.0; //TODO: Find current limit
     }
     public static class XavierConstants

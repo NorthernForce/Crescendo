@@ -10,9 +10,8 @@ public class ClimbersUp extends Command{
      * Raises the climbers (lowering the robot)
      * @param climber The climber object
      * @param speed The speed at which the climbing motor will run (MUST BE NEGATIVE)
-     * @param currentLimit If the motor starts drawing more current than this number, it will turn off
      */
-    public ClimbersUp(Climber climber, double speed, double currentLimit){
+    public ClimbersUp(Climber climber, double speed){
         this.climber = climber;
         this.speed = speed;
     }

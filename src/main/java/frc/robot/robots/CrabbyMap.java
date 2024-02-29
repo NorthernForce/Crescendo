@@ -38,4 +38,5 @@ public class CrabbyMap {
         wristSparkMax.setIdleMode(IdleMode.kBrake);
     }
     public final NFRSparkMax climberMotor = new NFRSparkMax(MotorType.kBrushless, 15);
+    public final NFRBeamBreak climberBeamBreak = new NFRBeamBreak(1);
 }
