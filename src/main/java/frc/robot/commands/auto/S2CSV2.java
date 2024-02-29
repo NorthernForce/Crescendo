@@ -66,6 +66,6 @@ public class S2CSV2 extends SequentialCommandGroup{
     {
         return new AutonomousRoutine(S2CSV2.class.getSimpleName(),
             () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),
-            new S1CSV1(drive, setStateCommands, poseSupplier, controller, shouldFlipPath, ignoreCommands));
+            new S2CSV2(drive, setStateCommands, poseSupplier, controller, shouldFlipPath, ignoreCommands));
     }
 }

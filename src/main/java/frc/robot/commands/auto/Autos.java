@@ -20,6 +20,51 @@ import frc.robot.utils.AutonomousRoutine;
 public class Autos
 {
     /**
+     * Gets the AutonomousRoutine struct for S4LSV2
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S4LSV2
+     */
+    public static AutonomousRoutine getS4LSV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S1LV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+
+    /**
+     * Gets the AutonomousRoutine struct for S3CSV2
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S3CSV2
+     */
+    public static AutonomousRoutine getS3CSV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S1LV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+
+    /**
+     * Gets the AutonomousRoutine struct for S2CSV2
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @return an AutonomousRoutine for S2CSV2
+     */
+    public static AutonomousRoutine getS2CSV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, boolean ignoreCommands)
+    {
+        return S1LV1.getRoutine(drive, setStateCommands, poseSupplier, controller,
+            () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, ignoreCommands);
+    }
+
+    /**
      * Gets the AutonomousRoutine struct for S1CSV1
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
@@ -290,15 +335,19 @@ public class Autos
             getS2CV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, true),
             getS2LSV1(drive, setStateCommands, poseSupplier, controller, true),
+            getS2CSV2(drive, setStateCommands, poseSupplier, controller, true),
             getS3LSV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2SV1(drive, setStateCommands, poseSupplier, controller, true),
             getS2SV2(drive, setStateCommands, poseSupplier, controller, true),
             getS2T(drive, setStateCommands, poseSupplier, controller, true),
             getS3CS(drive, setStateCommands, poseSupplier, controller, true),
             getS3SV1(drive, setStateCommands, poseSupplier, controller, true),
+            getS3CSV2(drive, setStateCommands, poseSupplier, controller, true),
             getS3SV2(drive, setStateCommands, poseSupplier, controller, true),
             getS3CV1(drive, setStateCommands, poseSupplier, controller, true),
-            getS3CV2(drive, setStateCommands, poseSupplier, controller, true)
+            getS3CV2(drive, setStateCommands, poseSupplier, controller, true),
+            getS4LSV2(drive, setStateCommands, poseSupplier, controller, true)
+
         );
     }
     /**
@@ -327,6 +376,7 @@ public class Autos
             getS2CS(drive, setStateCommands, poseSupplier, controller, false),
             getS2CV1(drive, setStateCommands, poseSupplier, controller, false),
             getS2CV2(drive, setStateCommands, poseSupplier, controller, false),
+            getS2CSV2(drive, setStateCommands, poseSupplier, controller, false),
             getS2T(drive, setStateCommands, poseSupplier, controller, false),
             getS2LSV1(drive, setStateCommands, poseSupplier, controller, false),
             getS3LSV1(drive, setStateCommands, poseSupplier, controller, false),
@@ -336,7 +386,10 @@ public class Autos
             getS3SV1(drive, setStateCommands, poseSupplier, controller, false),
             getS3SV2(drive, setStateCommands, poseSupplier, controller, false),
             getS3CV1(drive, setStateCommands, poseSupplier, controller, false),
-            getS3CV2(drive, setStateCommands, poseSupplier, controller, false)
+            getS3CV2(drive, setStateCommands, poseSupplier, controller, false),
+            getS3CSV2(drive, setStateCommands, poseSupplier, controller, false),
+            getS4LSV2(drive, setStateCommands, poseSupplier, controller, false)
+
         );
     }
 }

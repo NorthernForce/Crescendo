@@ -66,6 +66,6 @@ public class S4LSV2 extends SequentialCommandGroup{
     {
         return new AutonomousRoutine(S4LSV2.class.getSimpleName(),
             () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),
-            new S1CSV1(drive, setStateCommands, poseSupplier, controller, shouldFlipPath, ignoreCommands));
+            new S4LSV2(drive, setStateCommands, poseSupplier, controller, shouldFlipPath, ignoreCommands));
     }
 }
