@@ -4,18 +4,22 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import static frc.robot.robots.CrabbyContainer.shooter;
+import java.util.function.DoubleSupplier;
 
-public class RunShooter extends Command {
-    private double speed;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Shooter;
+
+public class RampShooter extends Command {
+    private DoubleSupplier speed;
+    private Shooter shooter;
     /** Creates a new RunShooter. 
      * @param speed the velocity to run the motor at (in rotation per 100ms)
     */
-    public RunShooter(double speed) {
+    public RampShooter(Shooter shooter, DoubleSupplier speed) {
     // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(shooter);
         this.speed = speed;
+        this.shooter = shooter;
     }
 
     // Called when the command is initially scheduled.
@@ -25,7 +29,7 @@ public class RunShooter extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        shooter.run(speed); //rotations per 100ms
+        shooter.run(speed.getAsDouble()); //rotations per 100ms
     }
 
     // Called once the command ends or is interrupted.

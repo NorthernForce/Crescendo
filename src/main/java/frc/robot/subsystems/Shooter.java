@@ -10,6 +10,7 @@ import org.northernforce.motors.NFRTalonFX;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -20,8 +21,12 @@ public class Shooter extends SubsystemBase {
 
     /** Creates a new Shooter. */
     public Shooter() {
+        Shuffleboard.getTab("Debug").addDouble("top motor v", this::getTopMotorVelocity);
+        Shuffleboard.getTab("Debug").addDouble("bottom motor v", this::getBottomMotorVelocity);
         TalonFXConfiguration config = new TalonFXConfiguration();
         Slot0Configs slot0Config = new Slot0Configs()
+            .withKV(0.05)
+            .withKS(0.00)
             .withKP(0)
             .withKI(0)
             .withKD(0);
@@ -54,6 +59,14 @@ public class Shooter extends SubsystemBase {
      */
     public void runBottom(double speed) {
         bottomMotor.setVelocity(0, speed);
+    }
+
+    public double getTopMotorVelocity() {
+        return topMotor.getSelectedEncoder().getVelocity();
+    }
+
+    public double getBottomMotorVelocity() {
+        return bottomMotor.getSelectedEncoder().getVelocity();
     }
 
     @Override
