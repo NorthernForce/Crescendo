@@ -8,7 +8,6 @@ import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
-import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
@@ -31,17 +30,16 @@ import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.constants.CrabbyConstants;
+import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.RampShooter;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
-import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.Xavier;
@@ -63,13 +61,14 @@ public class CrabbyContainer implements RobotContainer
     protected final Intake intake;
     protected final Shooter shooter;
     protected boolean manualWrist;
+    protected double lastRecordedDistance = 0;
     public CrabbyContainer()
     {
         manualWrist = false;
         map = new CrabbyMap();
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.Wrist.wristConfig);
         
-        drive = new SwerveDrive(new NFRSwerveDriveConfiguration("drive"), map.modules, CrabbyConstants.Drive.offsets, map.gyro);
+        drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
@@ -77,7 +76,7 @@ public class CrabbyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[3], 0, false)
         };
 
-        orangePi = new OrangePi(new OrangePiConfiguration("orange pi", "xavier"));
+        orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
@@ -107,6 +106,17 @@ public class CrabbyContainer implements RobotContainer
         intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
         dashboard.register(orangePi);
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
+        Shuffleboard.getTab("General").addDouble("Distance",
+            () ->
+            {
+                var distance =
+                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
+                if (distance.isPresent())
+                {
+                    lastRecordedDistance = distance.get();
+                }
+                return lastRecordedDistance;
+            });
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -131,6 +141,12 @@ public class CrabbyContainer implements RobotContainer
             //    .onTrue(new RumbleController(driverController, 0.5, 0.5));
             new JoystickButton(driverController, XboxController.Button.kBack.value)
                 .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
+            new JoystickButton(driverController, XboxController.Button.kX.value)
+                .whileTrue(new TurnToTarget(drive, setStateCommands, CrabbyConstants.DriveConstants.turnToTargetController, 
+                    () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
+                    () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
+                    aprilTagCamera::getSpeakerTag, true, true));
         }
         else
         {
@@ -183,6 +199,9 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void periodic()
     {
+        orangePi.setOdometry(drive.getChassisSpeeds());
+        orangePi.setIMU(drive.getRotation());
+        dashboard.updateRobotPose(orangePi.getPose());
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
