@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.dashboard.sendables.Camera;
 import frc.robot.utils.AutonomousRoutine;
 
 /**
@@ -13,6 +14,7 @@ public class SwervyDashboard extends Dashboard
 {
     protected final Field2d field;
     protected final Field2d autoField;
+    protected final Camera camera;
     /**
      * Creates a new SwervyDashboard
      */
@@ -21,8 +23,10 @@ public class SwervyDashboard extends Dashboard
         super("FWC");
         field = new Field2d();
         autoField = new Field2d();
-        addSendable("field", field);
+        camera = new Camera();
         addSendable("auto_field", autoField);
+        addSendable("Camera", camera);
+        addSendable("Field", field);
     }
     /**
      * Updates the robot pose
