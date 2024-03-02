@@ -5,37 +5,17 @@
 package frc.robot.subsystems;
 
 import org.northernforce.motors.NFRMotorController;
-import org.northernforce.motors.NFRTalonFX;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-    private final int TOP_MOTOR_ID = 0;
-    private final int BOTTOM_MOTOR_ID = 0;
     private final NFRMotorController topMotor;
     private final NFRMotorController bottomMotor; 
 
     /** Creates a new Shooter. */
-    public Shooter() {
-        Shuffleboard.getTab("Debug").addDouble("top motor v", this::getTopMotorVelocity);
-        Shuffleboard.getTab("Debug").addDouble("bottom motor v", this::getBottomMotorVelocity);
-        TalonFXConfiguration config = new TalonFXConfiguration();
-        Slot0Configs slot0Config = new Slot0Configs()
-            .withKV(0.05)
-            .withKS(0.00)
-            .withKP(0)
-            .withKI(0)
-            .withKD(0);
-
-        config.withSlot0(slot0Config);
-        // do config here
-
-        topMotor = new NFRTalonFX(config, TOP_MOTOR_ID);
-        bottomMotor = new NFRTalonFX(config, BOTTOM_MOTOR_ID);
+    public Shooter(NFRMotorController topMotor, NFRMotorController bottomMotor) {
+        this.topMotor = topMotor;
+        this.bottomMotor = bottomMotor;
     }
 
     /**
@@ -67,6 +47,11 @@ public class Shooter extends SubsystemBase {
 
     public double getBottomMotorVelocity() {
         return bottomMotor.getSelectedEncoder().getVelocity();
+    }
+
+    public void stop() {
+        topMotor.set(0);
+        bottomMotor.set(0);
     }
 
     @Override

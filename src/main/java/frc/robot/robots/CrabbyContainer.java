@@ -97,7 +97,7 @@ public class CrabbyContainer implements RobotContainer
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
         intake = new Intake(map.intakeMotor);
         dashboard.register(orangePi);
-        shooter = new Shooter();
+        shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -120,7 +120,7 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
             new Trigger(() -> indexer.getBeamBreak().beamBroken())
                 .onTrue(new RumbleController(driverController, 0.5, 0.5));
-           new Trigger(() -> ((XboxController)driverHID).getRightTriggerAxis() > 0.3).onTrue(new RampShooter(shooter, () -> 1));
+           new Trigger(() -> driverController.getRightTriggerAxis() > 0.3).onTrue(new RampShooter(shooter, () -> 30));
         }
         else
         {

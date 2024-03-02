@@ -2,7 +2,11 @@ package frc.robot.robots;
 
 import org.northernforce.gyros.NFRGyro;
 import org.northernforce.motors.NFRSparkMax;
+import org.northernforce.motors.NFRTalonFX;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.gyros.NFRPigeon2;
@@ -24,4 +28,22 @@ public class CrabbyMap {
     }
     public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16);
     public final NFRBeamBreak indexerBeamBreak = new NFRBeamBreak(0);
+
+    private final Slot0Configs ShooterSlot0Config = new Slot0Configs()
+            .withKV(0.0119)
+            .withKS(0.00)
+            .withKP(0.02)
+            .withKI(0)
+            .withKD(0);
+
+    public final NFRTalonFX shooterMotorTop = new NFRTalonFX(new TalonFXConfiguration()
+        .withSlot0(ShooterSlot0Config), 22);
+    {
+        shooterMotorTop.setNeutralMode(NeutralModeValue.Coast);
+    }
+    public final NFRTalonFX shooterMotorBottom = new NFRTalonFX(new TalonFXConfiguration()
+        .withSlot0(ShooterSlot0Config), 23);
+    {
+        shooterMotorBottom.setNeutralMode(NeutralModeValue.Coast);
+    }
 }
