@@ -12,8 +12,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.commands.RunFullIntake;
-import frc.robot.subsystems.Indexer;
+import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.Intake;
 import frc.robot.utils.AutonomousRoutine;
 
@@ -315,9 +314,9 @@ public class Autos
      * @return an list of AutonomousRoutines
      */
     public static List<AutonomousRoutine> getRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
-        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, Indexer indexer, double intakeSpeed, double indexerSpeed)
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, double intakeSpeed)
     {
-        NamedCommands.registerCommand("intake", new RunFullIntake(indexer, intake, intakeSpeed, indexerSpeed));
+        NamedCommands.registerCommand("intake", new RunIntake(intake, intakeSpeed));
         return List.of(
             getS1CSV1(drive, setStateCommands, poseSupplier, controller, false),
             getS1CSV2(drive, setStateCommands, poseSupplier, controller, false),

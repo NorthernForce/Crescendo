@@ -19,9 +19,8 @@ public class CrabbyMap {
     };
     public final NFRGyro gyro = new NFRPigeon2(13);
     public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 17, 18);
+    public final NFRBeamBreak intakeBeamBreak = new NFRBeamBreak(0);
     {
         intakeMotor.setFollowerOppose(0);
     }
-    public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16);
-    public final NFRBeamBreak indexerBeamBreak = new NFRBeamBreak(0);
 }

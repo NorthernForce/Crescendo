@@ -17,11 +17,6 @@ public class CrabbyConstants {
         public static final double intakeSpeed = 1;
         public static final double intakePurgeSpeed = -1;
     }
-    public static class IndexerConstants
-    {
-        public static final double indexerSpeed = 1;
-        public static final double indexerPurgeSpeed = -1;
-    }
     public static class XavierConstants
     {
         public static final XavierConfiguration config = new XavierConfiguration("xavier", "note_detection");
