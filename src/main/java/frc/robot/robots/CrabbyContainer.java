@@ -26,11 +26,10 @@ import frc.robot.commands.FollowNote;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
-import frc.robot.commands.RunFullIntake;
+import frc.robot.commands.RunIntake;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
@@ -52,7 +51,6 @@ public class CrabbyContainer implements RobotContainer
     protected final PoseSupplier aprilTagSupplier;
     protected final CrabbyMap map;
     protected final CrabbyDashboard dashboard;
-    protected final Indexer indexer;
     protected final Intake intake;
     public CrabbyContainer()
     {
@@ -90,8 +88,7 @@ public class CrabbyContainer implements RobotContainer
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
         dashboard = new CrabbyDashboard();
-        indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
-        intake = new Intake(map.intakeMotor);
+        intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
         dashboard.register(orangePi);
     }
     @Override
@@ -112,8 +109,8 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
             new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
-                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
-            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            new Trigger(() -> intake.getBeamBreak().beamBroken())
                 .onTrue(new RumbleController(driverController, 0.5, 0.5));
         }
         else
@@ -131,12 +128,11 @@ public class CrabbyContainer implements RobotContainer
         {
             XboxController manipulatorController = (XboxController)manipulatorHID;
             new Trigger(() -> manipulatorController.getLeftTriggerAxis() > 0.4)
-                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
-            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            new Trigger(() -> intake.getBeamBreak().beamBroken())
                 .onTrue(new RumbleController(manipulatorController, 0.5, 0.5));
             new JoystickButton(manipulatorController, XboxController.Button.kX.value)
-                .whileTrue(new PurgeIntake(intake, indexer, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
-                    CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
+                .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
         }
     }
     @Override
