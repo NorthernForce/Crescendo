@@ -3,6 +3,7 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
@@ -40,7 +41,7 @@ import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 
 public class SwervyContainer implements RobotContainer
-{
+{   
     protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
@@ -52,6 +53,7 @@ public class SwervyContainer implements RobotContainer
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
     protected final SwervyDashboard dashboard;
+
     public SwervyContainer()
     {
         map = new SwervyMap();
@@ -74,6 +76,7 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
         Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getYawRadians);
+
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
         SendableChooser<String> musicChooser = new SendableChooser<>();

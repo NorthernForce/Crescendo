@@ -3,6 +3,7 @@ package frc.robot.robots;
 import org.northernforce.gyros.NFRGyro;
 import org.northernforce.motors.NFRSparkMax;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.gyros.NFRPigeon2;
@@ -21,4 +22,8 @@ public class CrabbyMap {
     public final NFRGyro gyro = new NFRPigeon2(1);
     public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 18);
     public final NFRBeamBreak intakeBeamBreak = new NFRBeamBreak(7);
+    public final NFRSparkMax wristSparkMax = new NFRSparkMax(MotorType.kBrushless, 14);
+    {
+        wristSparkMax.setIdleMode(IdleMode.kBrake);
+    }
 }
