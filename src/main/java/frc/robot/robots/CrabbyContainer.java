@@ -31,12 +31,13 @@ import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.ShootIntake;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.RampShooter;
+import frc.robot.commands.RestShooter;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
@@ -131,6 +132,11 @@ public class CrabbyContainer implements RobotContainer
             //    .onTrue(new RumbleController(driverController, 0.5, 0.5));
             new JoystickButton(driverController, XboxController.Button.kBack.value)
                 .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
+            new Trigger(() -> driverController.getRightTriggerAxis() > 0.4)
+                .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            new JoystickButton(driverController, XboxController.Button.kStart.value)
+                .toggleOnTrue(new RampShooter(shooter, () -> 40))
+                .toggleOnFalse(new RestShooter(shooter));
         }
         else
         {
