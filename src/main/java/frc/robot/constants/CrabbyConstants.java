@@ -93,7 +93,12 @@ public class CrabbyConstants {
     }
     public static class Wrist
     {
-        public static final NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig").withUseLimits(false);
+        public static final NFRRotatingArmJointConfiguration wristConfig = 
+            new NFRRotatingArmJointConfiguration("wristConfig")
+            .withUseLimits(true)
+            .withUseIntegratedLimits(true)
+            .withLimits(Rotation2d.fromDegrees(22), Rotation2d.fromDegrees(56));
+        
     }
     public static class XavierConstants
     {
