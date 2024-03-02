@@ -128,6 +128,7 @@ public class SwerveModuleHelpers
         driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.4;
         turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
         NFRTalonFX turnMotor = new NFRTalonFX(canbus, turnConfig, turnID);
+        turnMotor.setInverted(true);
         NFRCANCoder cancoder = new NFRCANCoder(canbus, cancoderID);
         try
         {
