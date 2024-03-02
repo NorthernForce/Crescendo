@@ -90,6 +90,7 @@ public class CrabbyContainer implements RobotContainer
         dashboard = new CrabbyDashboard();
         intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
         dashboard.register(orangePi);
+        Shuffleboard.getTab("General").addBoolean("DIO Port 7", intake::getBeamBreakState);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
