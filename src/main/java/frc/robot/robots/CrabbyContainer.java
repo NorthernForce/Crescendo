@@ -114,10 +114,11 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
             new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
-                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
-            new Trigger(() -> intake.getBeamBreak().beamBroken())
-                .onTrue(new RumbleController(driverController, 0.5, 0.5));
-           new Trigger(() -> driverController.getRightTriggerAxis() > 0.3).onTrue(new RampShooter(shooter, () -> 30));
+                .toggleOnTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            //new Trigger(() -> intake.getBeamBreak().beamBroken())
+            //    .onTrue(new RumbleController(driverController, 0.5, 0.5));
+            new JoystickButton(driverController, XboxController.Button.kBack.value)
+                .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
         }
         else
         {
