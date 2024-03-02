@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.northernforce.subsystems.NFRSubsystem;
@@ -23,11 +24,14 @@ import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.dashboard.Dashboard.Alert;
+import frc.robot.dashboard.Dashboard.AlertType;
+import frc.robot.utils.AlertProvider;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
  */
-public class OrangePi extends NFRSubsystem
+public class OrangePi extends NFRSubsystem implements AlertProvider
 {
     /**
      * This is the configuration class for the OrangePi subsystem.
@@ -71,6 +75,7 @@ public class OrangePi extends NFRSubsystem
     protected final IntegerPublisher odometryStamp, globalPoseStamp, targetPoseStamp;
     protected final BooleanPublisher targetPoseCancel;
     protected final StructSubscriber<Pose2d> poseSubscriber;
+    protected final Alert orangePiMissing;
     /**
      * Create a new orange pi.
      * @param config the configuration for the orange pi.
@@ -88,6 +93,7 @@ public class OrangePi extends NFRSubsystem
         globalPoseStamp = table.getIntegerTopic("global_pose_stamp").publish();
         cmdVelSubscriber = table.getStructTopic("cmd_vel", new Twist2dStruct()).subscribe(new Twist2d());
         poseSubscriber = table.getStructTopic("pose", new Pose2dStruct()).subscribe(new Pose2d());
+        orangePiMissing = new Alert(AlertType.kError, "Orange pi is not connected");
     }
     /**
      * Sets the odometry
@@ -282,5 +288,14 @@ public class OrangePi extends NFRSubsystem
     {
         globalPosePublisher.set(pose);
         globalPoseStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
+    }
+    @Override
+    public void periodic() {
+        orangePiMissing.shouldDisplay().set(!isConnected());
+    }
+    @Override
+    public List<Alert> getPossibleAlerts()
+    {
+        return List.of(orangePiMissing);
     }
 }

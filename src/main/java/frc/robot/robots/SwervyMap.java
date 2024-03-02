@@ -1,13 +1,12 @@
 package frc.robot.robots;
 
-import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
-
 import frc.robot.gyros.NFRPigeon2;
+import frc.robot.subsystems.swerve.SwerveModule;
 import frc.robot.utils.SwerveModuleHelpers;
 
 public class SwervyMap
 {
-    public final NFRSwerveModule[] modules = new NFRSwerveModule[] {
+    public final SwerveModule[] modules = new SwerveModule[] {
         SwerveModuleHelpers.createMk3Slow("Front Left", 1, 5, 9, false, "drive"),
         SwerveModuleHelpers.createMk3Slow("Front Right", 2, 6, 10, true, "drive"),
         SwerveModuleHelpers.createMk3Slow("Back Left", 3, 7, 11, false, "drive"),
