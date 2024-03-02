@@ -4,15 +4,18 @@ import org.northernforce.motors.NFRSparkMax;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.sensors.NFRBeamBreak;
 
 public class Intake extends SubsystemBase {
     private final NFRSparkMax motors;
+    private final NFRBeamBreak beamBreak;
     /** Creates a new Intake subsystem
-     * @param primaryMotor the primary motor of the intake (doesn't matter which one)
-     * @param followerMotors the follower motors
+     * @param motors the motor of the intake
+     * @param beamBreak the beam break
     */
-    public Intake(NFRSparkMax motors) {
+    public Intake(NFRSparkMax motors, NFRBeamBreak beamBreak) {
         this.motors = motors;
+        this.beamBreak = beamBreak;
     }
     /**
      * Runs the intake motors
@@ -20,6 +23,20 @@ public class Intake extends SubsystemBase {
      */
     public void run(double speed) {
         this.motors.set(speed);
+    }
+
+    /**
+     * @return the beam break object
+     */
+    public NFRBeamBreak getBeamBreak() {
+        return beamBreak;
+    }
+
+    /**
+     * @return the beam break status (true: intact, false: broken)
+     */
+    public boolean getBeamBreakState() {
+        return beamBreak.beamIntact();
     }
     @Override
     public void initSendable(SendableBuilder builder) {

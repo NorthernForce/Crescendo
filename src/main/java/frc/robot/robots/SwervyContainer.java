@@ -8,6 +8,7 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
+import org.northernforce.motors.NFRTalonFX;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
@@ -20,11 +21,14 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
+import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
@@ -75,6 +79,23 @@ public class SwervyContainer implements RobotContainer
 
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
+        SendableChooser<String> musicChooser = new SendableChooser<>();
+        musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
+        musicChooser.addOption("Crab Rave", "crab-rave.chrp");
+        musicChooser.addOption("The Office", "the-office.chrp");
+        Shuffleboard.getTab("General").add("Music Selector", musicChooser);
+        Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
+            return new OrchestraCommand(musicChooser.getSelected(), List.of(
+                (NFRTalonFX)map.modules[0].getDriveController(),
+                (NFRTalonFX)map.modules[0].getTurnController(),
+                (NFRTalonFX)map.modules[1].getDriveController(),
+                (NFRTalonFX)map.modules[1].getTurnController(),
+                (NFRTalonFX)map.modules[2].getDriveController(),
+                (NFRTalonFX)map.modules[2].getTurnController(),
+                (NFRTalonFX)map.modules[3].getDriveController(),
+                (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
+                .ignoringDisable(true);
+        }));
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());

@@ -19,11 +19,6 @@ public class CrabbyConstants {
         public static final double intakeSpeed = 1;
         public static final double intakePurgeSpeed = -1;
     }
-    public static class IndexerConstants
-    {
-        public static final double indexerSpeed = 1;
-        public static final double indexerPurgeSpeed = -1;
-    }
     public static class Wrist
     {
         public static final NFRRotatingArmJointConfiguration wristConfig = new NFRRotatingArmJointConfiguration("wristConfig").withUseLimits(false);

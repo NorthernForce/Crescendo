@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
+import org.northernforce.motors.NFRTalonFX;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
@@ -18,19 +19,21 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.FollowNote;
 import frc.robot.commands.NFRWristContinuous;
+import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
-import frc.robot.commands.RunFullIntake;
+import frc.robot.commands.RunIntake;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.SwerveDrive;
@@ -54,7 +57,6 @@ public class CrabbyContainer implements RobotContainer
     protected final WristJoint wristJoint;
     protected final CrabbyMap map;
     protected final CrabbyDashboard dashboard;
-    protected final Indexer indexer;
     protected final Intake intake;
     protected boolean manualWrist;
     public CrabbyContainer()
@@ -77,11 +79,27 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
+        SendableChooser<String> musicChooser = new SendableChooser<>();
+        musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
+        musicChooser.addOption("Crab Rave", "crab-rave.chrp");
+        musicChooser.addOption("The Office", "the-office.chrp");
+        Shuffleboard.getTab("General").add("Music Selector", musicChooser);
+        Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
+            return new OrchestraCommand(musicChooser.getSelected(), List.of(
+                (NFRTalonFX)map.modules[0].getDriveController(),
+                (NFRTalonFX)map.modules[0].getTurnController(),
+                (NFRTalonFX)map.modules[1].getDriveController(),
+                (NFRTalonFX)map.modules[1].getTurnController(),
+                (NFRTalonFX)map.modules[2].getDriveController(),
+                (NFRTalonFX)map.modules[2].getTurnController(),
+                (NFRTalonFX)map.modules[3].getDriveController(),
+                (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
+                .ignoringDisable(true);
+        }));
         aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
         dashboard = new CrabbyDashboard();
-        indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
-        intake = new Intake(map.intakeMotor);
+        intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
         dashboard.register(orangePi);
     }
     @Override
@@ -102,8 +120,8 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
             new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
-                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
-            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            new Trigger(() -> intake.getBeamBreak().beamBroken())
                 .onTrue(new RumbleController(driverController, 0.5, 0.5));
         }
         else
@@ -121,12 +139,11 @@ public class CrabbyContainer implements RobotContainer
         {
             XboxController manipulatorController = (XboxController)manipulatorHID;
             new Trigger(() -> manipulatorController.getLeftTriggerAxis() > 0.4)
-                .whileTrue(new RunFullIntake(indexer, intake, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.IndexerConstants.indexerSpeed));
-            new Trigger(() -> indexer.getBeamBreak().beamBroken())
+                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            new Trigger(() -> intake.getBeamBreak().beamBroken())
                 .onTrue(new RumbleController(manipulatorController, 0.5, 0.5));
             new JoystickButton(manipulatorController, XboxController.Button.kX.value)
-                .whileTrue(new PurgeIntake(intake, indexer, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
-                    CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
+                .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
             new JoystickButton(manipulatorController, XboxController.Button.kB.value)
                 .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
             new JoystickButton(manipulatorController, XboxController.Button.kA.value)

@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.northernforce.encoders.NFRCANCoder;
 import org.northernforce.motors.MotorEncoderMismatchException;
 import org.northernforce.motors.NFRTalonFX;
-import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule.Mk3SwerveConstants;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule.NFRSwerveModuleConfiguration;
 
@@ -14,6 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.swerve.SwerveModule;
 
 public class SwerveModuleHelpers
 {
@@ -27,7 +27,7 @@ public class SwerveModuleHelpers
      * @param canbus the name of the canbus
      * @return a new NFRSwerveModule
      */
-    public static NFRSwerveModule createMk3Slow(String name, int driveID, int turnID, int cancoderID, boolean invertDrive, String canbus)
+    public static SwerveModule createMk3Slow(String name, int driveID, int turnID, int cancoderID, boolean invertDrive, String canbus)
     {
         NFRSwerveModuleConfiguration config = new NFRSwerveModuleConfiguration(name)
             .withGearRatios(Mk3SwerveConstants.kDriveGearRatioSlow, Mk3SwerveConstants.kTurnGearRatio)
@@ -40,6 +40,7 @@ public class SwerveModuleHelpers
         driveConfig.CurrentLimits.SupplyCurrentThreshold = 90;
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        driveConfig.Audio.AllowMusicDurDisable = true;
         driveConfig.Slot0.kP = Mk3SwerveConstants.kDriveP;
         driveConfig.Slot1.kS = 0.01;
         driveConfig.Slot1.kV = 0.01;
@@ -57,6 +58,7 @@ public class SwerveModuleHelpers
         turnConfig.CurrentLimits.SupplyCurrentLimit = 60;
         turnConfig.CurrentLimits.SupplyCurrentThreshold = 90;
         turnConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+        turnConfig.Audio.AllowMusicDurDisable = true;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         turnConfig.Slot0.kP = Mk3SwerveConstants.kTurnP;
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -73,7 +75,7 @@ public class SwerveModuleHelpers
         {
             e.printStackTrace();
         }
-        return new NFRSwerveModule(config, driveMotor, turnMotor, Optional.empty());
+        return new SwerveModule(config, driveMotor, turnMotor, Optional.empty());
     }
     public static class Mk4iConstants
     {
@@ -95,7 +97,7 @@ public class SwerveModuleHelpers
      * @param canbus the name of the canbus
      * @return a new NFRSwerveModule
      */
-    public static NFRSwerveModule createMk4iL3(String name, int driveID, int turnID, int cancoderID, boolean invertDrive, String canbus)
+    public static SwerveModule createMk4iL3(String name, int driveID, int turnID, int cancoderID, boolean invertDrive, String canbus)
     {
         NFRSwerveModuleConfiguration config = new NFRSwerveModuleConfiguration(name)
             .withGearRatios(Mk4iConstants.kDriveGearRatioL3, Mk4iConstants.kTurnGearRatio)
@@ -106,6 +108,7 @@ public class SwerveModuleHelpers
         driveConfig.CurrentLimits.SupplyCurrentLimit = 60;
         driveConfig.CurrentLimits.SupplyCurrentThreshold = 90;
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+        driveConfig.Audio.AllowMusicDurDisable = true;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         driveConfig.Slot0.kP = Mk4iConstants.kDriveP;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -118,12 +121,14 @@ public class SwerveModuleHelpers
         turnConfig.CurrentLimits.SupplyCurrentLimit = 60;
         turnConfig.CurrentLimits.SupplyCurrentThreshold = 90;
         turnConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+        turnConfig.Audio.AllowMusicDurDisable = true;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         turnConfig.Slot0.kP = Mk4iConstants.kTurnP;
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.4;
         turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
         NFRTalonFX turnMotor = new NFRTalonFX(canbus, turnConfig, turnID);
+        turnMotor.setInverted(true);
         NFRCANCoder cancoder = new NFRCANCoder(canbus, cancoderID);
         try
         {
@@ -133,6 +138,6 @@ public class SwerveModuleHelpers
         {
             e.printStackTrace();
         }
-        return new NFRSwerveModule(config, driveMotor, turnMotor, Optional.empty());
+        return new SwerveModule(config, driveMotor, turnMotor, Optional.empty());
     }
 }
