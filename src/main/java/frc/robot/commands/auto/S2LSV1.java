@@ -25,7 +25,7 @@ public class S2LSV1 extends SequentialCommandGroup
         PathPlannerPath.fromPathFile("S3.LS.V1.G7"),
         PathPlannerPath.fromPathFile("S3.LS.V1.superback.cut"),
         PathPlannerPath.fromPathFile("S3.LS.V1.G6"),
-        PathPlannerPath.fromPathFile("S3.LS.V1.guesswhosbackagain")
+        PathPlannerPath.fromPathFile("S3.LS.V1.guesswhosbackbackagain")
     };
     /**
      * Creates a new S2LSV1
@@ -49,7 +49,6 @@ public class S2LSV1 extends SequentialCommandGroup
             path.apply(3),
             path.apply(4),
             path.apply(5),
-            path.apply(6),
             new NFRSwerveDriveStop(drive, setStateCommands, true)
         );
     }
