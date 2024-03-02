@@ -3,9 +3,7 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
@@ -27,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
-import frc.robot.commands.NFRWristContinuous;
 import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
@@ -36,7 +33,6 @@ import frc.robot.commands.FollowNote;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Xavier;
 import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.WristJoint;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 
@@ -52,14 +48,11 @@ public class SwervyContainer implements RobotContainer
     protected final PoseSupplier aprilTagSupplier;
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
-    protected final WristJoint wristJoint;
     protected final SwervyDashboard dashboard;
-    protected boolean manualWrist;
 
     public SwervyContainer()
     {
         map = new SwervyMap();
-        wristJoint = new WristJoint(map.wristSparkMax, SwervyConstants.Wrist.wristConfig);
         drive = new SwerveDrive(SwervyConstants.DriveConstants.config, map.modules, SwervyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
@@ -79,7 +72,6 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
         Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getYawRadians);
-        Shuffleboard.getTab("General").addString("Manual Wrist Positioning", () -> manualWrist ? "Manual" : "Automatic");
 
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
@@ -124,17 +116,6 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverHID, XboxController.Button.kA.value)
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1), true));
-        }
-        if (manipulatorHID instanceof XboxController)
-        {
-            XboxController manipulatorController = (XboxController)manipulatorHID;
-            new JoystickButton(manipulatorController, XboxController.Button.kB.value)
-                .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
-            new JoystickButton(manipulatorController, XboxController.Button.kA.value)
-                .toggleOnTrue(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)).alongWith(Commands.runOnce(() -> manualWrist = false)));
-        }
-        else
-        {
         }
     }
     @Override

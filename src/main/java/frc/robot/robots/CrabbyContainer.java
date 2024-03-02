@@ -2,11 +2,13 @@ package frc.robot.robots;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
+import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import edu.wpi.first.math.MathUtil;
@@ -21,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.FollowNote;
+import frc.robot.commands.NFRWristContinuous;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunFullIntake;
@@ -124,6 +127,11 @@ public class CrabbyContainer implements RobotContainer
             new JoystickButton(manipulatorController, XboxController.Button.kX.value)
                 .whileTrue(new PurgeIntake(intake, indexer, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
                     CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
+            new JoystickButton(manipulatorController, XboxController.Button.kB.value)
+                .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
+            new JoystickButton(manipulatorController, XboxController.Button.kA.value)
+                .toggleOnTrue(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)).alongWith(Commands.runOnce(() -> manualWrist = false)));
+
         }
     }
     @Override
