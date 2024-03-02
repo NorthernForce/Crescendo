@@ -17,8 +17,8 @@ public class CrabbyConstants {
     }
     public static class IntakeConstants
     {
-        public static final double intakeSpeed = 1;
-        public static final double intakePurgeSpeed = -1;
+        public static final double intakeSpeed = -1;
+        public static final double intakePurgeSpeed = 1;
     }
     public static class Wrist
     {
