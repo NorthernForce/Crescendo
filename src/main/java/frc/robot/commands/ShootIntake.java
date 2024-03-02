@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
-public class RunIntake extends Command {
+public class ShootIntake extends Command {
     private final Intake intake;
     private final double speed;
 
@@ -11,7 +11,7 @@ public class RunIntake extends Command {
      * @param intake the intake subsystem
      * @param speed raw speed value for intake motors
      */
-    public RunIntake(Intake intake, double speed) {
+    public ShootIntake(Intake intake, double speed) {
         addRequirements(intake);
         this.intake = intake;
         this.speed = speed;
@@ -22,6 +22,7 @@ public class RunIntake extends Command {
     }
     @Override
     public void end(boolean interrupted) {
-        intake.getBeamBreak().beamBroken();
+        intake.getBeamBreak().beamIntact();
     }
 }
+

@@ -308,9 +308,7 @@ public class Autos
      * @param poseSupplier the supplier for pose estimation
      * @param controller the controller for following the path
      * @param intake the intake subsystem to be used
-     * @param indexer the indexer subsystem to be used
      * @param intakeSpeed speed at which to run the intake
-     * @param indexerSpeed speed at which to run the indexer
      * @return an list of AutonomousRoutines
      */
     public static List<AutonomousRoutine> getRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
