@@ -35,7 +35,10 @@ import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.RampShooter;
 import frc.robot.subsystems.OrangePi;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
@@ -58,6 +61,7 @@ public class CrabbyContainer implements RobotContainer
     protected final CrabbyMap map;
     protected final CrabbyDashboard dashboard;
     protected final Intake intake;
+    protected final Shooter shooter;
     protected boolean manualWrist;
     public CrabbyContainer()
     {
@@ -102,7 +106,7 @@ public class CrabbyContainer implements RobotContainer
         dashboard = new CrabbyDashboard();
         intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
         dashboard.register(orangePi);
-        Shuffleboard.getTab("General").addBoolean("DIO Port 7", intake::getBeamBreakState);
+        shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
