@@ -90,6 +90,7 @@ public class CrabbyContainer implements RobotContainer
         dashboard = new CrabbyDashboard();
         intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
         dashboard.register(orangePi);
+        Shuffleboard.getTab("General").addBoolean("DIO Port 7", intake::getBeamBreakState);
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -109,9 +110,11 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
             new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
-                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
-            new Trigger(() -> intake.getBeamBreak().beamBroken())
-                .onTrue(new RumbleController(driverController, 0.5, 0.5));
+                .toggleOnTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            //new Trigger(() -> intake.getBeamBreak().beamBroken())
+            //    .onTrue(new RumbleController(driverController, 0.5, 0.5));
+            new JoystickButton(driverController, XboxController.Button.kBack.value)
+                .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
         }
         else
         {
