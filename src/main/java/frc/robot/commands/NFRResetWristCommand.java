@@ -16,10 +16,8 @@ public class NFRResetWristCommand extends Command {
     {
         addRequirements(m_wrist);
         m_wrist.getController().getAbsoluteEncoder().get().setAbsoluteOffset(
-            MathUtil.inputModulus(Rotation2d.fromDegrees(25).getRotations() - 
+            MathUtil.inputModulus(Rotation2d.fromDegrees(22).getRotations() - 
             m_wrist.getController().getAbsoluteEncoder().get().getAbsolutePosition() + 
             m_wrist.getController().getAbsoluteEncoder().get().getAbsoluteOffset(), 0, 1));
     }
-
-
 }
