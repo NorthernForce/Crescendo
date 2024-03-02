@@ -22,6 +22,10 @@ public class RunIntake extends Command {
     }
     @Override
     public void end(boolean interrupted) {
-        intake.getBeamBreak().beamBroken();
+        intake.run(0);
+    }
+    @Override
+    public boolean isFinished(){
+        return intake.getBeamBreak().beamBroken();
     }
 }

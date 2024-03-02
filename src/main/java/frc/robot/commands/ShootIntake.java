@@ -22,7 +22,11 @@ public class ShootIntake extends Command {
     }
     @Override
     public void end(boolean interrupted) {
-        intake.getBeamBreak().beamIntact();
+        intake.run(0);
+    }
+    @Override
+    public boolean isFinished(){
+        return intake.getBeamBreak().beamIntact();
     }
 }
 
