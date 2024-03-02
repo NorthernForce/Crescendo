@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
 
 import edu.wpi.first.math.MathUtil;
@@ -11,13 +12,14 @@ public class NFRResetWristCommand extends Command {
     public NFRResetWristCommand(NFRRotatingArmJoint wrist)
     {
         m_wrist = wrist;
+        addRequirements(m_wrist);
     }
     @Override public void initialize()
     {
-        addRequirements(m_wrist);
         m_wrist.getController().getAbsoluteEncoder().get().setAbsoluteOffset(
-            MathUtil.inputModulus(Rotation2d.fromDegrees(22).getRotations() - 
+            MathUtil.inputModulus(Rotation2d.fromDegrees(22).getRotations() * 3 - 
             m_wrist.getController().getAbsoluteEncoder().get().getAbsolutePosition() + 
             m_wrist.getController().getAbsoluteEncoder().get().getAbsoluteOffset(), 0, 1));
+        ((NFRSparkMax)m_wrist.getController()).burnFlash();
     }
 }

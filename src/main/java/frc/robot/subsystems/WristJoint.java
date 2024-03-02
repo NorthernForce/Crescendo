@@ -18,10 +18,13 @@ public class WristJoint extends NFRRotatingArmJoint
             e.printStackTrace();
         } 
         wristController.getAbsoluteEncoder().get().setConversionFactor(1.0/3);
-        wristController.getPIDController().setP(0.25);
+        wristController.getPIDController().setP(2);
         wristController.getPIDController().setI(0);
-        wristController.getPIDController().setD(0);       
-        
+        wristController.getPIDController().setD(0);
+        wristController.getPIDController().setSmartMotionMaxVelocity(5, 0);
+        wristController.getPIDController().setSmartMotionMaxAccel(2, 0);
+        wristController.getPIDController().setSmartMotionAllowedClosedLoopError(0.002, 0);
+        wristController.burnFlash();
 
     }
     public Rotation2d getSpeakerAngle(boolean useAbsolutePositioning, double distance)

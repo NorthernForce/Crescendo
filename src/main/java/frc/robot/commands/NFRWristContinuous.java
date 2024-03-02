@@ -18,16 +18,15 @@ public class NFRWristContinuous extends Command
     }
     @Override public void initialize()   
     {
-
+        
     }
     @Override public void execute()
     {
         Optional<Double> distance = m_distanceSupplied.get();
         if(distance.isPresent())
         {
-            m_wrist.getController().setPosition(0, m_wrist.getSpeakerAngle(false, distance.get()).getRotations()); //TODO get actual distance
+            m_wrist.getController().setPositionTrapezoidal(0, m_wrist.getSpeakerAngle(false, distance.get()).getRotations()); //TODO get actual distance
         }
-        
     }
     @Override public boolean isFinished()
     {

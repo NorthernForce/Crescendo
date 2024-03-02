@@ -79,6 +79,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
+        // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
@@ -147,7 +148,7 @@ public class CrabbyContainer implements RobotContainer
             new JoystickButton(manipulatorController, XboxController.Button.kB.value)
                 .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
             new JoystickButton(manipulatorController, XboxController.Button.kA.value)
-                .toggleOnTrue(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)).alongWith(Commands.runOnce(() -> manualWrist = false)));
+                .toggleOnFalse(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)).alongWith(Commands.runOnce(() -> manualWrist = false)));
 
         }
     }
