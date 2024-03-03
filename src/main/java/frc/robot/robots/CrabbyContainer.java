@@ -35,8 +35,6 @@ import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.RampShooter;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
