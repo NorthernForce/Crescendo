@@ -32,7 +32,6 @@ import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.constants.CrabbyConstants;
-import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Intake;
@@ -110,12 +109,22 @@ public class CrabbyContainer implements RobotContainer
             () ->
             {
                 var distance =
-                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
+                    aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch);
                 if (distance.isPresent())
                 {
                     lastRecordedDistance = distance.get();
                 }
                 return lastRecordedDistance;
+            });
+        Shuffleboard.getTab("General").addDouble("Pitch",
+            () ->
+            {
+                var speakerTag = aprilTagCamera.getSpeakerTag();
+                if (speakerTag.isPresent())
+                {
+                    return speakerTag.get().pitch();
+                }
+                return 0;
             });
     }
     @Override
@@ -141,7 +150,7 @@ public class CrabbyContainer implements RobotContainer
             //    .onTrue(new RumbleController(driverController, 0.5, 0.5));
             new JoystickButton(driverController, XboxController.Button.kBack.value)
                 .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
-            new JoystickButton(driverController, XboxController.Button.kX.value)
+            new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
                 .whileTrue(new TurnToTarget(drive, setStateCommands, CrabbyConstants.DriveConstants.turnToTargetController, 
                     () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
