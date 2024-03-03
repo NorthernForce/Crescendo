@@ -13,6 +13,7 @@ import org.northernforce.motors.NFRTalonFX;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.commands.OrchestraCommand;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
@@ -53,7 +55,7 @@ public class SwervyContainer implements RobotContainer
     protected final Notifier flushNotifier;
     protected final SwervyMap map;
     protected final SwervyDashboard dashboard;
-
+    protected double lastRecordedDistance = 0;
     public SwervyContainer()
     {
         map = new SwervyMap();
@@ -100,11 +102,33 @@ public class SwervyContainer implements RobotContainer
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
+        Shuffleboard.getTab("General").addDouble("Angle", () -> {
+            var tag = aprilTagCamera.getSpeakerTag();
+            if (tag.isPresent())
+            {
+                return tag.get().yaw();
+            }
+            else
+            {
+                return 0;
+            }
+        });
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
         flushNotifier.startPeriodic(0.01);
         CameraServer.startAutomaticCapture();
         dashboard = new SwervyDashboard();
         dashboard.register(orangePi);
+        Shuffleboard.getTab("General").addDouble("Distance",
+            () ->
+            {
+                var distance =
+                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
+                if (distance.isPresent())
+                {
+                    lastRecordedDistance = distance.get();
+                }
+                return lastRecordedDistance;
+            });
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -123,6 +147,12 @@ public class SwervyContainer implements RobotContainer
             new JoystickButton(driverController, XboxController.Button.kA.value)
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
+            new JoystickButton(driverController, XboxController.Button.kX.value)
+                .whileTrue(new TurnToTarget(drive, setStateCommands, new PIDController(1, 0, 0), 
+                    () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
+                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
+                    () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
+                    aprilTagCamera::getSpeakerTag, true, true));
         }
         else
         {
@@ -164,7 +194,10 @@ public class SwervyContainer implements RobotContainer
     public void periodic()
     {
         orangePi.setOdometry(drive.getChassisSpeeds());
+        orangePi.setIMU(drive.getRotation());
+        NetworkTableInstance.getDefault().flush();
         field.setRobotPose(orangePi.getPose());
+        dashboard.updateRobotPose(orangePi.getPose());
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
