@@ -9,6 +9,7 @@ import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
+import org.northernforce.commands.NFRRotatingArmJointSetAngle;
 import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveDriveStop;
@@ -38,6 +39,7 @@ import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.RampShooter;
+import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RestShooter;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
@@ -87,7 +89,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
-        shooterSpeed = Shuffleboard.getTab("General").add("Shooter Speed", 30).getEntry();
+        shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
@@ -130,16 +132,20 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
             new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
-                .toggleOnTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
-            //new Trigger(() -> intake.getBeamBreak().beamBroken())
-            //    .onTrue(new RumbleController(driverController, 0.5, 0.5));
+                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            new Trigger(() -> intake.getBeamBreak().beamBroken())
+                .onTrue(new RumbleController(driverController, 0.5, 0.5));
             new JoystickButton(driverController, XboxController.Button.kBack.value)
                 .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
             new Trigger(() -> driverController.getRightTriggerAxis() > 0.4)
                 .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
             new JoystickButton(driverController, XboxController.Button.kStart.value)
-                .toggleOnTrue(new RampShooter(shooter, () -> shooterSpeed.getDouble(30)))
-                .toggleOnFalse(new RestShooter(shooter));
+                .toggleOnTrue(new RampShooter(shooter, () -> shooterSpeed.getDouble(30)));
+            new Trigger(() -> driverController.getPOV() == 180)
+                .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, Rotation2d.fromDegrees(55), Rotation2d.fromDegrees(1), 0, true).alongWith(new RampShooter(shooter, () -> 30)));
+            shooter.setDefaultCommand(new RestShooter(shooter));
+            new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
+                .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, Rotation2d.fromDegrees(55), Rotation2d.fromDegrees(1), 0, true).alongWith(new RampShooterWithDifferential(shooter, () -> 9, () -> 15)));
         }
         else
         {
@@ -163,8 +169,11 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
             new JoystickButton(manipulatorController, XboxController.Button.kB.value)
                 .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
-            new JoystickButton(manipulatorController, XboxController.Button.kA.value)
-                .toggleOnFalse(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)).alongWith(Commands.runOnce(() -> manualWrist = false)));
+                wristJoint.setDefaultCommand(new NFRWristContinuous(wristJoint, () -> Optional.of(0.0)).alongWith(Commands.runOnce(() -> manualWrist = false)));
+            new Trigger(() -> manipulatorController.getRightTriggerAxis() > 0.4)
+                .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            // new JoystickButton(manipulatorController, XboxController.Button.kA.value)
+            //     .toggleOnFalse(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)).alongWith(Commands.runOnce(() -> manualWrist = false)));
 
         }
     }
