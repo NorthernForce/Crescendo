@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.FollowNote;
 import frc.robot.commands.NFRWristContinuous;
 import frc.robot.commands.OrchestraCommand;
@@ -51,6 +52,7 @@ import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
+import frc.robot.utils.TargetingCalculator;
 
 public class CrabbyContainer implements RobotContainer
 {
@@ -68,6 +70,7 @@ public class CrabbyContainer implements RobotContainer
     protected final Shooter shooter;
     protected boolean manualWrist;
     protected final GenericEntry shooterSpeed;
+    protected final TargetingCalculator targetingCalculator;
     public CrabbyContainer()
     {
         manualWrist = false;
@@ -95,6 +98,8 @@ public class CrabbyContainer implements RobotContainer
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
         musicChooser.addOption("The Office", "the-office.chrp");
         Shuffleboard.getTab("General").add("Music Selector", musicChooser);
+        targetingCalculator = new TargetingCalculator("/home/lvuser/speedData.csv");
+        Shuffleboard.getTab("Developer").add("Add Wrist and Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0, () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
         Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
             return new OrchestraCommand(musicChooser.getSelected(), List.of(
                 (NFRTalonFX)map.modules[0].getDriveController(),
