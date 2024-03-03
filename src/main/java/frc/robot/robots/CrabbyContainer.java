@@ -16,6 +16,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -64,6 +65,7 @@ public class CrabbyContainer implements RobotContainer
     protected final Intake intake;
     protected final Shooter shooter;
     protected boolean manualWrist;
+    protected final GenericEntry shooterSpeed;
     public CrabbyContainer()
     {
         manualWrist = false;
@@ -85,6 +87,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
+        shooterSpeed = Shuffleboard.getTab("General").add("Shooter Speed", 30).getEntry();
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
@@ -135,7 +138,7 @@ public class CrabbyContainer implements RobotContainer
             new Trigger(() -> driverController.getRightTriggerAxis() > 0.4)
                 .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
             new JoystickButton(driverController, XboxController.Button.kStart.value)
-                .toggleOnTrue(new RampShooter(shooter, () -> 40))
+                .toggleOnTrue(new RampShooter(shooter, () -> shooterSpeed.getDouble(30)))
                 .toggleOnFalse(new RestShooter(shooter));
         }
         else
