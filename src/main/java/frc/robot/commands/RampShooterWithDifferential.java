@@ -4,17 +4,24 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
-public class RestShooter extends Command {
+public class RampShooterWithDifferential extends Command {
+    private DoubleSupplier topSpeed;
+    private DoubleSupplier bottomSpeed;
     private Shooter shooter;
     /** Creates a new RunShooter. 
-     * @param speed the velocity to run the motor at (in rotation per 100ms)
+     * @param topSpeed the velocity to run the top motor at (in rotation per 100ms)
+     * @param bottomSpeed the velocity to run the bottom motor at (inrotation per 100ms)
     */
-    public RestShooter(Shooter shooter) {
+    public RampShooterWithDifferential(Shooter shooter, DoubleSupplier topSpeed, DoubleSupplier bottomSpeed) {
     // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(shooter);
+        this.topSpeed = topSpeed;
+        this.bottomSpeed = bottomSpeed;
         this.shooter = shooter;
     }
 
@@ -25,7 +32,8 @@ public class RestShooter extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        shooter.stop(); //rotations per 100ms
+        shooter.runTop(topSpeed.getAsDouble()); //rotations per 100ms
+        shooter.runBottom(bottomSpeed.getAsDouble()); //rotations per 100ms
     }
 
     // Called once the command ends or is interrupted.
@@ -39,3 +47,4 @@ public class RestShooter extends Command {
         return false;
     }
 }
+
