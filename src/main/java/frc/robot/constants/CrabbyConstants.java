@@ -71,6 +71,7 @@ public class CrabbyConstants {
         public static final double ampBottomSpeed = 15;
         public static final double ampTopSpeed = 9;
         public static final double tolerance = 1; // RPS
+        public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
     public static class XavierConstants
     {
