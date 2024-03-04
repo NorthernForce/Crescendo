@@ -58,7 +58,10 @@ public class SwervyContainer implements RobotContainer
     protected double lastRecordedDistance = 0;
     public SwervyContainer()
     {
+        dashboard = new SwervyDashboard();
+
         map = new SwervyMap();
+
         drive = new SwerveDrive(SwervyConstants.DriveConstants.config, map.modules, SwervyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
@@ -72,15 +75,33 @@ public class SwervyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[2], 1, 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 1, 0, false)
         };
-        orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
-        xavier = new Xavier(SwervyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
-        Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
-        Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
-        Shuffleboard.getTab("General").addFloat("Note Radian", xavier::getYawRadians);
-
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
+
+        orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
+            drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
+        });
+        dashboard.register(orangePi);
+        Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addDouble("Distance",
+            () ->
+            {
+                var distance =
+                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
+                if (distance.isPresent())
+                {
+                    lastRecordedDistance = distance.get();
+                }
+                return lastRecordedDistance;
+            });
+
+        xavier = new Xavier(SwervyConstants.XavierConstants.config);
+        Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);
+        Shuffleboard.getTab("General").addDouble("Note Yaw", () -> Math.toDegrees(xavier.getYawRadians()));
+
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
@@ -98,37 +119,11 @@ public class SwervyContainer implements RobotContainer
                 (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
                 .ignoringDisable(true);
         }));
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
-        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
-            drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
-        });
-        Shuffleboard.getTab("General").addDouble("Angle", () -> {
-            var tag = aprilTagCamera.getSpeakerTag();
-            if (tag.isPresent())
-            {
-                return tag.get().yaw();
-            }
-            else
-            {
-                return 0;
-            }
-        });
+        
         flushNotifier = new Notifier(() -> {NetworkTableInstance.getDefault().flush();});
         flushNotifier.startPeriodic(0.01);
+
         CameraServer.startAutomaticCapture();
-        dashboard = new SwervyDashboard();
-        dashboard.register(orangePi);
-        Shuffleboard.getTab("General").addDouble("Distance",
-            () ->
-            {
-                var distance =
-                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
-                if (distance.isPresent())
-                {
-                    lastRecordedDistance = distance.get();
-                }
-                return lastRecordedDistance;
-            });
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -136,17 +131,22 @@ public class SwervyContainer implements RobotContainer
         if (driverHID instanceof XboxController)
         {
             XboxController driverController = (XboxController)driverHID;
+            
             drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
                 () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), true, true));
+            
             new JoystickButton(driverController, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
+            
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            
             new JoystickButton(driverController, XboxController.Button.kA.value)
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
+            
             new JoystickButton(driverController, XboxController.Button.kX.value)
                 .whileTrue(new TurnToTarget(drive, setStateCommands, new PIDController(1, 0, 0), 
                     () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
@@ -160,10 +160,13 @@ public class SwervyContainer implements RobotContainer
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(1), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(4), 0.1, 1), true, true));
+            
             new JoystickButton(driverHID, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
+            
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            
             new JoystickButton(driverHID, XboxController.Button.kA.value)
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1), true));

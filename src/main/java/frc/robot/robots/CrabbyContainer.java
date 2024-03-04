@@ -73,9 +73,19 @@ public class CrabbyContainer implements RobotContainer
     protected final TargetingCalculator targetingCalculator;
     public CrabbyContainer()
     {
-        manualWrist = false;
+        dashboard = new CrabbyDashboard();
+
         map = new CrabbyMap();
-        wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.Wrist.wristConfig);
+
+        intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
+
+        wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
+        wristJoint.setDefaultCommand(new NFRWristContinuous(wristJoint, () -> Optional.of(0.0))
+            .alongWith(Commands.runOnce(() -> manualWrist = false)));
+        Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
+        manualWrist = false;
+        Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
+        // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
@@ -84,22 +94,39 @@ public class CrabbyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[2], 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 0, false)
         };
+        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
         orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
-        xavier = new Xavier(CrabbyConstants.XavierConstants.config);
-        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
+        dashboard.register(orangePi);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
-        Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
-        Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
-        // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
+        Shuffleboard.getTab("General").addDouble("Distance",
+            () ->
+            {
+                var distance =
+                    aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch);
+                if (distance.isPresent())
+                {
+                    lastRecordedDistance = distance.get();
+                }
+                return lastRecordedDistance;
+            });
+
+        xavier = new Xavier(CrabbyConstants.XavierConstants.config);
+        
+        shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
+        shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
+        targetingCalculator = new TargetingCalculator("/home/lvuser/speedData.csv");
+        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0,
+            () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
+
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
         musicChooser.addOption("The Office", "the-office.chrp");
         Shuffleboard.getTab("General").add("Music Selector", musicChooser);
-        targetingCalculator = new TargetingCalculator("/home/lvuser/speedData.csv");
-        Shuffleboard.getTab("Developer").add("Add Wrist and Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0, () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
         Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
             return new OrchestraCommand(musicChooser.getSelected(), List.of(
                 (NFRTalonFX)map.modules[0].getDriveController(),
@@ -112,33 +139,7 @@ public class CrabbyContainer implements RobotContainer
                 (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
                 .ignoringDisable(true);
         }));
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
-        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
-        dashboard = new CrabbyDashboard();
-        intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
-        dashboard.register(orangePi);
-        shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
-        Shuffleboard.getTab("General").addDouble("Distance",
-            () ->
-            {
-                var distance =
-                    aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch);
-                if (distance.isPresent())
-                {
-                    lastRecordedDistance = distance.get();
-                }
-                return lastRecordedDistance;
-            });
-        Shuffleboard.getTab("General").addDouble("Pitch",
-            () ->
-            {
-                var speakerTag = aprilTagCamera.getSpeakerTag();
-                if (speakerTag.isPresent())
-                {
-                    return speakerTag.get().pitch();
-                }
-                return 0;
-            });
+        
     }
     @Override
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -150,34 +151,49 @@ public class CrabbyContainer implements RobotContainer
                 () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), true, true));
+            
             new JoystickButton(driverController, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
+            
             new JoystickButton(driverController, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            
             new JoystickButton(driverHID, XboxController.Button.kA.value)
                 .whileTrue(new FollowNote(xavier, drive, setStateCommands,
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
+            
             new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
                 .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            
             new Trigger(() -> intake.getBeamBreak().beamBroken())
                 .onTrue(new RumbleController(driverController, 0.5, 0.5));
+            
             new JoystickButton(driverController, XboxController.Button.kBack.value)
                 .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
+            
             new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
                 .whileTrue(new TurnToTarget(drive, setStateCommands, CrabbyConstants.DriveConstants.turnToTargetController, 
                     () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                     () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
                     aprilTagCamera::getSpeakerTag, true, true));
+            
             new Trigger(() -> driverController.getRightTriggerAxis() > 0.4)
                 .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            
             new JoystickButton(driverController, XboxController.Button.kStart.value)
                 .toggleOnTrue(new RampShooter(shooter, () -> shooterSpeed.getDouble(30)));
+            
             new Trigger(() -> driverController.getPOV() == 180)
-                .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, Rotation2d.fromDegrees(55), Rotation2d.fromDegrees(1), 0, true).alongWith(new RampShooter(shooter, () -> 30)));
-            shooter.setDefaultCommand(new RestShooter(shooter));
+                .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
+                    CrabbyConstants.WristConstants.tolerance, 0, true)
+                .alongWith(new RampShooter(shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
+            
             new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
-                .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, Rotation2d.fromDegrees(55), Rotation2d.fromDegrees(1), 0, true).alongWith(new RampShooterWithDifferential(shooter, () -> 9, () -> 15)));
+                .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, CrabbyConstants.WristConstants.ampRotation,
+                    CrabbyConstants.WristConstants.tolerance, 0, true)
+                .alongWith(new RampShooterWithDifferential(shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
+                    () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
         }
         else
         {
@@ -185,8 +201,10 @@ public class CrabbyContainer implements RobotContainer
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(1), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverHID.getRawAxis(4), 0.1, 1), true, true));
+            
             new JoystickButton(driverHID, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
+            
             new JoystickButton(driverHID, XboxController.Button.kY.value)
                 .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
         }
@@ -195,18 +213,19 @@ public class CrabbyContainer implements RobotContainer
             XboxController manipulatorController = (XboxController)manipulatorHID;
             new Trigger(() -> manipulatorController.getLeftTriggerAxis() > 0.4)
                 .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            
             new Trigger(() -> intake.getBeamBreak().beamBroken())
                 .onTrue(new RumbleController(manipulatorController, 0.5, 0.5));
+            
             new JoystickButton(manipulatorController, XboxController.Button.kX.value)
                 .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
+            
             new JoystickButton(manipulatorController, XboxController.Button.kB.value)
-                .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint, () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
-                wristJoint.setDefaultCommand(new NFRWristContinuous(wristJoint, () -> Optional.of(0.0)).alongWith(Commands.runOnce(() -> manualWrist = false)));
+                .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint,
+                    () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
+            
             new Trigger(() -> manipulatorController.getRightTriggerAxis() > 0.4)
                 .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
-            // new JoystickButton(manipulatorController, XboxController.Button.kA.value)
-            //     .toggleOnFalse(new NFRWristContinuous(wristJoint, () -> Optional.of(0.25)).alongWith(Commands.runOnce(() -> manualWrist = false)));
-
         }
     }
     @Override
