@@ -6,6 +6,7 @@ import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.constants.CrabbyConstants;
 public class WristJoint extends NFRRotatingArmJoint
 {
     public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig)
@@ -17,15 +18,14 @@ public class WristJoint extends NFRRotatingArmJoint
         } catch (MotorEncoderMismatchException e) {
             e.printStackTrace();
         } 
-        wristController.getAbsoluteEncoder().get().setConversionFactor(1.0/3);
-        wristController.getPIDController().setP(2);
-        wristController.getPIDController().setI(0);
-        wristController.getPIDController().setD(0);
-        wristController.getPIDController().setSmartMotionMaxVelocity(5, 0);
-        wristController.getPIDController().setSmartMotionMaxAccel(2, 0);
-        wristController.getPIDController().setSmartMotionAllowedClosedLoopError(0.002, 0);
+        wristController.getAbsoluteEncoder().get().setConversionFactor(CrabbyConstants.WristConstants.wristEncoderRatio);
+        wristController.getPIDController().setP(CrabbyConstants.WristConstants.kP);
+        wristController.getPIDController().setI(CrabbyConstants.WristConstants.kI);
+        wristController.getPIDController().setD(CrabbyConstants.WristConstants.kD);
+        wristController.getPIDController().setSmartMotionMaxVelocity(CrabbyConstants.WristConstants.maxVelocity, 0);
+        wristController.getPIDController().setSmartMotionMaxAccel(CrabbyConstants.WristConstants.maxAccel, 0);
+        wristController.getPIDController().setSmartMotionAllowedClosedLoopError(CrabbyConstants.WristConstants.allowedClosedLoopError, 0);
         wristController.burnFlash();
-
     }
     public Rotation2d getSpeakerAngle(boolean useAbsolutePositioning, double distance)
     {

@@ -4,12 +4,10 @@ import org.northernforce.gyros.NFRGyro;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.motors.NFRTalonFX;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import frc.robot.constants.CrabbyConstants;
 import frc.robot.gyros.NFRPigeon2;
 import frc.robot.sensors.NFRBeamBreak;
 import frc.robot.subsystems.swerve.SwerveModule;
@@ -27,23 +25,8 @@ public class CrabbyMap {
     public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 18);
     public final NFRBeamBreak intakeBeamBreak = new NFRBeamBreak(7);
 
-    private final Slot0Configs ShooterSlot0Config = new Slot0Configs()
-            .withKV(0.0119)
-            .withKS(0.00)
-            .withKP(0.02)
-            .withKI(0)
-            .withKD(0);
-
-    public final NFRTalonFX shooterMotorTop = new NFRTalonFX(new TalonFXConfiguration()
-        .withSlot0(ShooterSlot0Config), 22);
-    {
-        shooterMotorTop.setNeutralMode(NeutralModeValue.Coast);
-    }
-    public final NFRTalonFX shooterMotorBottom = new NFRTalonFX(new TalonFXConfiguration()
-        .withSlot0(ShooterSlot0Config), 23);
-    {
-        shooterMotorBottom.setNeutralMode(NeutralModeValue.Coast);
-    }
+    public final NFRTalonFX shooterMotorTop = new NFRTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 22);
+    public final NFRTalonFX shooterMotorBottom = new NFRTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 23);
     public final NFRSparkMax wristSparkMax = new NFRSparkMax(MotorType.kBrushless, 14);
     {
         wristSparkMax.setIdleMode(IdleMode.kBrake);
