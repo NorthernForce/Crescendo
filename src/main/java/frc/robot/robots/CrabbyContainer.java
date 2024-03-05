@@ -73,8 +73,11 @@ public class CrabbyContainer implements RobotContainer
     protected double lastRecordedDistance = 0;
     protected final GenericEntry shooterSpeed;
     protected final TargetingCalculator targetingCalculator;
+
+    protected final SetColor setColor;
     public CrabbyContainer()
     {
+        setColor = new SetColor();
         dashboard = new CrabbyDashboard();
 
         map = new CrabbyMap();
@@ -259,6 +262,13 @@ public class CrabbyContainer implements RobotContainer
         orangePi.setOdometry(drive.getChassisSpeeds());
         orangePi.setIMU(drive.getRotation());
         dashboard.updateRobotPose(orangePi.getPose());
+
+        // leds
+        if (intake.getBeamBreak().beamBroken()) {
+            SetColor.setColor((short)255, (short)0, (short)0);
+        } else {
+            SetColor.ledOff();
+        }
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
