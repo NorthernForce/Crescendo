@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.Xavier.XavierConfiguration;
@@ -40,7 +41,11 @@ public class CrabbyConstants {
             new NFRRotatingArmJointConfiguration("wristConfig")
                 .withUseLimits(true)
                 .withUseIntegratedLimits(true)
-                .withLimits(Rotation2d.fromDegrees(22), Rotation2d.fromDegrees(56));
+                .withLimits(Rotation2d.fromDegrees(22), Rotation2d.fromDegrees(56))
+                .withGearRatio(1) // TODO
+                .withGearbox(DCMotor.getNEO(1))
+                .withLength(1) // TODO
+                .withMass(1); // TODO
         public static final Rotation2d ampRotation = Rotation2d.fromDegrees(55);
         public static final Rotation2d closeShotRotation = Rotation2d.fromDegrees(55);
         public static final Rotation2d tolerance = Rotation2d.fromDegrees(1);

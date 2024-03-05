@@ -10,6 +10,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import edu.wpi.first.math.interpolation.*;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class TargetingCalculator {
     private InterpolatingDoubleTreeMap treeMap;
@@ -17,38 +18,35 @@ public class TargetingCalculator {
     private CSVReader csvReader;
     private CSVWriter csvWriter;
     public TargetingCalculator(String filePath){
-        file = new File(filePath);
-        if(!file.exists()){
-            try {
-                file.createNewFile();
-            } catch(IOException e){
-                e.printStackTrace();
+        treeMap = new InterpolatingDoubleTreeMap();
+        if (!RobotBase.isSimulation())
+        {
+            file = new File(filePath);
+            if(!file.exists()){
+                try {
+                    file.createNewFile();
+                } catch(IOException e){
+                    e.printStackTrace();
+                }
             }
-        }
-        try {
-            csvReader = new CSVReader(new FileReader(file));
             try {
+                csvReader = new CSVReader(new FileReader(file));
                 csvWriter = new CSVWriter(new FileWriter(file));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            treeMap = new InterpolatingDoubleTreeMap();
-            try {
                 while(csvReader.readNext() != null){
                     String[] nextLine = csvReader.readNext();
                     treeMap.put(Double.parseDouble(nextLine[0]), Double.parseDouble(nextLine[1]));
                 }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            }
+            catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-        } finally {
-            
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -66,12 +64,15 @@ public class TargetingCalculator {
      * @param speed the speed that the shooters were running at
      */
     public void addData(double distance, double speed){
-        csvWriter.writeNext(new String[]{Double.toString(distance) + "," + Double.toString(speed)});
-        treeMap.put(distance, speed);
-        try {
-            csvWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!RobotBase.isSimulation())
+        {
+            csvWriter.writeNext(new String[]{Double.toString(distance) + "," + Double.toString(speed)});
+            try {
+                csvWriter.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        treeMap.put(distance, speed);
     }
 }
