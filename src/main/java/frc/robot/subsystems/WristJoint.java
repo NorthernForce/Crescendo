@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import org.opencv.core.Point;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.utils.CSVFileReader;
 import frc.robot.utils.GroovyEpsilonAndSolver;
+
 public class WristJoint extends NFRRotatingArmJoint
 {
     public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig)
@@ -23,6 +25,7 @@ public class WristJoint extends NFRRotatingArmJoint
         } catch (MotorEncoderMismatchException e) {
             e.printStackTrace();
         } 
+
         wristController.getAbsoluteEncoder().get().setConversionFactor(1.0/3);
         wristController.getPIDController().setP(2);
         wristController.getPIDController().setI(0);

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.northernforce.subsystems.NFRSubsystem;
@@ -15,6 +16,7 @@ import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.geometry.struct.Twist2dStruct;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -23,10 +25,13 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.dashboard.Dashboard.Alert;
 import frc.robot.dashboard.Dashboard.AlertType;
 import frc.robot.utils.AlertProvider;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.FieldConstants;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
@@ -70,9 +75,10 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     }
     protected final NetworkTable table;
     protected final StructPublisher<Twist2d> odometryPublisher;
+    protected final DoublePublisher imuPublisher;
     protected final StructSubscriber<Twist2d> cmdVelSubscriber;
     protected final StructPublisher<Pose2d> globalPosePublisher, targetPosePublisher;
-    protected final IntegerPublisher odometryStamp, globalPoseStamp, targetPoseStamp;
+    protected final IntegerPublisher odometryStamp, imuStamp, globalPoseStamp, targetPoseStamp;
     protected final BooleanPublisher targetPoseCancel;
     protected final StructSubscriber<Pose2d> poseSubscriber;
     protected final Alert orangePiMissing;
@@ -91,6 +97,8 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         targetPoseCancel = table.getBooleanTopic("target_pose_cancel").publish();
         globalPosePublisher = table.getStructTopic("global_set_pose", new Pose2dStruct()).publish();
         globalPoseStamp = table.getIntegerTopic("global_pose_stamp").publish();
+        imuPublisher = table.getDoubleTopic("imu").publish();
+        imuStamp = table.getIntegerTopic("imu_stamp").publish();
         cmdVelSubscriber = table.getStructTopic("cmd_vel", new Twist2dStruct()).subscribe(new Twist2d());
         poseSubscriber = table.getStructTopic("pose", new Pose2dStruct()).subscribe(new Pose2d());
         orangePiMissing = new Alert(AlertType.kError, "Orange pi is not connected");
@@ -106,7 +114,16 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     {
         odometryPublisher.set(new Twist2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
         odometryStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
-        NetworkTableInstance.getDefault().flush();
+    }
+    /**
+     * Sets the imu
+     * @param rotation of the robot
+     * @param stamp in seconds
+     */
+    public void setIMU(Rotation2d rotation)
+    {
+        imuPublisher.set(rotation.getRadians());
+        imuStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
     /**
      * Sends a target pose
@@ -222,7 +239,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         @Override
         public TargetDetection unpack(ByteBuffer buffer)
         {
-            return new TargetDetection(buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(),
+            return new TargetDetection(buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), -buffer.getDouble(), buffer.getDouble(),
                 buffer.getDouble(), (int)buffer.getLong());
         }
         @Override
@@ -231,7 +248,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
             buffer.putDouble(detection.area);
             buffer.putDouble(detection.tx);
             buffer.putDouble(detection.ty);
-            buffer.putDouble(detection.pitch);
+            buffer.putDouble(-detection.pitch);
             buffer.putDouble(detection.yaw);
             buffer.putDouble(detection.depth);
             buffer.putLong(detection.fiducialID);
@@ -258,6 +275,47 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         public TargetDetection[] getDetections()
         {
             return detections.get();
+        }
+        /**
+         * Get a specific tag detection if present
+         * @param fiducialID the tag id
+         * @return tag detection if present in latest frame
+         */
+        public Optional<TargetDetection> getTarget(int fiducialID)
+        {
+            for (var detection : getDetections())
+            {
+                if (detection.fiducialID == fiducialID)
+                {
+                    return Optional.of(detection);
+                }
+            }
+            return Optional.empty();
+        }
+        /**
+         * Gets the distance to the speaker without using the depth camera. Needs the height of the apriltag camera.
+         * @param cameraHeight the height in meters of the apriltag camera
+         * @return the distance from the camera to the speaker along the xy plane
+         */
+        public Optional<Double> getDistanceToSpeaker(double cameraHeight, Rotation2d cameraPitch)
+        {
+            int targetId = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7;
+            for (var detection : getDetections())
+            {
+                if (detection.fiducialID == targetId)
+                {
+                    return Optional.of(detection.calculateDistanceWithPitch(cameraPitch, cameraHeight, FieldConstants.SpeakerConstants.speakerHeight));
+                }
+            }
+            return Optional.empty();
+        }
+        /**
+         * Gets the speaker tag if within the frame of the camera
+         * @return speaker tag, if present
+         */
+        public Optional<TargetDetection> getSpeakerTag()
+        {
+            return getTarget(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7);
         }
     }
     /**

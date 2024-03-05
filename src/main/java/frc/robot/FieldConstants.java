@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 
 public class FieldConstants
 {
@@ -35,5 +36,9 @@ public class FieldConstants
             new Translation3d(13.694, 5.5785, 0),
             new Translation3d(13.694, 4.1305, 0)
         };
+    }
+    public static class SpeakerConstants
+    {
+        public static final double speakerHeight = Units.inchesToMeters(57);
     }
 }

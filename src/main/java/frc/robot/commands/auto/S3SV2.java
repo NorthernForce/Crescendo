@@ -14,7 +14,11 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CloseShot;
 import frc.robot.commands.NFRSwerveDriveFollowPath;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.WristJoint;
 import frc.robot.utils.AutonomousRoutine;
 
 public class S3SV2 extends SequentialCommandGroup
@@ -48,6 +52,32 @@ public class S3SV2 extends SequentialCommandGroup
         );
     }
     /**
+     * Creates a new S3SV2
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @param shouldFlipPath whether to flip the routine based on alliance
+     * @param shooter the shooter subsystem
+     * @param wristJoint the wrist subsystem
+     * @param intake the intake subsystem
+     */
+    public S3SV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
+        PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, Shooter shooter, WristJoint wristJoint, Intake intake)
+    {
+        IntFunction<NFRSwerveDriveFollowPath> path = idx -> new NFRSwerveDriveFollowPath(
+            drive, setStateCommands, paths[idx], poseSupplier, controller,
+            () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, false);
+        addCommands(
+            new CloseShot(shooter, wristJoint, intake),
+            path.apply(0),
+            path.apply(1),
+            path.apply(2),
+            path.apply(3),
+            new NFRSwerveDriveStop(drive, setStateCommands, true)
+        );
+    }
+    /**
      * Gets the AutonomousRoutine struct for S3SV2
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
@@ -62,5 +92,25 @@ public class S3SV2 extends SequentialCommandGroup
         return new AutonomousRoutine(S3SV2.class.getSimpleName(),
             () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),
             new S3SV2(drive, setStateCommands, poseSupplier, controller, shouldFlipPath, ignoreCommands));
+    }
+    /**
+     * Gets the AutonomousRoutine struct for S3SV1
+     * @param drive the drive subsystem
+     * @param setStateCommands the commands to run each module
+     * @param poseSupplier the supplier for pose estimation
+     * @param controller the controller for following the path
+     * @param shouldFlipPath whether to flip the routine based on alliance
+     * @param shooter the robot's shooter
+     * @param wrist the robot's wrist
+     * @param intake the robot's intake
+     * @return an AutonomousRoutine for S3SV1
+     */
+    public static AutonomousRoutine getRoutine(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, Shooter shooter,
+        WristJoint wrist, Intake intake)
+    {
+        return new AutonomousRoutine(S3SV2.class.getSimpleName(),
+            () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),
+            new S3SV2(drive, setStateCommands, poseSupplier, controller, shouldFlipPath, shooter, wrist, intake));
     }
 }
