@@ -135,7 +135,7 @@ public class CrabbyContainer implements RobotContainer
 
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
         shooter.setDefaultCommand(new RestShooter(shooter));
-        shooterSpeed = dashboard.addDouble("Shooter Speed", 30);
+        shooterSpeed = dashboard.addDouble("shooter_speed", 30);
         targetingCalculator = new TargetingCalculator("/home/lvuser/speedData.csv");
         dashboard.addSendable("register_shooter_data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0,
             () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
