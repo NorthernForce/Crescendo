@@ -56,7 +56,7 @@ public class S1CSV2 extends SequentialCommandGroup
      * @param controller the controller for following the path
      * @param shouldFlipPath whether to flip the routine based on alliance
      * @param shooter the shooter subsystem
-     * @param wrist the wrist subsystem
+     * @param wristJoint the wrist subsystem
      * @param intake the intake subsystem
      */
     public S1CSV2(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,

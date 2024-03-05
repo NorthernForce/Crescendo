@@ -8,6 +8,8 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -28,6 +30,11 @@ public class CrabbyConstants {
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
         public static final PIDController turnToTargetController = new PIDController(1, 0, 0);
+        public static final PPHolonomicDriveController holonomicDriveController = new PPHolonomicDriveController(
+            new PIDConstants(10, 0, 0), // X/Y pid constants TODO: needs to be properly tuned
+            new PIDConstants(5, 0, 0), // Rotational pid constants TODO: needs to be properly tuned
+            6, // Max Module Speed TODO: needs to be properly tuned
+            offsets[0].getDistance(new Translation2d())); // Distance from center
     }
     public static class IntakeConstants
     {

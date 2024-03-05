@@ -1,5 +1,6 @@
 package frc.robot.robots;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +35,7 @@ import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.TurnToTarget;
+import frc.robot.commands.auto.Autos;
 import frc.robot.commands.ShootIntake;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
@@ -260,7 +262,12 @@ public class CrabbyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", Pose2d::new, Commands.none()));
+        ArrayList<AutonomousRoutine> routines = new ArrayList<>();
+        routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
+        routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose,
+            CrabbyConstants.DriveConstants.holonomicDriveController, intake,
+            CrabbyConstants.IntakeConstants.intakeSpeed, shooter, wristJoint));
+        return routines;
     }
     @Override
     public Dashboard getDashboard()
