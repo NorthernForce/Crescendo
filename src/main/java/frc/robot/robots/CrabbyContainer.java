@@ -1,5 +1,6 @@
 package frc.robot.robots;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,12 +35,13 @@ import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.TurnToTarget;
+import frc.robot.commands.auto.Autos;
 import frc.robot.commands.ShootIntake;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.RampShooter;
+import frc.robot.commands.RampShooterContinuous;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RestShooter;
 import frc.robot.subsystems.OrangePi;
@@ -179,15 +181,16 @@ public class CrabbyContainer implements RobotContainer
                     aprilTagCamera::getSpeakerTag, true, true));
             
             new Trigger(() -> driverController.getRightTriggerAxis() > 0.4)
+                .and(() -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
                 .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
             
             new JoystickButton(driverController, XboxController.Button.kStart.value)
-                .toggleOnTrue(new RampShooter(shooter, () -> shooterSpeed.getDouble(30)));
+                .toggleOnTrue(new RampShooterContinuous(shooter, () -> shooterSpeed.getDouble(30)));
             
             new Trigger(() -> driverController.getPOV() == 180)
                 .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
                     CrabbyConstants.WristConstants.tolerance, 0, true)
-                .alongWith(new RampShooter(shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
+                .alongWith(new RampShooterContinuous(shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
             
             new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
                 .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, CrabbyConstants.WristConstants.ampRotation,
@@ -225,6 +228,7 @@ public class CrabbyContainer implements RobotContainer
                     () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
             
             new Trigger(() -> manipulatorController.getRightTriggerAxis() > 0.4)
+                .and(() -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
                 .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
         }
     }
@@ -258,7 +262,12 @@ public class CrabbyContainer implements RobotContainer
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
-        return List.of(new AutonomousRoutine("Do nothing", Pose2d::new, Commands.none()));
+        ArrayList<AutonomousRoutine> routines = new ArrayList<>();
+        routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
+        routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose,
+            CrabbyConstants.DriveConstants.holonomicDriveController, intake,
+            CrabbyConstants.IntakeConstants.intakeSpeed, shooter, wristJoint));
+        return routines;
     }
     @Override
     public Dashboard getDashboard()

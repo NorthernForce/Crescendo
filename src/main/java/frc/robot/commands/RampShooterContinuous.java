@@ -4,33 +4,32 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
-public class RampShooter extends Command {
-    private double speed;
-    private double tolerance;
+public class RampShooterContinuous extends Command {
+    private DoubleSupplier speed;
     private Shooter shooter;
-    /** Creates a new RampShooter. 
+    /** Creates a new RunShooter. 
      * @param speed the velocity to run the motor at (in rotation per 100ms)
     */
-    public RampShooter(Shooter shooter, double speed, double tolerance) {
+    public RampShooterContinuous(Shooter shooter, DoubleSupplier speed) {
     // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(shooter);
         this.speed = speed;
         this.shooter = shooter;
-        this.tolerance = tolerance;
     }
 
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {
-        shooter.run(speed);
-    }
+    public void initialize() {}
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {; //rotations per 100ms
+    public void execute() {
+        shooter.run(speed.getAsDouble()); //rotations per 100ms
     }
 
     // Called once the command ends or is interrupted.
@@ -41,6 +40,6 @@ public class RampShooter extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return shooter.isAtSpeed(tolerance);
+        return false;
     }
 }

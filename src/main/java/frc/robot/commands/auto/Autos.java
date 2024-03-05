@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.WristJoint;
 import frc.robot.utils.AutonomousRoutine;
 
 public class Autos
@@ -60,11 +62,66 @@ public class Autos
      * @param setStateCommands list of setStateCommands to use
      * @param poseSupplier give the autos pose predictions
      * @param controller holonomic drive controller
-     * @param ignoreCommands whether to ignore commands (e.g. run intake) or not
      * @return list of AutonomousRoutines
      */
     private static List<AutonomousRoutine> getRawRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
-        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, boolean ignoreCommands)
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller)
+    {
+        ArrayList<AutonomousRoutine> autoList = new ArrayList<>();
+        for (var auto : getAllAutos())
+        {
+            Method getRoutineMethod;
+            try
+            {
+                getRoutineMethod = auto.getDeclaredMethod("getRoutine",
+                    NFRSwerveDrive.class,
+                    NFRSwerveModuleSetState[].class,
+                    Supplier.class,
+                    PPHolonomicDriveController.class,
+                    BooleanSupplier.class);
+            }
+            catch (NoSuchMethodException e)
+            {
+                e.printStackTrace();
+                autoList.add(new AutonomousRoutine("[ERROR] Failed to find getRoutine in class: " + auto.getName(),
+                    () -> new Pose2d(), new InstantCommand())); // ignore auto and alert driver
+                continue;
+            }
+            try
+            {
+                autoList.add((AutonomousRoutine)getRoutineMethod.invoke(null,
+                    drive,
+                    setStateCommands,
+                    poseSupplier,
+                    controller,
+                    (BooleanSupplier)() -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                autoList.add(new AutonomousRoutine("[ERROR] Failed to invoke getRoutine on: " + auto.getName(),
+                    () -> new Pose2d(), new InstantCommand())); // ignore auto and alert driver
+            }
+        }
+        return autoList;
+    }
+    /**
+     * gets the routines
+     * 
+     * this method returns the AutonomousRoutines of the class and is primairly
+     * here simply to remove code duplication
+     * 
+     * @param drive the NFRSwerveDrive to use
+     * @param setStateCommands list of setStateCommands to use
+     * @param poseSupplier give the autos pose predictions
+     * @param controller holonomic drive controller
+     * @param shooter the robot's shooter
+     * @param wrist the robot's wrist
+     * @param intake the robot's intake
+     * @return list of AutonomousRoutines
+     */
+    private static List<AutonomousRoutine> getRawRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Shooter shooter, WristJoint wrist, Intake intake)
     {
         ArrayList<AutonomousRoutine> autoList = new ArrayList<>();
         for (var auto : getAllAutos())
@@ -78,7 +135,9 @@ public class Autos
                     Supplier.class,
                     PPHolonomicDriveController.class,
                     BooleanSupplier.class,
-                    boolean.class);
+                    Shooter.class,
+                    WristJoint.class,
+                    Intake.class);
             }
             catch (NoSuchMethodException e)
             {
@@ -95,7 +154,9 @@ public class Autos
                     poseSupplier,
                     controller,
                     (BooleanSupplier)() -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red,
-                    ignoreCommands));
+                    shooter,
+                    wrist,
+                    intake));
             }
             catch (Exception e)
             {
@@ -119,7 +180,7 @@ public class Autos
     public static List<AutonomousRoutine> getRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
         Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller)
     {
-        return getRawRoutines(drive, setStateCommands, poseSupplier, controller, true);
+        return getRawRoutines(drive, setStateCommands, poseSupplier, controller);
     }
     /**
      * Gets the list of autonomous routines.
@@ -133,9 +194,10 @@ public class Autos
      * @return an list of AutonomousRoutines
      */
     public static List<AutonomousRoutine> getRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
-        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, double intakeSpeed)
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, double intakeSpeed,
+        Shooter shooter, WristJoint wrist)
     {
         NamedCommands.registerCommand("intake", new RunIntake(intake, intakeSpeed));
-        return getRawRoutines(drive, setStateCommands, poseSupplier, controller, false);
+        return getRawRoutines(drive, setStateCommands, poseSupplier, controller, shooter, wrist, intake);
     }
 }
