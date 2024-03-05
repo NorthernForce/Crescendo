@@ -66,7 +66,7 @@ public class TargetingCalculator {
     public void addData(double distance, double speed){
         if (!RobotBase.isSimulation())
         {
-            csvWriter.writeNext(new String[]{Double.toString(distance) + "," + Double.toString(speed)});
+            csvWriter.writeNext(new String[]{Double.toString(distance), Double.toString(speed)});
             try {
                 csvWriter.flush();
             } catch (IOException e) {
