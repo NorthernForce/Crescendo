@@ -1,12 +1,20 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
 import java.util.Optional;
+
+
 import org.northernforce.motors.MotorEncoderMismatchException;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
+import org.opencv.core.Point;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+
 import frc.robot.constants.CrabbyConstants;
+import frc.robot.utils.CSVFileReader;
+import frc.robot.utils.GroovyEpsilonAndSolver;
+
 public class WristJoint extends NFRRotatingArmJoint
 {
     public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig)
@@ -27,17 +35,66 @@ public class WristJoint extends NFRRotatingArmJoint
         wristController.getPIDController().setSmartMotionAllowedClosedLoopError(CrabbyConstants.WristConstants.allowedClosedLoopError, 0);
         wristController.burnFlash();
     }
-    public Rotation2d getSpeakerAngle(boolean useAbsolutePositioning, double distance)
+    /**
+     * 
+     * @param positioningType string to represent angling method
+     * @param distance double to represent distance from speaker
+     * @return ampAngle returns Rotation2d to represent angle to shoot at
+     * @exception IllegalArgumentException if position type is invalid 
+     */
+    public static Rotation2d getSpeakerAngle(PositioningType positioningType, double distance)
     {
-        if(useAbsolutePositioning)
+        Rotation2d ampAngle = new Rotation2d();
+        switch(positioningType)
         {
-            //TODO use formula to generate an exact angle from distance
-        } else 
-        {
-            //TODO use distance parameters to approximate angle needed (ex. if 0 < distance < 5, ampAngle = 55)
+            case Linear : 
+                ampAngle = Rotation2d.fromDegrees(Math.atan(81/distance)*(180/Math.PI));
+                break;
+
+            case Regressive :
+                ArrayList<Point> points = CSVFileReader.readFile("C:\\Users\\First\\Source\\Crescendo\\src\\main\\java\\frc\\robot\\utils\\AnglesToPoints.csv");
+                ampAngle = Rotation2d.fromDegrees(findRegressiveExponential(points, distance));
+                break;
+
+            case InRange :
+                ampAngle = distance < 5.0 ? Rotation2d.fromDegrees(55) : 
+                distance < 15 ? Rotation2d.fromDegrees(45) : null;
+                break;
+
+            default :
+                throw new IllegalArgumentException("Positioning type: \"" + positioningType + "\" is invalid");
         }
-        Rotation2d ampAngle = Rotation2d.fromDegrees(45); //for now, I will just use random degrees to test el motoro until I get data from ONE PARTICULAR CLAREDITH DYNAMIC DUO. *Ahem* Clare and Meredith...
-        System.out.println("Fetching the angle using a formula from distance. Angle = " + ampAngle);
+       
+        
         return ampAngle; 
+    }
+    public enum PositioningType
+    {
+        Linear,
+        Regressive,
+        InRange
+    }
+    public static double findRegressiveExponential(ArrayList<Point> points, double distance)
+    {
+        double[] x = new double[points.size()];
+        double[] y = new double[points.size()];
+        for(int i = 0; i < points.size(); i++)
+        {
+            x[i] = points.get(i).x;
+            y[i] = points.get(i).y;
+        }
+        int n = points.size();
+        double a = Math.exp((GroovyEpsilonAndSolver.epsilon("Math.pow(x,2)*y",1, n+1,x,y) * (GroovyEpsilonAndSolver.epsilon("y*Math.log(y)",1, n+1,x,y)) - 
+            (GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("x*y*Math.log(y)",1, n+1,x,y))) / 
+            ((GroovyEpsilonAndSolver.epsilon("y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("Math.pow(x,2)*y",1, n+1,x,y)) - 
+            (Math.pow(GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y),2))));
+        double b = ((GroovyEpsilonAndSolver.epsilon("y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("x*y*Math.log(y)",1, n+1,x,y))-
+            (GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("y*Math.log(y)",1, n+1,x,y)))/
+            ((GroovyEpsilonAndSolver.epsilon("y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("Math.pow(x,2)*y",1, n+1,x,y))-
+            (Math.pow(GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y),2)));
+        String finalEquation = (a+"*Math.pow(Math.exp(1),(" + b + "*" + distance + "))");
+        System.out.println(finalEquation);
+        return Double.parseDouble(GroovyEpsilonAndSolver.GroovySolver(finalEquation).toString());
+        
     }
 }
