@@ -42,7 +42,7 @@ public class WristJoint extends NFRRotatingArmJoint
      * @return ampAngle returns Rotation2d to represent angle to shoot at
      * @exception IllegalArgumentException if position type is invalid 
      */
-    public static Rotation2d getSpeakerAngle(PositioningType positioningType, double distance)
+    public Rotation2d getSpeakerAngle(PositioningType positioningType, double distance)
     {
         Rotation2d ampAngle = new Rotation2d();
         switch(positioningType)
