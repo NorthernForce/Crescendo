@@ -68,7 +68,7 @@ public abstract class Dashboard
     {
         if (routines.size() != 0)
         {
-            autoChooser.addOption(routines.get(0).name(), routines.get(0));
+            autoChooser.setDefaultOption(routines.get(0).name(), routines.get(0));
         }
         for (int i = 1; i < routines.size(); i++)
         {
