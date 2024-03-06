@@ -29,6 +29,19 @@ public class Shooter extends SubsystemBase {
         topMotor.setVelocity(0, speed);
         bottomMotor.setVelocity(0, speed);
     }
+    
+    /**
+     * runs both the top and bottom motors at the given velocity (in rotations per 100 ms)
+     * (-) velocity is outtake (in current design) (i think)
+     * @param speed the speed to run the motors at in RPS
+     * @param topspin the speed to add to the top motor to correct for floating
+     */
+    public void run(double speed, double topspin) {
+        topMotor.setVelocity(0, speed + topspin);
+        topTargetSpeed = speed + topspin;
+        bottomMotor.setVelocity(0, speed);
+        bottomTargetSpeed = speed;
+    }
 
     /**
      * runs the top motor at the given velocity (in rotations per 100 ms)

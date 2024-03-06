@@ -10,6 +10,7 @@ import frc.robot.subsystems.Shooter;
 public class RampShooter extends Command {
     private double speed;
     private double tolerance;
+    private double topspin;
     private Shooter shooter;
     /** Creates a new RampShooter. 
      * @param speed the velocity to run the motor at (in rotation per 100ms)
@@ -20,12 +21,24 @@ public class RampShooter extends Command {
         this.speed = speed;
         this.shooter = shooter;
         this.tolerance = tolerance;
+        this.topspin = 0;
+    }
+    /** Creates a new RampShooter. 
+     * @param speed the velocity to run the motor at (in rotation per 100ms)
+    */
+    public RampShooter(Shooter shooter, double speed, double topspin, double tolerance) {
+    // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(shooter);
+        this.speed = speed;
+        this.shooter = shooter;
+        this.tolerance = tolerance;
+        this.topspin = topspin;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        shooter.run(speed);
+        shooter.run(speed, topspin);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

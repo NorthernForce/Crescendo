@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
 public class RampShooterContinuous extends Command {
-    private DoubleSupplier speed;
+    private DoubleSupplier speed, topspin;
     private Shooter shooter;
     /** Creates a new RunShooter. 
      * @param speed the velocity to run the motor at (in rotation per 100ms)
@@ -20,6 +20,14 @@ public class RampShooterContinuous extends Command {
         addRequirements(shooter);
         this.speed = speed;
         this.shooter = shooter;
+        this.topspin = () -> 0;
+    }
+    public RampShooterContinuous(Shooter shooter, DoubleSupplier speed, DoubleSupplier topspin) {
+    // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(shooter);
+        this.speed = speed;
+        this.shooter = shooter;
+        this.topspin = topspin;
     }
 
     // Called when the command is initially scheduled.
@@ -29,7 +37,7 @@ public class RampShooterContinuous extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        shooter.run(speed.getAsDouble()); //rotations per 100ms
+        shooter.run(speed.getAsDouble(), topspin.getAsDouble()); //rotations per second
     }
 
     // Called once the command ends or is interrupted.

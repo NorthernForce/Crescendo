@@ -71,7 +71,7 @@ public class CrabbyContainer implements RobotContainer
     protected final Shooter shooter;
     protected boolean manualWrist;
     protected double lastRecordedDistance = 0;
-    protected final GenericEntry shooterSpeed;
+    protected final GenericEntry shooterSpeed, shooterTopspin;
     protected final TargetingCalculator targetingCalculator;
     public CrabbyContainer()
     {
@@ -120,6 +120,7 @@ public class CrabbyContainer implements RobotContainer
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
         shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
+        shooterTopspin = Shuffleboard.getTab("Developer").add("Shooter Topspin", 0).getEntry();
         targetingCalculator = new TargetingCalculator("/home/lvuser/speedData.csv");
         Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0,
             () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
@@ -185,7 +186,7 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
             
             new JoystickButton(driverController, XboxController.Button.kStart.value)
-                .toggleOnTrue(new RampShooterContinuous(shooter, () -> shooterSpeed.getDouble(30)));
+                .toggleOnTrue(new RampShooterContinuous(shooter, () -> shooterSpeed.getDouble(30), () -> shooterTopspin.getDouble(0)));
             
             new Trigger(() -> driverController.getPOV() == 180)
                 .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
