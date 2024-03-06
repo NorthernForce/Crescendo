@@ -27,6 +27,7 @@ public class Shooter extends SubsystemBase {
      */
     public void run(double speed) {
         topMotor.setVelocity(0, speed);
+        topTargetSpeed = bottomTargetSpeed = speed;
         bottomMotor.setVelocity(0, speed);
     }
 
