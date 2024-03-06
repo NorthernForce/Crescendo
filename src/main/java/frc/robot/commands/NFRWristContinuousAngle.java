@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,5 +28,4 @@ public class NFRWristContinuousAngle extends Command
     {
         return false;
     }
-    
 }
