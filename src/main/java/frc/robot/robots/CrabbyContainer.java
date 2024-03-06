@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.FollowNote;
 import frc.robot.commands.NFRWristContinuous;
+import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
@@ -54,6 +55,7 @@ import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.TargetingCalculator;
+import frc.robot.utils.InterpolatedTargetingCalculator;
 
 public class CrabbyContainer implements RobotContainer
 {
@@ -73,7 +75,8 @@ public class CrabbyContainer implements RobotContainer
     protected boolean manualWrist;
     protected double lastRecordedDistance = 0;
     protected final GenericEntry shooterSpeed;
-    protected final TargetingCalculator targetingCalculator;
+    protected final TargetingCalculator speedCalculator;
+    protected final TargetingCalculator angleCalculator;
     public CrabbyContainer()
     {
         dashboard = new CrabbyDashboard();
@@ -127,16 +130,18 @@ public class CrabbyContainer implements RobotContainer
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
         shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
-        targetingCalculator = new TargetingCalculator("/home/lvuser/speedData.csv");
-        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0,
-            () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
-
+        speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");
+        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> lastRecordedDistance,
+            () -> shooterSpeed.getDouble(30)).ignoringDisable(true));
+        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
+        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
+            () -> wristJoint.getRotation().getRadians()));
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
         musicChooser.addOption("The Office", "the-office.chrp");
         Shuffleboard.getTab("General").add("Music Selector", musicChooser);
-        Shuffleboard.getTab("Developer").add("Add Wrist and Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0, () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
+        Shuffleboard.getTab("Developer").add("Add Wrist and Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> 0, () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
         Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
             return new OrchestraCommand(musicChooser.getSelected(), List.of(
                 (NFRTalonFX)map.modules[0].getDriveController(),
@@ -186,7 +191,9 @@ public class CrabbyContainer implements RobotContainer
                     () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                     () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
-                    aprilTagCamera::getSpeakerTag, true, true));
+                    aprilTagCamera::getSpeakerTag, true, true)
+                .alongWith(new RampShooterContinuous(shooter, () -> speedCalculator.getValueForDistance(lastRecordedDistance)))
+                .alongWith(new NFRWristContinuousAngle(wristJoint, () -> Rotation2d.fromRadians(angleCalculator.getValueForDistance(lastRecordedDistance)))));
             
             new Trigger(() -> driverController.getRightTriggerAxis() > 0.4)
                 .and(() -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
