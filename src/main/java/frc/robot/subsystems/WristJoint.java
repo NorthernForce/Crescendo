@@ -16,6 +16,7 @@ import frc.robot.utils.GroovyEpsilonAndSolver;
 
 public class WristJoint extends NFRRotatingArmJoint
 {
+    private String regressiveEquation; 
     public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig)
     {
         super(wristConfig, wristController, Optional.empty());
@@ -25,7 +26,7 @@ public class WristJoint extends NFRRotatingArmJoint
         } catch (MotorEncoderMismatchException e) {
             e.printStackTrace();
         } 
-
+        regressiveEquation = findRegressiveExponential(CSVFileReader.readFile("C:\\Users\\First\\Source\\Crescendo\\src\\main\\java\\frc\\robot\\utils\\AnglesToPoints.csv"), 0);
         wristController.getAbsoluteEncoder().get().setConversionFactor(1.0/3);
         wristController.getPIDController().setP(2);
         wristController.getPIDController().setI(0);
@@ -53,8 +54,7 @@ public class WristJoint extends NFRRotatingArmJoint
                 break;
 
             case Regressive :
-                ArrayList<Point> points = CSVFileReader.readFile("C:\\Users\\First\\Source\\Crescendo\\src\\main\\java\\frc\\robot\\utils\\AnglesToPoints.csv");
-                ampAngle = Rotation2d.fromDegrees(findRegressiveExponential(points, distance));
+                ampAngle = Rotation2d.fromDegrees(getAngleFromDistance(10)); // TODO depending on if we use this, I will need to fetch distances
                 break;
 
             case InRange :
@@ -75,7 +75,7 @@ public class WristJoint extends NFRRotatingArmJoint
         Regressive,
         InRange
     }
-    public static double findRegressiveExponential(ArrayList<Point> points, double distance)
+    public static String findRegressiveExponential(ArrayList<Point> points, double distance)
     {
         double[] x = new double[points.size()];
         double[] y = new double[points.size()];
@@ -93,9 +93,12 @@ public class WristJoint extends NFRRotatingArmJoint
             (GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("y*Math.log(y)",1, n+1,x,y)))/
             ((GroovyEpsilonAndSolver.epsilon("y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("Math.pow(x,2)*y",1, n+1,x,y))-
             (Math.pow(GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y),2)));
-        String finalEquation = (a+"*Math.pow(Math.exp(1),(" + b + "*" + distance + "))");
-        System.out.println(finalEquation);
-        return Double.parseDouble(GroovyEpsilonAndSolver.GroovySolver(finalEquation).toString());
+        String finalEquation = (a+"*Math.pow(Math.exp(1),(" + b + "*");
+        return finalEquation;
         
+    }
+    public double getAngleFromDistance(double distance)
+    {
+        return Double.parseDouble(GroovyEpsilonAndSolver.GroovySolver(regressiveEquation + "" + distance + "))").toString());
     }
 }
