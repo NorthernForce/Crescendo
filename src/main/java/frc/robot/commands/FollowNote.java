@@ -52,7 +52,7 @@ public class FollowNote extends Command {
     public void execute() {
         ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
         float radian = xavier.getYawRadians();
-        if (radian == 0) {
+        if (Float.isNaN(radian)) {
             pid.reset();
         } else {
             speeds = new ChassisSpeeds(.5, strafeSupplier.getAsDouble() * 0.5, pid.calculate(radian));
