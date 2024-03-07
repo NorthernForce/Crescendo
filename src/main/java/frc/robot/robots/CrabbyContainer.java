@@ -18,8 +18,10 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +29,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.FieldConstants;
 import frc.robot.commands.AddDataToTargetingCalculator;
+import frc.robot.commands.DriveWithOrangePi;
 import frc.robot.commands.FollowNote;
 import frc.robot.commands.NFRWristContinuous;
 import frc.robot.commands.NFRWristContinuousAngle;
@@ -212,7 +216,19 @@ public class CrabbyContainer implements RobotContainer
                 .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, CrabbyConstants.WristConstants.ampRotation,
                     CrabbyConstants.WristConstants.tolerance, 0, true)
                 .alongWith(new RampShooterWithDifferential(shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
-                    () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
+                    () -> CrabbyConstants.ShooterConstants.ampBottomSpeed))
+                .alongWith(
+                    new DriveWithOrangePi(drive, setStateCommandsVelocity, orangePi, () -> {
+                        if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
+                        {
+                            return FieldConstants.AmpPositions.redAmp;
+                        }
+                        else
+                        {
+                            return FieldConstants.AmpPositions.blueAmp;
+                        }
+                    }, 0.1, Rotation2d.fromDegrees(90)))
+                );
         }
         else
         {
