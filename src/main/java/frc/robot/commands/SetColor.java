@@ -1,18 +1,18 @@
-package main.java.frc.robot.commands;
+package frc.robot.commands;
 
-import edu.wpi.wpilibj.Command;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.NFRleds;
 
 public class SetColor extends Command {
-    private NFRleds Leds;
-    public ShowPink() {
-        Leds = new NFRleds();
+    private final NFRleds leds;
+    public SetColor(NFRleds leds) {
+        addRequirements(leds);
+        this.leds = leds;
     }
-    @Override
-    public Color(short r, short g, short b) {
-        Leds.setColor(r, g, b);
+    public void Color(short r, short g, short b) {
+        leds.setColor(r, g, b);
     }
-    @Override
-    public offColor() {
-        Leds.offColor();
+    public void offColor() {
+        leds.ledOff();
     }
 }
