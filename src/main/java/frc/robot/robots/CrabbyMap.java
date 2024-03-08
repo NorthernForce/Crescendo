@@ -32,6 +32,8 @@ public class CrabbyMap {
     public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 0); //TODO get the id
     {
         intakeMotor.setSmartCurrentLimit(40);
+        intakeMotor.setIdleMode(IdleMode.kCoast);
+        intakeMotor.burnFlash();
     }
     public final NFRBeamBreak intakeBeamBreak = new NFRBeamBreak(7);
 

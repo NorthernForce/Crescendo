@@ -80,5 +80,6 @@ public class InterpolatedTargetingCalculator implements TargetingCalculator{
                 e.printStackTrace();
             }
         }
+        treeMap.put(distance, value);
     }
 }
