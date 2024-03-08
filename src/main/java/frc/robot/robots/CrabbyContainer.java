@@ -135,7 +135,7 @@ public class CrabbyContainer implements RobotContainer
             () -> shooterSpeed.getDouble(30)).ignoringDisable(true));
         angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
         Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
-            () -> wristJoint.getRotation().getRadians()));
+            () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");

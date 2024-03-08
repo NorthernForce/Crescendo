@@ -31,11 +31,10 @@ public class InterpolatedTargetingCalculator implements TargetingCalculator{
             }
             try {
                 csvReader = new CSVReader(new FileReader(file));
-                csvWriter = new CSVWriter(new FileWriter(file));
-                while(csvReader.readNext() != null){
-                    String[] nextLine = csvReader.readNext();
+                csvWriter = new CSVWriter(new FileWriter(file, true));
+                csvReader.forEach(nextLine -> {
                     treeMap.put(Double.parseDouble(nextLine[0]), Double.parseDouble(nextLine[1]));
-                }
+                });
             }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
