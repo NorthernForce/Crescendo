@@ -3,7 +3,6 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
@@ -29,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.FollowNote;
-import frc.robot.commands.NFRWristContinuous;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.PurgeIntake;
@@ -53,6 +51,7 @@ import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.ExponentialRegressive;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.TargetingCalculator;
 import frc.robot.utils.InterpolatedTargetingCalculator;
@@ -84,9 +83,12 @@ public class CrabbyContainer implements RobotContainer
 
         intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
 
+        angleCalculator = new ExponentialRegressive("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
-        wristJoint.setDefaultCommand(new NFRWristContinuous(wristJoint, () -> Optional.of(0.0))
+        wristJoint.setDefaultCommand(new NFRWristContinuousAngle(wristJoint, () -> Rotation2d.fromDegrees(angleCalculator.getValueForDistance(lastRecordedDistance)))
             .alongWith(Commands.runOnce(() -> manualWrist = false)));
+            Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
+                () -> wristJoint.getRotation().getRadians()));
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
@@ -109,6 +111,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
+        
         Shuffleboard.getTab("General").addDouble("Distance",
             () ->
             {
@@ -129,9 +132,7 @@ public class CrabbyContainer implements RobotContainer
         speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");
         Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> lastRecordedDistance,
             () -> shooterSpeed.getDouble(30)).ignoringDisable(true));
-        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
-        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
-            () -> wristJoint.getRotation().getRadians()));
+
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
