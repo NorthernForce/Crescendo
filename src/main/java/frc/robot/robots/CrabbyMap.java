@@ -23,12 +23,16 @@ public class CrabbyMap {
 
     public final NFRGyro gyro = new NFRPigeon2(1);
     public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 18);
+    {
+        intakeMotor.setSmartCurrentLimit(40);
+    }
     public final NFRBeamBreak intakeBeamBreak = new NFRBeamBreak(7);
 
     public final NFRTalonFX shooterMotorTop = new NFRTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 22);
     public final NFRTalonFX shooterMotorBottom = new NFRTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 23);
     public final NFRSparkMax wristSparkMax = new NFRSparkMax(MotorType.kBrushless, 14);
     {
+        wristSparkMax.setSmartCurrentLimit(40);
         wristSparkMax.setIdleMode(IdleMode.kBrake);
     }
 }
