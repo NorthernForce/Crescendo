@@ -3,7 +3,6 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
@@ -23,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
-import frc.robot.commands.NFRWristContinuous;
+import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.auto.Autos;
 import frc.robot.constants.CrabbyConstants;
@@ -41,6 +40,7 @@ import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.ExponentialRegressive;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.TargetingCalculator;
 import frc.robot.utils.InterpolatedTargetingCalculator;
@@ -74,13 +74,15 @@ public class CrabbyContainer implements RobotContainer
 
         intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
 
+        angleCalculator = new ExponentialRegressive("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
-        wristJoint.setDefaultCommand(new NFRWristContinuous(wristJoint, () -> Optional.of(0.0))
+        wristJoint.setDefaultCommand(new NFRWristContinuousAngle(wristJoint, () -> Rotation2d.fromDegrees(angleCalculator.getValueForDistance(lastRecordedDistance)))
             .alongWith(Commands.runOnce(() -> manualWrist = false)));
+            Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
+                () -> wristJoint.getRotation().getRadians()));
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
-        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
         Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
             () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
