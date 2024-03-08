@@ -280,7 +280,7 @@ public class CrabbyContainer implements RobotContainer
     public List<AutonomousRoutine> getAutonomousRoutines() {
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
-        routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose,
+        routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose,
             CrabbyConstants.DriveConstants.holonomicDriveController, intake,
             CrabbyConstants.IntakeConstants.intakeSpeed, shooter, wristJoint));
         return routines;

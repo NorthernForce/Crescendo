@@ -29,7 +29,7 @@ public class FixedShot extends SequentialCommandGroup {
         addCommands(
             new ParallelCommandGroup(
                 new NFRRotatingArmJointSetAngle(wrist, targetAngle, angularTolerance, 0, true),
-                new RampShooter(shooter, intakeSpeed, shooterTolerance)
+                new RampShooter(shooter, shooterSpeed, shooterTolerance)
             ),
             new ShootIntake(intake, intakeSpeed),
             new WaitCommand(clearanceTime)

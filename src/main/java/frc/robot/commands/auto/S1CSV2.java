@@ -65,11 +65,11 @@ public class S1CSV2 extends SequentialCommandGroup
         addCommands(
             new CloseShot(shooter, wristJoint, intake),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[0], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, true),
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, false),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[1], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, true),
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, false),
             new NFRSwerveDriveFollowPath(drive, setStateCommands, paths[2], poseSupplier, controller,
-                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, true),
+                () -> Rotation2d.fromDegrees(0), 0.1, shouldFlipPath, false),
             new NFRSwerveDriveStop(drive, setStateCommands, true)
         );
     }
