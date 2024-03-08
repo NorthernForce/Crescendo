@@ -4,6 +4,7 @@ import org.northernforce.subsystems.arm.NFRRotatingArmJoint.NFRRotatingArmJointC
 
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -20,7 +21,12 @@ import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
 import frc.robot.subsystems.Xavier.XavierConfiguration;
 
 public class CrabbyConstants {
-    public static final TalonFXConfiguration defaultTalonConfiguration = new TalonFXConfiguration(); // TODO: if necessary,
+    public static final TalonFXConfiguration defaultTalonConfiguration = new TalonFXConfiguration()
+        .withCurrentLimits(new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(40)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentThreshold(40)
+            .withSupplyTimeThreshold(0.5)); // TODO: if necessary,
         // add some common configurations to this
     public static class DriveConstants {
         public static final Translation2d[] offsets = new Translation2d[] {

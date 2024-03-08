@@ -36,8 +36,8 @@ public class SwerveModuleHelpers
             .withMaxSpeed(Mk3SwerveConstants.kDriveMaxSpeed);
         
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-        driveConfig.CurrentLimits.SupplyCurrentLimit = 60;
-        driveConfig.CurrentLimits.SupplyCurrentThreshold = 90;
+        driveConfig.CurrentLimits.SupplyCurrentLimit = 40;
+        driveConfig.CurrentLimits.SupplyCurrentThreshold = 40;
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         driveConfig.Audio.AllowMusicDurDisable = true;
@@ -55,8 +55,8 @@ public class SwerveModuleHelpers
         driveMotor.setInverted(invertDrive);
 
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
-        turnConfig.CurrentLimits.SupplyCurrentLimit = 60;
-        turnConfig.CurrentLimits.SupplyCurrentThreshold = 90;
+        turnConfig.CurrentLimits.SupplyCurrentLimit = 40;
+        turnConfig.CurrentLimits.SupplyCurrentThreshold = 40;
         turnConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         turnConfig.Audio.AllowMusicDurDisable = true;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -105,8 +105,8 @@ public class SwerveModuleHelpers
             .withMOIs(1.2, 1.2)
             .withMaxSpeed(Mk4iConstants.kMaxDriveSpeed);
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-        driveConfig.CurrentLimits.SupplyCurrentLimit = 60;
-        driveConfig.CurrentLimits.SupplyCurrentThreshold = 90;
+        driveConfig.CurrentLimits.SupplyCurrentLimit = 40;
+        driveConfig.CurrentLimits.SupplyCurrentThreshold = 40;
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         driveConfig.Audio.AllowMusicDurDisable = true;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -120,8 +120,8 @@ public class SwerveModuleHelpers
             Mk4iConstants.kDriveGearRatioL3);
         driveMotor.setInverted(invertDrive);
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
-        turnConfig.CurrentLimits.SupplyCurrentLimit = 60;
-        turnConfig.CurrentLimits.SupplyCurrentThreshold = 90;
+        turnConfig.CurrentLimits.SupplyCurrentLimit = 40;
+        turnConfig.CurrentLimits.SupplyCurrentThreshold = 40;
         turnConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         turnConfig.Audio.AllowMusicDurDisable = true;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
