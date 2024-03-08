@@ -4,6 +4,7 @@ package frc.robot.dashboard.sendables;
 import java.util.function.Function;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
 
 public class ObjectHolder<T> implements AutoCloseable {
@@ -11,14 +12,24 @@ public class ObjectHolder<T> implements AutoCloseable {
     public GenericEntry entry;
     public NetworkTableValue internal;
     public T value;
+    private Function<T, NetworkTableValue> setterProcess;
+    private Function<NetworkTableValue, T> getterProcess;
 
     /**
-   * Package-local constructor.
-   *
-   * @param name name
-   */
-    public ObjectHolder(String name) {
+     * Package-local constructor.
+     *
+     * @param name name
+     * Sets the value of the entry.
+     * @param setter this is the function to convert from T to {@link NetworkTableValue}.
+     * You can use the format `NetworkTableValue::makeYOUR_TYPE_HERE`
+     * @param getter this is the function to convert from {@link NetworkTableValue} to a T.
+     * You can use the format `ObjectHolder::getYOUR_TYPE_HERE`
+     */
+    public ObjectHolder(String name, Function<T, NetworkTableValue> setter, Function<NetworkTableValue, T> getter) {
         this.name = name;
+        this.setterProcess = setter;
+        this.getterProcess = getter;
+
     }
 
     @Override
@@ -41,6 +52,15 @@ public class ObjectHolder<T> implements AutoCloseable {
         updateEntryNetwork(false);
     }
 
+    public synchronized void setValue(T val) {
+        this.value = val;
+        updateEntry(setterProcess, false);
+    }
+
+    public void init(NetworkTable table) {
+        entry = table.getTopic(name).getGenericEntry();
+    }
+
     /**
      * Sets the value of the entry.
      * @param process this is the function to convert from T to {@link NetworkTableValue}.
@@ -49,6 +69,11 @@ public class ObjectHolder<T> implements AutoCloseable {
     public synchronized void setValue(T val, Function<T, NetworkTableValue> process) {
         this.value = val;
         updateEntry(process, false);
+    }
+
+     public synchronized void setDefault(T val) {
+        this.value = val;
+        updateEntry(setterProcess, true);
     }
 
      /**
@@ -81,6 +106,11 @@ public class ObjectHolder<T> implements AutoCloseable {
      */
     public synchronized T getValue(Function<NetworkTableValue, T> process) {
         updateFromEntry(process);
+        return value;
+    }
+
+    public synchronized T getValue() {
+        updateFromEntry(getterProcess);
         return value;
     }
 

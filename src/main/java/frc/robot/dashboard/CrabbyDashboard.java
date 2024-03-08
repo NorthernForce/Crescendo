@@ -5,6 +5,7 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.dashboard.sendables.Camera;
+import frc.robot.dashboard.sendables.StatusLightManager;
 import frc.robot.utils.AutonomousRoutine;
 
 /**
@@ -15,6 +16,7 @@ public class CrabbyDashboard extends Dashboard
     protected final Field2d field;
     protected final Field2d autoField;
     protected final Camera camera;
+    protected final StatusLightManager statusLightManager;
     /**
      * Creates a new CrabbyDashboard
      */
@@ -24,6 +26,7 @@ public class CrabbyDashboard extends Dashboard
         field = new Field2d();
         autoField = new Field2d();
         camera = new Camera();
+        statusLightManager = new StatusLightManager(this); //adds all status lights
         addSendable("Field", field);
         addSendable("auto_field", autoField);
         addSendable("Camera", camera);

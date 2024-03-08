@@ -11,7 +11,7 @@ public class Camera implements NTSendable, AutoCloseable {
     private ObjectHolder<String[]> srcArr;
 
     public Camera() {
-        srcArr = new ObjectHolder<String[]>("srcs");
+        srcArr = new ObjectHolder<String[]>("srcs", NetworkTableValue::makeStringArray, ObjectHolder::getStringArray);
     }
 
     @Override
@@ -26,8 +26,8 @@ public class Camera implements NTSendable, AutoCloseable {
         synchronized (this) {
             table = builder.getTable();
             synchronized (srcArr) {
-                srcArr.entry = table.getTopic(srcArr.name).getGenericEntry();
-                srcArr.setDefault(new String[] {},  NetworkTableValue::makeStringArray);
+                srcArr.init(table);
+                srcArr.setDefault(new String[] {});
             }
 
             // synchronized (obj) {
