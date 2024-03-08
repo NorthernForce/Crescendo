@@ -59,6 +59,7 @@ public class CrabbyContainer implements RobotContainer
 {
     protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
+    protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
 
     protected final OrangePi orangePi;
     protected final Xavier xavier;
@@ -95,6 +96,12 @@ public class CrabbyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
             new NFRSwerveModuleSetState(map.modules[2], 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 0, false)
+        };
+        setStateCommandsVelocity = new NFRSwerveModuleSetState[] {
+            new NFRSwerveModuleSetState(map.modules[0], 0, 0, false),
+            new NFRSwerveModuleSetState(map.modules[1], 0, 0, false),
+            new NFRSwerveModuleSetState(map.modules[2], 0, 0, false),
+            new NFRSwerveModuleSetState(map.modules[3], 0, 0, false)
         };
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 

@@ -110,7 +110,9 @@ public class SwerveModuleHelpers
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         driveConfig.Audio.AllowMusicDurDisable = true;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        driveConfig.Slot0.kP = Mk4iConstants.kDriveP;
+        driveConfig.Slot0.kP = 0.01;
+        driveConfig.Slot0.kI = 0.1;
+        driveConfig.Slot0.kV = 0.01;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.1;
         NFRTalonFX driveMotor = new NFRTalonFX(canbus, driveConfig, driveID);
