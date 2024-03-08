@@ -91,6 +91,9 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
+        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
+        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
+            () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
@@ -133,9 +136,7 @@ public class CrabbyContainer implements RobotContainer
         speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");
         Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> lastRecordedDistance,
             () -> shooterSpeed.getDouble(30)).ignoringDisable(true));
-        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
-        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
-            () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
+        
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");

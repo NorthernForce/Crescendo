@@ -55,7 +55,14 @@ public class InterpolatedTargetingCalculator implements TargetingCalculator{
      */
     @Override
     public double getValueForDistance(double distance){
-        return treeMap.get(distance);
+        try {
+            return treeMap.get(distance);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     /**
