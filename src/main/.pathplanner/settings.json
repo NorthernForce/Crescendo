@@ -1,0 +1,24 @@
+{
+  "robotWidth": 0.9,
+  "robotLength": 0.9,
+  "holonomicMode": true,
+  "pathFolders": [
+    "S2.CS.V2",
+    "S1.CS.V1.new",
+    "S1.CS.V2.new",
+    "S1.L.V1",
+    "S1.L.V2",
+    "S1.LS.new ",
+    "S2.CS.V1",
+    "S2.T Pain + the voices won't go away",
+    "S3.LS.V1",
+    "S3.S.V1G7",
+    "S3.S.V2G8"
+  ],
+  "autoFolders": [],
+  "defaultMaxVel": 3.0,
+  "defaultMaxAccel": 3.0,
+  "defaultMaxAngVel": 540.0,
+  "defaultMaxAngAccel": 720.0,
+  "maxModuleSpeed": 4.5
+}

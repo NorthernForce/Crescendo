@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0341427302071695,
-        "y": 5.62867536173981
+        "x": 8.28973292584782,
+        "y": 5.7844864444177295
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.540528748910404,
-        "y": 7.410764619868505
+        "x": 4.189953812885087,
+        "y": 7.060189683843188
       },
       "isLocked": false,
-      "linkedName": "S1.L.5"
+      "linkedName": "S2.T.6"
     },
     {
       "anchor": {
-        "x": 2.9045123807922586,
-        "y": 7.011498720506339
+        "x": 2.242315279411105,
+        "y": 5.297576811049233
       },
       "prevControl": {
-        "x": 4.910580070270461,
-        "y": 6.651185591813652
+        "x": 4.482099592906184,
+        "y": 5.774748251750359
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "S1.L.6"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.35,
-      "rotationDegrees": 175.4790421004187,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -88.83086067209261,
+    "rotation": -4.864514437760495,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S1.L.V1",
+  "folder": "S2.T Pain + the voices won't go away",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
