@@ -53,7 +53,6 @@ public class SwervyContainer implements RobotContainer
     public final Notifier flushNotifier;
     public final SwervyMap map;
     public final SwervyDashboard dashboard;
-    public double lastRecordedDistance = 0;
     public SwervyOI oi;
     public SwervyContainer()
     {
@@ -86,16 +85,8 @@ public class SwervyContainer implements RobotContainer
         dashboard.register(orangePi);
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addDouble("Distance",
-            () ->
-            {
-                var distance =
-                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
-                if (distance.isPresent())
-                {
-                    lastRecordedDistance = distance.get();
-                }
-                return lastRecordedDistance;
-            });
+            () -> aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch)
+                .orElse(0.0));
 
         xavier = new Xavier(SwervyConstants.XavierConstants.config);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", xavier::isConnected);

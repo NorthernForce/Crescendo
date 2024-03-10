@@ -62,7 +62,6 @@ public class CrabbyContainer implements RobotContainer
     public final Intake intake;
     public final Shooter shooter;
     public boolean manualWrist;
-    public double lastRecordedDistance = 0;
     public final GenericEntry shooterSpeed;
     public final TargetingCalculator speedCalculator;
     public final TargetingCalculator angleCalculator;
@@ -73,6 +72,15 @@ public class CrabbyContainer implements RobotContainer
 
         map = new CrabbyMap();
 
+        orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera", 0.75);
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
+        dashboard.register(orangePi);
+        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addDouble("Distance",
+            () -> aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch)
+                .orElse(0.0));
+
         intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
 
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
@@ -82,7 +90,9 @@ public class CrabbyContainer implements RobotContainer
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
         angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
-        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
+        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator,
+            () -> aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch)
+                .orElse(0.0),
             () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
@@ -101,22 +111,6 @@ public class CrabbyContainer implements RobotContainer
         };
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
-        orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera", 0.75);
-        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
-        dashboard.register(orangePi);
-        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
-        Shuffleboard.getTab("General").addDouble("Distance",
-            () ->
-            {
-                var distance =
-                    aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch);
-                if (distance.isPresent())
-                {
-                    lastRecordedDistance = distance.get();
-                }
-                return lastRecordedDistance;
-            });
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
@@ -124,7 +118,9 @@ public class CrabbyContainer implements RobotContainer
         shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
         speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");
-        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> lastRecordedDistance,
+        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(speedCalculator,
+            () -> aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch)
+                .orElse(0.0),
             () -> shooterSpeed.getDouble(30)).ignoringDisable(true));
         
         SendableChooser<String> musicChooser = new SendableChooser<>();

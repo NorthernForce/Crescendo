@@ -52,9 +52,13 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
             container.aprilTagCamera::getSpeakerTag, true, true)
             .alongWith(new RampShooterContinuous(container.shooter,
-                () -> container.speedCalculator.getValueForDistance(container.lastRecordedDistance)))
+                () -> container.speedCalculator.getValueForDistance(
+                    container.aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch)
+                        .orElse(0.0))))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(
+                    container.aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch)
+                        .orElse(0.0))))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
@@ -110,9 +114,13 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
             container.aprilTagCamera::getSpeakerTag, true, true)
             .alongWith(new RampShooterContinuous(container.shooter,
-                () -> container.speedCalculator.getValueForDistance(container.lastRecordedDistance)))
+                () -> container.speedCalculator.getValueForDistance(
+                    container.aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch)
+                        .orElse(0.0))))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(
+                    container.aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch)
+                        .orElse(0.0))))));
         
         controller.povLeft().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
