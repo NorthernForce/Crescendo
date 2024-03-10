@@ -18,8 +18,6 @@ import frc.robot.commands.RampShooterContinuous;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIndexerAndIntake;
-import frc.robot.commands.RunIntake;
-import frc.robot.commands.ShootIndexer;
 import frc.robot.commands.ShootIndexerAndIntake;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.constants.CrabbyConstants;
@@ -96,6 +94,9 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> container.manualWrist = true)));
+        
+        controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
+            .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
 
         controller.leftBumper().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
@@ -112,9 +113,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> container.speedCalculator.getValueForDistance(container.lastRecordedDistance)))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
-        
-        controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-            .onTrue(new ShootIndexer(container.indexer, CrabbyConstants.IndexerConstants.indexerShootSpeed));
         
         controller.povLeft().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
