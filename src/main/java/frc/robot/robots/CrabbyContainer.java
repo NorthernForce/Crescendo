@@ -273,7 +273,7 @@ public class CrabbyContainer implements RobotContainer
     public void periodic()
     {
         orangePi.setOdometry(drive.getChassisSpeeds());
-        orangePi.setIMU(drive.getRotation());
+        orangePi.setIMU(drive.getRotation(), map.gyro.getGyroAcceleration().rotateBy(CrabbyConstants.DriveConstants.gyroRotation.unaryMinus()));
         dashboard.updateRobotPose(orangePi.getPose());
     }
     @Override

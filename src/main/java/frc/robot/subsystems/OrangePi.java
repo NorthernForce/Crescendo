@@ -11,12 +11,14 @@ import org.northernforce.subsystems.NFRSubsystem;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.geometry.struct.Twist2dStruct;
+import edu.wpi.first.math.geometry.struct.Twist3dStruct;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -75,7 +77,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     }
     protected final NetworkTable table;
     protected final StructPublisher<Twist2d> odometryPublisher;
-    protected final DoublePublisher imuPublisher;
+    protected final StructPublisher<Twist3d> imuPublisher;
     protected final StructSubscriber<Twist2d> cmdVelSubscriber;
     protected final StructPublisher<Pose2d> globalPosePublisher, targetPosePublisher;
     protected final IntegerPublisher odometryStamp, imuStamp, globalPoseStamp, targetPoseStamp;
@@ -97,7 +99,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         targetPoseCancel = table.getBooleanTopic("target_pose_cancel").publish();
         globalPosePublisher = table.getStructTopic("global_set_pose", new Pose2dStruct()).publish();
         globalPoseStamp = table.getIntegerTopic("global_pose_stamp").publish();
-        imuPublisher = table.getDoubleTopic("imu").publish();
+        imuPublisher = table.getStructTopic("imu", new Twist3dStruct()).publish();
         imuStamp = table.getIntegerTopic("imu_stamp").publish();
         cmdVelSubscriber = table.getStructTopic("cmd_vel", new Twist2dStruct()).subscribe(new Twist2d());
         poseSubscriber = table.getStructTopic("pose", new Pose2dStruct()).subscribe(new Pose2d());
@@ -120,9 +122,16 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
      * @param rotation of the robot
      * @param stamp in seconds
      */
-    public void setIMU(Rotation2d rotation)
+    public void setIMU(Rotation2d rotation, Translation3d acceleration)
     {
-        imuPublisher.set(rotation.getRadians());
+        imuPublisher.set(new Twist3d(
+            acceleration.getX(),
+            acceleration.getY(),
+            acceleration.getZ(),
+            0,
+            0,
+            rotation.getRadians()
+        ));
         imuStamp.set((long)(Timer.getFPGATimestamp() * 1e9));
     }
     /**

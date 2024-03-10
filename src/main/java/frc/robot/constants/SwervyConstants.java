@@ -5,6 +5,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PIDConstants;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
@@ -27,6 +28,7 @@ public class SwervyConstants
             new PIDConstants(5, 0, 0), // Rotational pid constants
             6, // Max Module Speed
             offsets[0].getDistance(new Translation2d())); // Distance from center
+        public static final Rotation3d gyroRotation = new Rotation3d(0, 0, Math.toRadians(90)); // GYRO Rotation
     }
     public static class OrangePiConstants
     {

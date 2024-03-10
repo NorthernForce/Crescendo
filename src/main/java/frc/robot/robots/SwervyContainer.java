@@ -197,7 +197,7 @@ public class SwervyContainer implements RobotContainer
     public void periodic()
     {
         orangePi.setOdometry(drive.getChassisSpeeds());
-        orangePi.setIMU(drive.getRotation());
+        orangePi.setIMU(drive.getRotation(), map.gyro.getGyroAcceleration().rotateBy(SwervyConstants.DriveConstants.gyroRotation.unaryMinus()));
         NetworkTableInstance.getDefault().flush();
         field.setRobotPose(orangePi.getPose());
         dashboard.updateRobotPose(orangePi.getPose());

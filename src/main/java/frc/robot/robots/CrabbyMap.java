@@ -1,6 +1,5 @@
 package frc.robot.robots;
 
-import org.northernforce.gyros.NFRGyro;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.motors.NFRTalonFX;
 
@@ -21,7 +20,7 @@ public class CrabbyMap {
         SwerveModuleHelpers.createMk4iL3("Back Right", 3, 7, 11, true, "drive"),
     };
 
-    public final NFRGyro gyro = new NFRPigeon2(1);
+    public final NFRPigeon2 gyro = new NFRPigeon2(1);
     public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 18);
     {
         intakeMotor.setSmartCurrentLimit(40);

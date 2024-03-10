@@ -2,6 +2,8 @@ package frc.robot.gyros;
 
 import org.northernforce.gyros.NFRGyro;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 public class NFRPigeon2 extends Pigeon2 implements NFRGyro
 {
     protected final Pigeon2SimState simState;
+    protected final StatusSignal<Double> accelX, accelY, accelZ;
     /**
      * Constructs a new pigeon2 on the roborio bus
      * @param deviceId the id of the pigeon2
@@ -32,6 +35,10 @@ public class NFRPigeon2 extends Pigeon2 implements NFRGyro
         {
             simState = null;
         }
+        accelX = getAccelerationX();
+        accelY = getAccelerationY();
+        accelZ = getAccelerationZ();
+        BaseStatusSignal.setUpdateFrequencyForAll(50, accelX, accelY, accelZ);
     }
     /**
      * Constructs a new pigeon2 on the roborio bus
@@ -50,6 +57,10 @@ public class NFRPigeon2 extends Pigeon2 implements NFRGyro
         {
             simState = null;
         }
+        accelX = getAccelerationX();
+        accelY = getAccelerationY();
+        accelZ = getAccelerationZ();
+        BaseStatusSignal.setUpdateFrequencyForAll(50, accelX, accelY, accelZ);
     }
     /**
      * Constructs a new pigeon2
@@ -67,6 +78,10 @@ public class NFRPigeon2 extends Pigeon2 implements NFRGyro
         {
             simState = null;
         }
+        accelX = getAccelerationX();
+        accelY = getAccelerationY();
+        accelZ = getAccelerationZ();
+        BaseStatusSignal.setUpdateFrequencyForAll(50, accelX, accelY, accelZ);
     }
     /**
      * Constructs a new pigeon2
@@ -86,6 +101,10 @@ public class NFRPigeon2 extends Pigeon2 implements NFRGyro
         {
             simState = null;
         }
+        accelX = getAccelerationX();
+        accelY = getAccelerationY();
+        accelZ = getAccelerationZ();
+        BaseStatusSignal.setUpdateFrequencyForAll(50, accelX, accelY, accelZ);
     }
     /**
      * Gets the current yaw angle of the gyroscope. Applies offset.
@@ -111,6 +130,14 @@ public class NFRPigeon2 extends Pigeon2 implements NFRGyro
      */
     @Override
     public Translation3d getGyroVelocity()
+    {
+        return new Translation3d(0, 0, 0); // TODO
+    }
+    /**
+     * Gets the current velocities recorded by the gyroscope. May be more or less accurate than odometry.
+     * @return a Translation 3d containing the forward movement, left to right movement, and the vertical velocity
+     */
+    public Translation3d getGyroAcceleration()
     {
         return new Translation3d(0, 0, 0); // TODO
     }

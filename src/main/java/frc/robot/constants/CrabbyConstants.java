@@ -14,6 +14,7 @@ import com.pathplanner.lib.util.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -42,6 +43,7 @@ public class CrabbyConstants {
             new PIDConstants(5, 0, 0), // Rotational pid constants TODO: needs to be properly tuned
             6, // Max Module Speed TODO: needs to be properly tuned
             offsets[0].getDistance(new Translation2d())); // Distance from center
+        public static final Rotation3d gyroRotation = new Rotation3d(0, 0, Math.toRadians(90)); // GYRO Rotation
     }
     public static class IntakeConstants
     {
