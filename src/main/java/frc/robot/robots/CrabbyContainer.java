@@ -5,49 +5,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
-import org.northernforce.commands.NFRRotatingArmJointSetAngle;
-import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
-import org.northernforce.commands.NFRSwerveDriveStop;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.FieldConstants;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
-import frc.robot.commands.DriveWithOrangePi;
-import frc.robot.commands.FollowNote;
 import frc.robot.commands.NFRWristContinuous;
-import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.OrchestraCommand;
-import frc.robot.commands.PurgeIntake;
-import frc.robot.commands.RumbleController;
-import frc.robot.commands.RunIntake;
-import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.auto.Autos;
-import frc.robot.commands.ShootIntake;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
+import frc.robot.oi.CrabbyOI;
+import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.RampShooterContinuous;
-import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RestShooter;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
@@ -63,24 +47,25 @@ import frc.robot.utils.InterpolatedTargetingCalculator;
 
 public class CrabbyContainer implements RobotContainer
 {
-    protected final SwerveDrive drive;
-    protected final NFRSwerveModuleSetState[] setStateCommands;
-    protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
+    public final SwerveDrive drive;
+    public final NFRSwerveModuleSetState[] setStateCommands;
+    public final NFRSwerveModuleSetState[] setStateCommandsVelocity;
 
-    protected final OrangePi orangePi;
-    protected final Xavier xavier;
-    protected final TargetCamera aprilTagCamera;
-    protected final PoseSupplier aprilTagSupplier;
-    protected final WristJoint wristJoint;
-    protected final CrabbyMap map;
-    protected final CrabbyDashboard dashboard;
-    protected final Intake intake;
-    protected final Shooter shooter;
-    protected boolean manualWrist;
-    protected double lastRecordedDistance = 0;
-    protected final GenericEntry shooterSpeed;
-    protected final TargetingCalculator speedCalculator;
-    protected final TargetingCalculator angleCalculator;
+    public final OrangePi orangePi;
+    public final Xavier xavier;
+    public final TargetCamera aprilTagCamera;
+    public final PoseSupplier aprilTagSupplier;
+    public final WristJoint wristJoint;
+    public final CrabbyMap map;
+    public final CrabbyDashboard dashboard;
+    public final Intake intake;
+    public final Shooter shooter;
+    public boolean manualWrist;
+    public double lastRecordedDistance = 0;
+    public final GenericEntry shooterSpeed;
+    public final TargetingCalculator speedCalculator;
+    public final TargetingCalculator angleCalculator;
+    public CrabbyOI oi;
     public CrabbyContainer()
     {
         dashboard = new CrabbyDashboard();
@@ -131,17 +116,6 @@ public class CrabbyContainer implements RobotContainer
                 }
                 return lastRecordedDistance;
             });
-        Shuffleboard.getTab("General").add("Press Me", 
-            new DriveWithOrangePi(drive, setStateCommandsVelocity, orangePi, () -> {
-                if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
-                {
-                    return FieldConstants.AmpPositions.redAmp;
-                }
-                else
-                {
-                    return FieldConstants.AmpPositions.blueAmp;
-                }
-            }, 0.1, Rotation2d.fromDegrees(90)));
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
@@ -173,118 +147,44 @@ public class CrabbyContainer implements RobotContainer
         
     }
     @Override
+    @Deprecated
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
     {
-        if (driverHID instanceof XboxController)
+    }
+    @Override
+    public void bindOI()
+    {
+        oi = new DefaultCrabbyOI();
+        if (DriverStation.getJoystickIsXbox(0))
         {
-            XboxController driverController = (XboxController)driverHID;
-            drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
-                () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), true, true));
-            
-            new JoystickButton(driverController, XboxController.Button.kB.value)
-                .onTrue(Commands.runOnce(drive::clearRotation, drive));
-            
-            new JoystickButton(driverController, XboxController.Button.kY.value)
-                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            
-            new JoystickButton(driverHID, XboxController.Button.kA.value)
-                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
-                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
-            
-            new Trigger(() -> driverController.getLeftTriggerAxis() > 0.4)
-                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
-            
-            new Trigger(() -> intake.getBeamBreak().beamBroken())
-                .onTrue(new RumbleController(driverController, 0.5, 0.5));
-            
-            new JoystickButton(driverController, XboxController.Button.kBack.value)
-                .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
-            
-            new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
-                .whileTrue(new TurnToTarget(drive, setStateCommands, CrabbyConstants.DriveConstants.turnToTargetController, 
-                    () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
-                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
-                    () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
-                    aprilTagCamera::getSpeakerTag, true, true)
-                .alongWith(new RampShooterContinuous(shooter, () -> speedCalculator.getValueForDistance(lastRecordedDistance)))
-                .alongWith(new NFRWristContinuousAngle(wristJoint, () -> Rotation2d.fromRadians(angleCalculator.getValueForDistance(lastRecordedDistance)))));
-            
-            new Trigger(() -> driverController.getRightTriggerAxis() > 0.4)
-                .and(() -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-                .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
-            
-            new JoystickButton(driverController, XboxController.Button.kStart.value)
-                .toggleOnTrue(new RampShooterContinuous(shooter, () -> shooterSpeed.getDouble(30)));
-            
-            new Trigger(() -> driverController.getPOV() == 180)
-                .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
-                    CrabbyConstants.WristConstants.tolerance, 0, true)
-                .alongWith(new RampShooterContinuous(shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
-            
-            new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
-                .toggleOnTrue(new NFRRotatingArmJointSetAngle(wristJoint, CrabbyConstants.WristConstants.ampRotation,
-                    CrabbyConstants.WristConstants.tolerance, 0, true)
-                .alongWith(new RampShooterWithDifferential(shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
-                    () -> CrabbyConstants.ShooterConstants.ampBottomSpeed))
-                .alongWith(
-                    new DriveWithOrangePi(drive, setStateCommandsVelocity, orangePi, () -> {
-                        if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
-                        {
-                            return FieldConstants.AmpPositions.redAmp;
-                        }
-                        else
-                        {
-                            return FieldConstants.AmpPositions.blueAmp;
-                        }
-                    }, 0.1, Rotation2d.fromDegrees(90)))
-                );
+            oi.bindDriverToXBoxController(this, new CommandXboxController(0));
         }
         else
         {
-            drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
-                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(1), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(4), 0.1, 1), true, true));
-            
-            new JoystickButton(driverHID, XboxController.Button.kB.value)
-                .onTrue(Commands.runOnce(drive::clearRotation, drive));
-            
-            new JoystickButton(driverHID, XboxController.Button.kY.value)
-                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
+            oi.bindDriverToJoystick(this, new CommandGenericHID(0));
         }
-        if (manipulatorHID instanceof XboxController)
+        if (DriverStation.getJoystickIsXbox(1))
         {
-            XboxController manipulatorController = (XboxController)manipulatorHID;
-            new Trigger(() -> manipulatorController.getLeftTriggerAxis() > 0.4)
-                .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
-            
-            new Trigger(() -> intake.getBeamBreak().beamBroken())
-                .onTrue(new RumbleController(manipulatorController, 0.5, 0.5));
-            
-            new JoystickButton(manipulatorController, XboxController.Button.kX.value)
-                .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
-            
-            new JoystickButton(manipulatorController, XboxController.Button.kB.value)
-                .toggleOnTrue(new NFRRotatingArmJointWithJoystick(wristJoint,
-                    () -> -MathUtil.applyDeadband(manipulatorController.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> manualWrist = true)));
-            
-            new Trigger(() -> manipulatorController.getRightTriggerAxis() > 0.4)
-                .and(() -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-                .whileTrue(new ShootIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            oi.bindManipulatorToXboxController(this, new CommandXboxController(1));
+        }
+        else
+        {
+            oi.bindManipulatorToJoystick(this, new CommandGenericHID(1));
         }
     }
+    @Deprecated
     @Override
     public Map<String, Command> getAutonomousOptions()
     {
         return Map.of();
     }
+    @Deprecated
     @Override
     public Map<String, Pose2d> getStartingLocations()
     {
         return Map.of("Simple Starting Location", new Pose2d(5, 5, Rotation2d.fromDegrees(0)));
     }
+    @Deprecated
     @Override
     public Pair<String, Command> getDefaultAutonomous()
     {

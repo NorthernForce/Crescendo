@@ -1,9 +1,14 @@
 package frc.robot.utils;
 
 import java.util.List;
+import java.util.Map;
 
 import org.northernforce.util.NFRRobotContainer;
 
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.dashboard.Dashboard;
 
 /**
@@ -22,4 +27,20 @@ public interface RobotContainer extends NFRRobotContainer
      * @return Class that inherits from Dashboard
      */
     public Dashboard getDashboard();
+    /**
+     * Binds the operator interface
+     */
+    public void bindOI();
+    @Deprecated
+    @Override
+    public void bindOI(GenericHID driverHID, GenericHID manipulatorHID);
+    @Deprecated
+    @Override
+    public Map<String, Command> getAutonomousOptions();
+    @Override
+    @Deprecated
+    public Map<String, Pose2d> getStartingLocations();
+    @Override
+    @Deprecated
+    public Pair<String, Command> getDefaultAutonomous();
 }
