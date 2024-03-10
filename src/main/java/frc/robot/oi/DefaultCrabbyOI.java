@@ -6,11 +6,13 @@ import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.FollowNote;
+import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.commands.RampShooterWithDifferential;
@@ -48,7 +50,11 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
-            container.aprilTagCamera::getSpeakerTag, true, true));
+            container.aprilTagCamera::getSpeakerTag, true, true)
+            .alongWith(new RampShooterContinuous(container.shooter,
+                () -> container.speedCalculator.getValueForDistance(container.lastRecordedDistance)))
+            .alongWith(new NFRWristContinuousAngle(container.wristJoint,
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .whileTrue(new ShootIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));

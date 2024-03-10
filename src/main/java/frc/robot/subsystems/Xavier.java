@@ -46,7 +46,7 @@ public class Xavier extends NFRSubsystem implements AlertProvider
         super(config);
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable(config.tableName);
-        xRadSubscriber = table.getFloatTopic("note_rad").subscribe(0);
+        xRadSubscriber = table.getFloatTopic("note_rad").subscribe(Float.NaN);
         xavierDisconnected = new Alert(AlertType.kError, "Xavier is disconnected");
     }
     /**

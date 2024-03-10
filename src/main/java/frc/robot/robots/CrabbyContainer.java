@@ -43,11 +43,13 @@ import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.TargetingCalculator;
+import frc.robot.utils.InterpolatedTargetingCalculator;
 
 public class CrabbyContainer implements RobotContainer
 {
     public final SwerveDrive drive;
     public final NFRSwerveModuleSetState[] setStateCommands;
+    public final NFRSwerveModuleSetState[] setStateCommandsVelocity;
 
     public final OrangePi orangePi;
     public final Xavier xavier;
@@ -61,7 +63,8 @@ public class CrabbyContainer implements RobotContainer
     public boolean manualWrist;
     public double lastRecordedDistance = 0;
     public final GenericEntry shooterSpeed;
-    public final TargetingCalculator targetingCalculator;
+    public final TargetingCalculator speedCalculator;
+    public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
     public CrabbyContainer()
     {
@@ -77,6 +80,9 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
+        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
+        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
+            () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
@@ -85,6 +91,12 @@ public class CrabbyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
             new NFRSwerveModuleSetState(map.modules[2], 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 0, false)
+        };
+        setStateCommandsVelocity = new NFRSwerveModuleSetState[] {
+            new NFRSwerveModuleSetState(map.modules[0], 0, 0, false),
+            new NFRSwerveModuleSetState(map.modules[1], 0, 0, false),
+            new NFRSwerveModuleSetState(map.modules[2], 0, 0, false),
+            new NFRSwerveModuleSetState(map.modules[3], 0, 0, false)
         };
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
@@ -110,15 +122,16 @@ public class CrabbyContainer implements RobotContainer
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
         shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
-        targetingCalculator = new TargetingCalculator("/home/lvuser/speedData.csv");
-        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0,
-            () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
-
+        speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");
+        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> lastRecordedDistance,
+            () -> shooterSpeed.getDouble(30)).ignoringDisable(true));
+        
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
         musicChooser.addOption("The Office", "the-office.chrp");
         Shuffleboard.getTab("General").add("Music Selector", musicChooser);
+        Shuffleboard.getTab("Developer").add("Add Wrist and Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> 0, () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
         Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
             return new OrchestraCommand(musicChooser.getSelected(), List.of(
                 (NFRTalonFX)map.modules[0].getDriveController(),
