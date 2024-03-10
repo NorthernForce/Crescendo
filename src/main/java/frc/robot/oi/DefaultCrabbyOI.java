@@ -92,6 +92,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.back().whileTrue(new PurgeIntake(container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
         
+        controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.shooterSpeed.getDouble(30)));
+        
         controller.x().toggleOnTrue(new NFRRotatingArmJointWithJoystick(container.wristJoint,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> container.manualWrist = true)));
         
