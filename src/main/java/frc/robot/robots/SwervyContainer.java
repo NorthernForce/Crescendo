@@ -79,7 +79,7 @@ public class SwervyContainer implements RobotContainer
         Shuffleboard.getTab("General").add("Field", field);
 
         orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera", 0.75);
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
             drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
         });
@@ -174,6 +174,7 @@ public class SwervyContainer implements RobotContainer
     @Override
     public void periodic()
     {
+        aprilTagCamera.update();
         orangePi.setOdometry(drive.getChassisSpeeds());
         orangePi.setIMU(drive.getRotation());
         NetworkTableInstance.getDefault().flush();
