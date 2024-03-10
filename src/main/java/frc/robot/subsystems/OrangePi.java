@@ -2,7 +2,9 @@ package frc.robot.subsystems;
 
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -260,13 +262,19 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     public class TargetCamera
     {
         protected final StructArraySubscriber<TargetDetection> detections;
+        protected final Map<Integer, TargetDetection> cache;
+        protected final Map<Integer, Timer> cacheInvalidater;
+        protected final double timeToInvalidate;
         /**
          * Creates a new Target Camera.
          * @param name topic on nt to subscribe to
          */
-        public TargetCamera(String name)
+        public TargetCamera(String name, double timeToInvalidate)
         {
             detections = table.getStructArrayTopic(name, new TargetDetectionStruct()).subscribe(new TargetDetection[] {});
+            cache = new HashMap<>();
+            cacheInvalidater = new HashMap<>();
+            this.timeToInvalidate = timeToInvalidate;
         }
         /**
          * Returns the list of target detections.
@@ -274,7 +282,10 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
          */
         public TargetDetection[] getDetections()
         {
-            return detections.get();
+            synchronized (cache)
+            {
+                return cache.values().toArray(new TargetDetection[cache.values().size()]);
+            }
         }
         /**
          * Get a specific tag detection if present
@@ -316,6 +327,26 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         public Optional<TargetDetection> getSpeakerTag()
         {
             return getTarget(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7);
+        }
+        public void update()
+        {
+            synchronized (cache)
+            {
+                var detectionArray = detections.get();
+                for (var detection : detectionArray)
+                {
+                    cache.put(detection.fiducialID, detection);
+                    cacheInvalidater.putIfAbsent(detection.fiducialID, new Timer());
+                    cacheInvalidater.get(detection.fiducialID).restart();
+                }
+                for (var fiducialID : cache.keySet())
+                {
+                    if (cacheInvalidater.get(fiducialID).hasElapsed(timeToInvalidate))
+                    {
+                        cache.remove(fiducialID);
+                    }
+                }
+            }
         }
     }
     /**

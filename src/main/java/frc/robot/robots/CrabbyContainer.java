@@ -112,7 +112,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
         orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera", 0.75);
         aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
         dashboard.register(orangePi);
         Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
@@ -224,6 +224,7 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void periodic()
     {
+        aprilTagCamera.update();
         orangePi.setOdometry(drive.getChassisSpeeds());
         orangePi.setIMU(drive.getRotation());
         dashboard.updateRobotPose(orangePi.getPose());
