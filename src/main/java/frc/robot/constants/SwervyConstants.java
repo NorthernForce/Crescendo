@@ -2,7 +2,9 @@ package frc.robot.constants;
 import org.northernforce.subsystems.drive.NFRSwerveDrive.NFRSwerveDriveConfiguration;
 
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -27,6 +29,10 @@ public class SwervyConstants
             new PIDConstants(5, 0, 0), // Rotational pid constants
             6, // Max Module Speed
             offsets[0].getDistance(new Translation2d())); // Distance from center
+        public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
+            new PIDConstants(5),
+            new PIDConstants(5),
+            6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
     }
     public static class OrangePiConstants
     {
