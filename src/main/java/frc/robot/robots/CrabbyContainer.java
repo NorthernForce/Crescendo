@@ -131,6 +131,17 @@ public class CrabbyContainer implements RobotContainer
                 }
                 return lastRecordedDistance;
             });
+        Shuffleboard.getTab("General").add("Press Me", 
+            new DriveWithOrangePi(drive, setStateCommandsVelocity, orangePi, () -> {
+                if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
+                {
+                    return FieldConstants.AmpPositions.redAmp;
+                }
+                else
+                {
+                    return FieldConstants.AmpPositions.blueAmp;
+                }
+            }, 0.1, Rotation2d.fromDegrees(90)));
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
