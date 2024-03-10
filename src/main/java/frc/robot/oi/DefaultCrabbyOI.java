@@ -45,7 +45,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.back().whileTrue(new PurgeIntake(container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
         
-        controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
+        controller.rightBumper().toggleOnTrue(new TurnToTarget(container.drive, container.setStateCommands,
             CrabbyConstants.DriveConstants.turnToTargetController, 
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
@@ -57,11 +57,11 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-            .whileTrue(new ShootIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            .onTrue(new ShootIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
         
         controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.shooterSpeed.getDouble(30)));
         
-        controller.povDown().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
+        controller.povLeft().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
         
@@ -92,11 +92,31 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.back().whileTrue(new PurgeIntake(container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
         
-        controller.b().toggleOnTrue(new NFRRotatingArmJointWithJoystick(container.wristJoint,
-                () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> container.manualWrist = true)));
+        controller.x().toggleOnTrue(new NFRRotatingArmJointWithJoystick(container.wristJoint,
+            () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> container.manualWrist = true)));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-            .whileTrue(new ShootIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            .onTrue(new ShootIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+
+        controller.leftBumper().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
+            CrabbyConstants.WristConstants.tolerance, 0, true)
+            .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
+                () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
+        
+        controller.rightBumper().toggleOnTrue(new TurnToTarget(container.drive, container.setStateCommands,
+            CrabbyConstants.DriveConstants.turnToTargetController, 
+            () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
+            () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
+            () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
+            container.aprilTagCamera::getSpeakerTag, true, true)
+            .alongWith(new RampShooterContinuous(container.shooter,
+                () -> container.speedCalculator.getValueForDistance(container.lastRecordedDistance)))
+            .alongWith(new NFRWristContinuousAngle(container.wristJoint,
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+        
+        controller.povLeft().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
+            CrabbyConstants.WristConstants.tolerance, 0, true)
+            .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
     }
     @Override
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick)
