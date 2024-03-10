@@ -66,7 +66,6 @@ public class CrabbyContainer implements RobotContainer
     public final Indexer indexer;
     public final Shooter shooter;
     public boolean manualWrist;
-    public double lastRecordedDistance = 0;
     public final GenericEntry shooterSpeed;
     public final GenericEntry topRollerChange;
     public final TargetingCalculator bottomSpeedCalculator;
