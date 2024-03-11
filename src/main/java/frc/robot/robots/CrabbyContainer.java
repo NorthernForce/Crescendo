@@ -221,8 +221,6 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void setInitialPose(Pose2d pose)
     {
-        orangePi.setGlobalPose(pose);
-        drive.resetPose(pose);
     }
     @Override
     public void periodic()
