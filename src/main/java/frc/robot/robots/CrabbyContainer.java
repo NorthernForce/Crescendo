@@ -194,8 +194,6 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void setInitialPose(Pose2d pose)
     {
-        orangePi.setGlobalPose(pose);
-        drive.resetPose(pose);
     }
     @Override
     public void periodic()
@@ -208,7 +206,10 @@ public class CrabbyContainer implements RobotContainer
     public List<AutonomousRoutine> getAutonomousRoutines() {
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
-        routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose, drive::resetPose,
+        routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose, pose -> {
+                orangePi.setGlobalPose(pose);
+                drive.resetPose(pose);
+            },
             CrabbyConstants.DriveConstants.holonomicConfig, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, intake,
             CrabbyConstants.IntakeConstants.intakeSpeed, shooter, wristJoint));
         return routines;
