@@ -109,9 +109,10 @@ public class Autos
         double clearanceTime)
     {
         NamedCommands.registerCommand("intake", new RunIntake(intake, intakeSpeed));
-        NamedCommands.registerCommand("autoShot", new AutoShot(drive, setStateCommands, camera, shooter, intake, wrist, poseSupplier, controller,
-            true, false, tolerance, wristCalculator, speedCalculator, cameraHeight, cameraPitch, speedTolerance, intakeSpeed, wristTolerance, clearanceTime));
+        NamedCommands.registerCommand("autoShot", new ShootIntake(intake, intakeSpeed).andThen(Commands.waitSeconds(clearanceTime)));
         NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, intake));
+        NamedCommands.registerCommand("alignToGoal", new PrepAutoShot(drive, camera, poseSupplier, shooter, speedCalculator, wrist,
+            wristCalculator, cameraHeight, cameraPitch, tolerance, speedTolerance));
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
         ArrayList<AutonomousRoutine> autoRoutines = new ArrayList<>();
