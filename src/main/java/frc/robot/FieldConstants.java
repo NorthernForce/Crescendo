@@ -1,10 +1,14 @@
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class FieldConstants
 {
+    public static final AprilTagFieldLayout layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     public static class NotePositions
     {
         /**
@@ -40,5 +44,7 @@ public class FieldConstants
     public static class SpeakerConstants
     {
         public static final double speakerHeight = Units.inchesToMeters(57);
+        public static final Translation2d redSpeaker = layout.getTagPose(4).get().getTranslation().toTranslation2d();
+        public static final Translation2d blueSpeaker = layout.getTagPose(7).get().getTranslation().toTranslation2d();
     }
 }
