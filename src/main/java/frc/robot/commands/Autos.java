@@ -12,14 +12,18 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
+import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.TargetingCalculator;
 
 public class Autos
 {   
@@ -79,16 +83,35 @@ public class Autos
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
      * @param poseSupplier the supplier for pose estimation
-     * @param controller the controller for following the path
+     * @param resetPose the function to reset the pose
+     * @param config the configuration of the path following
+     * @param shouldFlipPath whether to flip the path (ie. red -> true, blue -> false)
      * @param intake the intake subsystem to be used
      * @param intakeSpeed speed at which to run the intake
+     * @param shooter the shooter subsystem
+     * @param wrist the wrist subsystem
+     * @param camera the camera for detecting apriltags
+     * @param controller the pid controller for following the apriltag
+     * @param tolerance the tolerance for the rotational aspect of the robot (yaw)
+     * @param wristTolerance the tolerance for the wrist when auto shooting
+     * @param speedTolerance the tolerance for the shooter speed
+     * @param speedCalculator the calculator for the speed based on distance
+     * @param wristCalculator the calculator for the wrist angle based on distance
+     * @param cameraHeight the height of the camera in meters
+     * @param cameraPitch the pitch of the camera
+     * @param clearanceTime the time after pushing the note out of the indexer to keep shooting
      * @return an list of AutonomousRoutines
      */
     public static List<AutonomousRoutine> getRoutines(SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
         Supplier<Pose2d> poseSupplier, Consumer<Pose2d> resetPose, HolonomicPathFollowerConfig config, BooleanSupplier shouldFlipPath, Intake intake,
-        double intakeSpeed, Shooter shooter, WristJoint wrist)
+        double intakeSpeed, Shooter shooter, WristJoint wrist, TargetCamera camera, PIDController controller, Rotation2d tolerance, Rotation2d wristTolerance,
+        double speedTolerance, TargetingCalculator speedCalculator, TargetingCalculator wristCalculator, double cameraHeight, Rotation2d cameraPitch,
+        double clearanceTime)
     {
         NamedCommands.registerCommand("intake", new RunIntake(intake, intakeSpeed));
+        NamedCommands.registerCommand("autoShot", new AutoShot(drive, setStateCommands, camera, shooter, intake, wrist, poseSupplier, controller,
+            true, false, tolerance, wristCalculator, speedCalculator, cameraHeight, cameraPitch, speedTolerance, intakeSpeed, wristTolerance, clearanceTime));
+        NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, intake));
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
         ArrayList<AutonomousRoutine> autoRoutines = new ArrayList<>();

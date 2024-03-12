@@ -208,7 +208,10 @@ public class CrabbyContainer implements RobotContainer
                 drive.resetPose(pose);
             },
             CrabbyConstants.DriveConstants.holonomicConfig, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, intake,
-            CrabbyConstants.IntakeConstants.intakeSpeed, shooter, wristJoint));
+            CrabbyConstants.IntakeConstants.intakeSpeed, shooter, wristJoint, aprilTagCamera, CrabbyConstants.DriveConstants.turnToTargetController,
+            Rotation2d.fromDegrees(5), CrabbyConstants.WristConstants.tolerance, CrabbyConstants.ShooterConstants.tolerance,
+            speedCalculator, angleCalculator, CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch,
+            CrabbyConstants.ShooterConstants.clearanceTime));
         return routines;
     }
     @Override
