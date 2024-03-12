@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.DoubleBinaryOperator;
 
 import org.opencv.core.Point;
 
@@ -19,8 +20,11 @@ public class ExponentialRegressive implements TargetingCalculator{
     private CSVReader csvReader;
     private CSVWriter csvWriter;
     private ArrayList<Point> points;
-    private String equation;
+    private DoubleBinaryOperator equation;
+    private static double b;
+    private static double a;
     public ExponentialRegressive(String filePath){
+        points = new ArrayList<Point>();
         if (!RobotBase.isSimulation())
         {
             file = new File(filePath);
@@ -59,7 +63,7 @@ public class ExponentialRegressive implements TargetingCalculator{
      */
     @Override
     public double getValueForDistance(double distance){
-        return Double.parseDouble(GroovyEpsilonAndSolver.GroovySolver(equation).toString());
+        return Double.parseDouble(EpsilonAndSolver.GroovySolver(equation + "" + distance + "))").toString());
     }
 
     /**
@@ -78,28 +82,41 @@ public class ExponentialRegressive implements TargetingCalculator{
                 e.printStackTrace();
             }
         }
-        equation = findRegressiveExponential(points);
     }
-    public static String findRegressiveExponential(ArrayList<Point> points)
-    {
-        double[] x = new double[points.size()];
-        double[] y = new double[points.size()];
-        for(int i = 0; i < points.size(); i++)
-        {
-            x[i] = points.get(i).x;
-            y[i] = points.get(i).y;
+    public static void findRegressiveExponential(ArrayList<Point> angleToDistances) {
+        if (angleToDistances.size() > 0) {
+            double[] m_x = new double[angleToDistances.size()];
+            double[] m_y = new double[angleToDistances.size()];
+            for (int i = 0; i < angleToDistances.size(); i++) {
+                m_x[i] = angleToDistances.get(i).x;
+                m_y[i] = angleToDistances.get(i).y;
+            }
+            int n = angleToDistances.size();
+            a = Math.exp((EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n+1,m_x,m_y) * (EpsilonAndSolver.epsilon((x,y) -> y*Math.log(y),1, n+1,m_x,m_y)) - 
+                (EpsilonAndSolver.epsilon((x,y) -> x*y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> x*y*Math.log(y),1, n+1,m_x,m_y))) / 
+                ((EpsilonAndSolver.epsilon((x,y) -> y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n+1,m_x,m_y)) - 
+                (Math.pow(EpsilonAndSolver.epsilon((x,y) -> x*y,1, n+1,m_x,m_y),2))));
+            b = ((EpsilonAndSolver.epsilon((x,y) -> y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> x*y*Math.log(y),1, n+1,m_x,m_y))-
+                (EpsilonAndSolver.epsilon((x,y) -> x*y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> y*Math.log(y),1, n+1,m_x,m_y)))/
+                ((EpsilonAndSolver.epsilon((x,y) -> y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n+1,m_x,m_y))-
+                (Math.pow(EpsilonAndSolver.epsilon((x,y) -> x*y,1, n+1,m_x,m_y),2)));
         }
-        int n = points.size();
-        double a = Math.exp((GroovyEpsilonAndSolver.epsilon("Math.pow(x,2)*y",1, n+1,x,y) * (GroovyEpsilonAndSolver.epsilon("y*Math.log(y)",1, n+1,x,y)) - 
-            (GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("x*y*Math.log(y)",1, n+1,x,y))) / 
-            ((GroovyEpsilonAndSolver.epsilon("y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("Math.pow(x,2)*y",1, n+1,x,y)) - 
-            (Math.pow(GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y),2))));
-        double b = ((GroovyEpsilonAndSolver.epsilon("y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("x*y*Math.log(y)",1, n+1,x,y))-
-            (GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("y*Math.log(y)",1, n+1,x,y)))/
-            ((GroovyEpsilonAndSolver.epsilon("y",1, n+1,x,y))*(GroovyEpsilonAndSolver.epsilon("Math.pow(x,2)*y",1, n+1,x,y))-
-            (Math.pow(GroovyEpsilonAndSolver.epsilon("x*y",1, n+1,x,y),2)));
-        String finalEquation = (a+"*Math.pow(Math.exp(1),(" + b + "*");
-        return finalEquation;
         
     }
-}
+    public static double getB()
+    {
+        return b;
+    }
+    public static double getA()
+    {
+        return a;
+    }
+    public static double getAngleForDistance(double distance)
+    {
+        return a*Math.pow(Math.exp(1), distance * b);
+    }
+    public static String getFunction()
+    {
+        return a + "e ^ (" + b + "x)";
+    }
+}    

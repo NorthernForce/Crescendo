@@ -1,18 +1,20 @@
 package frc.robot.utils;
 
+import java.util.function.DoubleBinaryOperator;
+
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
-public class GroovyEpsilonAndSolver {
-    public static double epsilon(String func, int indexStart, int indexEndOrN, double[] x, double[] y) {
-        Binding binding = new Binding();
-        GroovyShell shell = new GroovyShell(binding);
+public class EpsilonAndSolver {
+    public static double epsilon(DoubleBinaryOperator func, int indexStart, int indexEndOrN, double[] x, double[] y) {
         double result = 0;
-        String[] rewrittenFuncs = GroovyRewriteFunction.rewrite(func, x, y);
+        //String[] rewrittenFuncs = GroovyRewriteFunction.rewrite(func, x, y);
         for(int i = indexStart-1; i < indexEndOrN-1; i++)
         {
+            
+            //MemoryCalculator.calcStorage();
             try {
-                result+=Double.parseDouble(shell.evaluate(rewrittenFuncs[i]).toString());
+                result+= func.applyAsDouble(x[i], y[i]);//Double.parseDouble(shell.evaluate(rewrittenFuncs[i]).toString());
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }

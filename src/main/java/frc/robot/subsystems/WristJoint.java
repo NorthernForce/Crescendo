@@ -13,7 +13,6 @@ public class WristJoint extends NFRRotatingArmJoint
     public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig)
     {
         super(wristConfig, wristController, Optional.empty());
-        System.out.println("Made WristJoint object");
         try {
             wristController.setSelectedEncoder(wristController.getAbsoluteEncoder().get());
         } catch (MotorEncoderMismatchException e) {
