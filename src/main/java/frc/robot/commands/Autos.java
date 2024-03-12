@@ -14,7 +14,9 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.CrabbyConstants;
@@ -92,9 +94,23 @@ public class Autos
      * @param drive the drive subsystem
      * @param setStateCommands the commands to run each module
      * @param poseSupplier the supplier for pose estimation
-     * @param controller the controller for following the path
+     * @param resetPose the function to reset the pose
+     * @param config the configuration of the path following
+     * @param shouldFlipPath whether to flip the path (ie. red -> true, blue -> false)
      * @param intake the intake subsystem to be used
      * @param intakeSpeed speed at which to run the intake
+     * @param shooter the shooter subsystem
+     * @param wrist the wrist subsystem
+     * @param camera the camera for detecting apriltags
+     * @param controller the pid controller for following the apriltag
+     * @param tolerance the tolerance for the rotational aspect of the robot (yaw)
+     * @param wristTolerance the tolerance for the wrist when auto shooting
+     * @param speedTolerance the tolerance for the shooter speed
+     * @param speedCalculator the calculator for the speed based on distance
+     * @param wristCalculator the calculator for the wrist angle based on distance
+     * @param cameraHeight the height of the camera in meters
+     * @param cameraPitch the pitch of the camera
+     * @param clearanceTime the time after pushing the note out of the indexer to keep shooting
      * @return an list of AutonomousRoutines
      */
     public static List<AutonomousRoutine> getRoutines(SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
