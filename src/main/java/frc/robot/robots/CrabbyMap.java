@@ -15,10 +15,10 @@ import frc.robot.utils.SwerveModuleHelpers;
 
 public class CrabbyMap {
     public final SwerveModule[] modules = new SwerveModule[] {
-        SwerveModuleHelpers.createMk4iL2("Front Left", 1, 5, 9, true, "drive"),
-        SwerveModuleHelpers.createMk4iL2("Front Right", 2, 6, 10, false, "drive"),
-        SwerveModuleHelpers.createMk4iL2("Back Left", 3, 7, 11, true, "drive"),
-        SwerveModuleHelpers.createMk4iL2("Back Right", 4, 8, 12, false, "drive"),
+        SwerveModuleHelpers.createMk4iL2("Front Left", 1, 5, 9, false, "drive"),
+        SwerveModuleHelpers.createMk4iL2("Front Right", 2, 6, 10, true, "drive"),
+        SwerveModuleHelpers.createMk4iL2("Back Left", 3, 7, 11, false, "drive"),
+        SwerveModuleHelpers.createMk4iL2("Back Right", 4, 8, 12, true, "drive"),
     };
 
     public final NFRGyro gyro = new NFRPigeon2(1);

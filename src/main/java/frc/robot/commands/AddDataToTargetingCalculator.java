@@ -20,4 +20,9 @@ public class AddDataToTargetingCalculator extends Command {
     public void initialize(){
         calculator.addData(distance.getAsDouble(), speed.getAsDouble());
     }
+    @Override
+    public boolean isFinished()
+    {
+        return true;
+    }
 }
