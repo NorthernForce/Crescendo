@@ -38,6 +38,7 @@ import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
+import frc.robot.subsystems.OrangePi.TargetDetection;
 import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
@@ -120,6 +121,9 @@ public class CrabbyContainer implements RobotContainer
                 }
                 return lastRecordedDistance;
             });
+        Shuffleboard.getTab("General").addDouble("Target X", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).tx());
+        Shuffleboard.getTab("General").addDouble("Target Y", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).ty());
+        Shuffleboard.getTab("General").addDouble("Target Pitch", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).pitch());
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
