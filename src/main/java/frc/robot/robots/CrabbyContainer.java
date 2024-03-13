@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
@@ -34,6 +36,7 @@ import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.PurgeIntake;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.SetColor;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.ShootIntake;
@@ -41,6 +44,7 @@ import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.NFRleds;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RestShooter;
@@ -73,11 +77,12 @@ public class CrabbyContainer implements RobotContainer
     protected double lastRecordedDistance = 0;
     protected final GenericEntry shooterSpeed;
     protected final TargetingCalculator targetingCalculator;
+    protected final NFRleds LEDs;
 
-    protected final SetColor setColor;
+   
     public CrabbyContainer()
     {
-        setColor = new SetColor();
+        
         dashboard = new CrabbyDashboard();
 
         map = new CrabbyMap();
@@ -127,6 +132,8 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(targetingCalculator, () -> 0,
             () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
 
+        LEDs = new NFRleds();
+
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
@@ -156,6 +163,8 @@ public class CrabbyContainer implements RobotContainer
                 () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), true, true));
+
+            LEDs.setDefaultCommand(new SetColor(LEDs, Color.kPink).ignoringDisable(true));
             
             new JoystickButton(driverController, XboxController.Button.kB.value)
                 .onTrue(Commands.runOnce(drive::clearRotation, drive));
@@ -171,7 +180,8 @@ public class CrabbyContainer implements RobotContainer
                 .whileTrue(new RunIntake(intake, CrabbyConstants.IntakeConstants.intakeSpeed));
             
             new Trigger(() -> intake.getBeamBreak().beamBroken())
-                .onTrue(new RumbleController(driverController, 0.5, 0.5));
+                .onTrue(new RumbleController(driverController, 0.5, 0.5))
+                .whileTrue(new SetColor(LEDs, Color.kOrange));
             
             new JoystickButton(driverController, XboxController.Button.kBack.value)
                 .whileTrue(new PurgeIntake(intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
@@ -262,13 +272,6 @@ public class CrabbyContainer implements RobotContainer
         orangePi.setOdometry(drive.getChassisSpeeds());
         orangePi.setIMU(drive.getRotation());
         dashboard.updateRobotPose(orangePi.getPose());
-
-        // leds
-        if (intake.getBeamBreak().beamBroken()) {
-            SetColor.setColor((short)255, (short)0, (short)0);
-        } else {
-            SetColor.ledOff();
-        }
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {

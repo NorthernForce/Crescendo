@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class NFRleds extends SubsystemBase {
@@ -18,6 +19,7 @@ public class NFRleds extends SubsystemBase {
         m_ledBuffer = new AddressableLEDBuffer(60/*led strip length*/);
         m_led.setLength(m_ledBuffer.getLength());
     }
+
     public void setColor(short r, short g, short b) {
         // Set the data
         m_led.setData(m_ledBuffer);
@@ -25,11 +27,25 @@ public class NFRleds extends SubsystemBase {
         
         for (var i = 0; i < m_ledBuffer.getLength(); i++) {
             // Sets the specified LED to the RGB values for red
-            m_ledBuffer.setRGB(i, 255, 0, 0);
+            m_ledBuffer.setRGB(i, r, g, b);
          }
          
          m_led.setData(m_ledBuffer);
     }
+
+    public void setColor(Color8Bit color) {
+        // Set the data
+        m_led.setData(m_ledBuffer);
+        m_led.start();
+        
+        for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+            // Sets the specified LED to the RGB values for red
+            m_ledBuffer.setLED(i, color);
+         }
+         
+         m_led.setData(m_ledBuffer);
+    }
+
     public void ledOff() {
         m_led.stop();
     }
