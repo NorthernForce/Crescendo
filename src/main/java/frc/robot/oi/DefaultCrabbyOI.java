@@ -113,6 +113,9 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
+        controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
+            .onTrue(new ShootIndexer(container.indexer, CrabbyConstants.IndexerConstants.indexerShootSpeed));
+        
         controller.povLeft().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));

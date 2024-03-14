@@ -10,6 +10,7 @@ public class RunIntake extends Command{
     {
         m_speed = speed;
         m_intake = intake;
+        addRequirements(m_intake);
     }
     @Override
     public void initialize() {
