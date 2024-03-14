@@ -20,6 +20,7 @@ import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIndexerAndIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.ShootIndexer;
+import frc.robot.commands.ShootIndexerAndIntake;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.robots.CrabbyContainer;
@@ -58,7 +59,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-            .onTrue(new ShootIndexer(container.indexer, CrabbyConstants.IndexerConstants.indexerSpeed));
+            .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         
         controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.shooterSpeed.getDouble(30)));
         
