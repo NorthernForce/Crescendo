@@ -30,6 +30,7 @@ import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.oi.CrabbyOI;
 import frc.robot.oi.DefaultCrabbyOI;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.RestShooter;
 import frc.robot.subsystems.OrangePi;
@@ -58,6 +59,7 @@ public class CrabbyContainer implements RobotContainer
     public final CrabbyMap map;
     public final CrabbyDashboard dashboard;
     public final Intake intake;
+    public final Indexer indexer;
     public final Shooter shooter;
     public boolean manualWrist;
     public double lastRecordedDistance = 0;
@@ -68,12 +70,12 @@ public class CrabbyContainer implements RobotContainer
     public CrabbyContainer()
     {
         
-
         dashboard = new CrabbyDashboard();
 
         map = new CrabbyMap();
+        intake = new Intake(map.intakeMotor);
 
-        intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
+        indexer = new Indexer(map.intakeMotor, map.indexerBeamBreak);
 
         angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
@@ -210,7 +212,7 @@ public class CrabbyContainer implements RobotContainer
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
         routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose,
-            CrabbyConstants.DriveConstants.holonomicDriveController, intake,
+            CrabbyConstants.DriveConstants.holonomicDriveController, indexer,
             CrabbyConstants.IntakeConstants.intakeSpeed, shooter, wristJoint));
         return routines;
     }

@@ -48,6 +48,11 @@ public class CrabbyConstants {
         public static final double intakeSpeed = -1;
         public static final double intakePurgeSpeed = 1;
     }
+    public static class IndexerConstants
+    {
+        public static final double indexerSpeed = 1;
+        public static final double indexerPurgeSpeed = 1; //TODO find indexerPurgeSpeed
+    }
     public static class WristConstants
     {
         public static final NFRRotatingArmJointConfiguration wristConfig = 

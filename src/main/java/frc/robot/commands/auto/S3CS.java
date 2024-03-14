@@ -15,7 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.CloseShot;
 import frc.robot.commands.NFRSwerveDriveFollowPath;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.WristJoint;
 import frc.robot.utils.AutonomousRoutine;
@@ -66,7 +66,7 @@ public class S3CS extends SequentialCommandGroup
      * @param intake the intake subsystem
      */
     public S3CS(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Supplier<Pose2d> poseSupplier,
-        PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, Shooter shooter, WristJoint wristJoint, Intake intake)
+        PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, Shooter shooter, WristJoint wristJoint, Indexer intake)
     {
         addCommands(
             new CloseShot(shooter, wristJoint, intake),
@@ -113,7 +113,7 @@ public class S3CS extends SequentialCommandGroup
      */
     public static AutonomousRoutine getRoutine(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
         Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, BooleanSupplier shouldFlipPath, Shooter shooter,
-        WristJoint wrist, Intake intake)
+        WristJoint wrist, Indexer intake)
     {
         return new AutonomousRoutine(S3CS.class.getSimpleName(),
             () -> shouldFlipPath.getAsBoolean() ? paths[0].flipPath().getPreviewStartingHolonomicPose() : paths[0].getPreviewStartingHolonomicPose(),

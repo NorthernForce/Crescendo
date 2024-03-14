@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.function.DoubleBinaryOperator;
 
 import org.opencv.core.Point;
 
@@ -20,7 +19,6 @@ public class ExponentialRegressive implements TargetingCalculator{
     private CSVReader csvReader;
     private CSVWriter csvWriter;
     private ArrayList<Point> points;
-    private DoubleBinaryOperator equation;
     private static double b;
     private static double a;
     public ExponentialRegressive(String filePath){
@@ -62,9 +60,24 @@ public class ExponentialRegressive implements TargetingCalculator{
      * @return the corresponding value at that index in the tree map
      */
     @Override
-    public double getValueForDistance(double distance){
-        return Double.parseDouble(EpsilonAndSolver.GroovySolver(equation + "" + distance + "))").toString());
-    }
+                    
+    public double 
+            
+    
+            getValueForDistance(double 
+                    
+            
+                    distance){
+
+
+
+
+
+    return 0;   
+
+
+}
+
 
     /**
      * Adds data to the tree map and csv file
@@ -92,14 +105,14 @@ public class ExponentialRegressive implements TargetingCalculator{
                 m_y[i] = angleToDistances.get(i).y;
             }
             int n = angleToDistances.size();
-            a = Math.exp((EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n+1,m_x,m_y) * (EpsilonAndSolver.epsilon((x,y) -> y*Math.log(y),1, n+1,m_x,m_y)) - 
-                (EpsilonAndSolver.epsilon((x,y) -> x*y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> x*y*Math.log(y),1, n+1,m_x,m_y))) / 
-                ((EpsilonAndSolver.epsilon((x,y) -> y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n+1,m_x,m_y)) - 
-                (Math.pow(EpsilonAndSolver.epsilon((x,y) -> x*y,1, n+1,m_x,m_y),2))));
-            b = ((EpsilonAndSolver.epsilon((x,y) -> y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> x*y*Math.log(y),1, n+1,m_x,m_y))-
-                (EpsilonAndSolver.epsilon((x,y) -> x*y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> y*Math.log(y),1, n+1,m_x,m_y)))/
-                ((EpsilonAndSolver.epsilon((x,y) -> y,1, n+1,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n+1,m_x,m_y))-
-                (Math.pow(EpsilonAndSolver.epsilon((x,y) -> x*y,1, n+1,m_x,m_y),2)));
+            a = Math.exp((EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n,m_x,m_y) * (EpsilonAndSolver.epsilon((x,y) -> y*Math.log(y),1, n,m_x,m_y)) - 
+                (EpsilonAndSolver.epsilon((x,y) -> x*y,1, n,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> x*y*Math.log(y),1, n,m_x,m_y))) / 
+                ((EpsilonAndSolver.epsilon((x,y) -> y,1, n,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n,m_x,m_y)) - 
+                (Math.pow(EpsilonAndSolver.epsilon((x,y) -> x*y,1, n,m_x,m_y),2))));
+            b = ((EpsilonAndSolver.epsilon((x,y) -> y,1, n,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> x*y*Math.log(y),1, n,m_x,m_y))-
+                (EpsilonAndSolver.epsilon((x,y) -> x*y,1, n,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> y*Math.log(y),1, n,m_x,m_y)))/
+                ((EpsilonAndSolver.epsilon((x,y) -> y,1, n,m_x,m_y))*(EpsilonAndSolver.epsilon((x,y) -> Math.pow(x,2)*y,1, n,m_x,m_y))-
+                (Math.pow(EpsilonAndSolver.epsilon((x,y) -> x*y,1, n,m_x,m_y),2)));
         }
         
     }

@@ -2,14 +2,12 @@ package frc.robot.utils;
 
 import java.util.function.DoubleBinaryOperator;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 
 public class EpsilonAndSolver {
     public static double epsilon(DoubleBinaryOperator func, int indexStart, int indexEndOrN, double[] x, double[] y) {
         double result = 0;
         //String[] rewrittenFuncs = GroovyRewriteFunction.rewrite(func, x, y);
-        for(int i = indexStart-1; i < indexEndOrN-1; i++)
+        for(int i = indexStart-1; i < indexEndOrN; i++)
         {
             
             //MemoryCalculator.calcStorage();
@@ -20,11 +18,5 @@ public class EpsilonAndSolver {
             }
         }
         return result;
-    }
-    public static Object GroovySolver(String equation)
-    {
-        Binding binding = new Binding();
-        GroovyShell shell = new GroovyShell(binding);
-        return shell.evaluate(equation);
     }
 }

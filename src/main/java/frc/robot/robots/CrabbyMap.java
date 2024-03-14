@@ -28,8 +28,8 @@ public class CrabbyMap {
         intakeMotor.setIdleMode(IdleMode.kCoast);
         intakeMotor.burnFlash();
     }
-    public final NFRBeamBreak intakeBeamBreak = new NFRBeamBreak(7);
-
+    public final NFRBeamBreak indexerBeamBreak = new NFRBeamBreak(7);
+    public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 0); //TODO get the id
     public final NFRTalonFX shooterMotorTop = new NFRTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 22);
     public final NFRTalonFX shooterMotorBottom = new NFRTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 23);
     public final NFRSparkMax wristSparkMax = new NFRSparkMax(MotorType.kBrushless, 14);
@@ -37,4 +37,5 @@ public class CrabbyMap {
         wristSparkMax.setSmartCurrentLimit(40);
         wristSparkMax.setIdleMode(IdleMode.kBrake);
     }
+   
 }

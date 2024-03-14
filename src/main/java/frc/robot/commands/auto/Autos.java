@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.RunIntake;
-import frc.robot.subsystems.Intake;
+import frc.robot.commands.RunIndexer;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.WristJoint;
 import frc.robot.utils.AutonomousRoutine;
@@ -121,7 +121,7 @@ public class Autos
      * @return list of AutonomousRoutines
      */
     private static List<AutonomousRoutine> getRawRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
-        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Shooter shooter, WristJoint wrist, Intake intake)
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Shooter shooter, WristJoint wrist, Indexer intake)
     {
         ArrayList<AutonomousRoutine> autoList = new ArrayList<>();
         for (var auto : getAllAutos())
@@ -137,7 +137,7 @@ public class Autos
                     BooleanSupplier.class,
                     Shooter.class,
                     WristJoint.class,
-                    Intake.class);
+                    Indexer.class);
             }
             catch (NoSuchMethodException e)
             {
@@ -194,10 +194,10 @@ public class Autos
      * @return an list of AutonomousRoutines
      */
     public static List<AutonomousRoutine> getRoutines(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
-        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Intake intake, double intakeSpeed,
+        Supplier<Pose2d> poseSupplier, PPHolonomicDriveController controller, Indexer intake, double intakeSpeed,
         Shooter shooter, WristJoint wrist)
     {
-        NamedCommands.registerCommand("intake", new RunIntake(intake, intakeSpeed));
+        NamedCommands.registerCommand("intake", new RunIndexer(intake, intakeSpeed));
         return getRawRoutines(drive, setStateCommands, poseSupplier, controller, shooter, wrist, intake);
     }
 }
