@@ -13,12 +13,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.FollowNote;
 import frc.robot.commands.NFRWristContinuousAngle;
-import frc.robot.commands.PurgeIntake;
+import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RumbleController;
+import frc.robot.commands.RunIndexerAndIntake;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.ShootIntake;
+import frc.robot.commands.ShootIndexer;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.robots.CrabbyContainer;
@@ -39,11 +40,11 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.a().whileTrue(new FollowNote(container.xavier, container.drive, container.setStateCommands,
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1), true));
         
-        controller.leftTrigger().whileTrue(new RunIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+        controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
         
-        new Trigger(() -> container.intake.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
+        new Trigger(() -> container.indexer.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
-        controller.back().whileTrue(new PurgeIntake(container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
+        controller.back().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
         
         controller.rightBumper().toggleOnTrue(new TurnToTarget(container.drive, container.setStateCommands,
             CrabbyConstants.DriveConstants.turnToTargetController, 
@@ -57,7 +58,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-            .onTrue(new ShootIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+            .onTrue(new ShootIndexer(container.indexer, CrabbyConstants.IndexerConstants.indexerSpeed));
         
         controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.shooterSpeed.getDouble(30)));
         
@@ -87,16 +88,13 @@ public class DefaultCrabbyOI implements CrabbyOI {
     {
         controller.leftTrigger().whileTrue(new RunIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
         
-        new Trigger(() -> container.intake.getBeamBreak().beamBroken())
+        new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
             .onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
-        controller.back().whileTrue(new PurgeIntake(container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed));
+        controller.back().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed, CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> container.manualWrist = true)));
-        
-        controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-            .onTrue(new ShootIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
 
         controller.leftBumper().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)

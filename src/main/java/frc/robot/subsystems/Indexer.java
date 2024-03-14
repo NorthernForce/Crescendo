@@ -42,4 +42,8 @@ public class Indexer extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Motor Speeds", () -> this.motors.get(), speed -> this.motors.set(speed));
     }
+    public double getMotorCurrent()
+    {
+        return motors.getOutputCurrent();
+    }
 }

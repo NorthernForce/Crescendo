@@ -75,7 +75,7 @@ public class CrabbyContainer implements RobotContainer
         map = new CrabbyMap();
         intake = new Intake(map.intakeMotor);
 
-        indexer = new Indexer(map.intakeMotor, map.indexerBeamBreak);
+        indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
         angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
@@ -86,8 +86,6 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
-        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
-            () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
@@ -128,6 +126,11 @@ public class CrabbyContainer implements RobotContainer
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
+        Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);
+        Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
+        Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
+        Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
+
         shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
         speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");

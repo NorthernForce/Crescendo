@@ -51,7 +51,7 @@ public class CrabbyConstants {
     public static class IndexerConstants
     {
         public static final double indexerSpeed = 1;
-        public static final double indexerPurgeSpeed = 1; //TODO find indexerPurgeSpeed
+        public static final double indexerPurgeSpeed = -1; //TODO find indexerPurgeSpeed
     }
     public static class WristConstants
     {

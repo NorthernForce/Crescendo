@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Indexer;
 
 public class RunIndexer extends Command {
-    private final Indexer intake;
+    private final Indexer indexer;
     private final double speed;
 
     /**
@@ -13,24 +13,24 @@ public class RunIndexer extends Command {
      * @param intake the intake subsystem
      * @param speed  raw speed value for intake motors
      */
-    public RunIndexer(Indexer intake, double speed) {
-        addRequirements(intake);
-        this.intake = intake;
+    public RunIndexer(Indexer indexer, double speed) {
+        addRequirements(indexer);
+        this.indexer = indexer;
         this.speed = speed;
     }
 
     @Override
     public void initialize() {
-        intake.run(speed);
+        indexer.run(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        intake.run(0);
+        indexer.run(0);
     }
 
     @Override
     public boolean isFinished() {
-        return intake.getBeamBreak().beamBroken();
+        return indexer.getBeamBreak().beamBroken();
     }
 }
