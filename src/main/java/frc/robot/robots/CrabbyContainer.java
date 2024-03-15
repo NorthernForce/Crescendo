@@ -41,6 +41,7 @@ import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.OrangePi.TargetDetection;
 import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.ExponentialRegressive;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.TargetingCalculator;
 import frc.robot.utils.InterpolatedTargetingCalculator;
@@ -77,7 +78,7 @@ public class CrabbyContainer implements RobotContainer
 
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
-        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
+        angleCalculator = new ExponentialRegressive("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
         wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(wristJoint, () -> 0)
             .alongWith(Commands.runOnce(() -> manualWrist = false)));
