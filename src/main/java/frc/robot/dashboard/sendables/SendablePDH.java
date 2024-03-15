@@ -1,6 +1,5 @@
 package frc.robot.dashboard.sendables;
 
-import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;

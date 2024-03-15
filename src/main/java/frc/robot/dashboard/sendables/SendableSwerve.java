@@ -97,7 +97,7 @@ public class SendableSwerve implements NFRSendableBase {
     @Override
     public void update() {
         states.setValue(moduleStateSupplier.get());
-        // desired.setValue(moduleDesiredSupplier.get());
+        desired.setValue(moduleDesiredSupplier.get());
         robotRotation.setValue(robotRotationSupplier.getAsDouble());
     }
 
@@ -110,6 +110,7 @@ public class SendableSwerve implements NFRSendableBase {
     public void setSuppliersNotDesired(Supplier<NFRSwerveModule[]> moduleStateSupplier, DoubleSupplier robotRotationSupplier) {
         this.moduleStateSupplier = moduleStateSupplier;
         this.robotRotationSupplier = robotRotationSupplier;
+        this.moduleDesiredSupplier = () -> new SwerveModuleState[] {new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()};
     }
 
     public void setSupplierDesiered(Supplier<SwerveModuleState[]> moduleDesiredSupplier) {

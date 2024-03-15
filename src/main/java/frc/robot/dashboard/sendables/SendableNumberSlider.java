@@ -1,9 +1,6 @@
 package frc.robot.dashboard.sendables;
 
-import java.util.function.DoubleConsumer;
-import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
@@ -16,7 +13,6 @@ public class SendableNumberSlider implements NFRSendableBase {
     private double defaultValue;
     private double defaultMax;
     private double defaultMin;
-    private DoubleConsumer consumer;
     private double currentValue = 0;
 
 

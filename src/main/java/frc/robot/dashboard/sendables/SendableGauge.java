@@ -2,7 +2,6 @@ package frc.robot.dashboard.sendables;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
