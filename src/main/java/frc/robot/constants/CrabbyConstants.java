@@ -36,9 +36,9 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
-        public static final PIDController turnToTargetController = new PIDController(2.5, 0, 0);
+        public static final PIDController turnToTargetController = new PIDController(2, 0, 0);
         static {
-            turnToTargetController.setTolerance(0.1);
+            turnToTargetController.setTolerance(0.03);
         }
         public static final PPHolonomicDriveController holonomicDriveController = new PPHolonomicDriveController(
             new PIDConstants(10, 0, 0), // X/Y pid constants TODO: needs to be properly tuned
