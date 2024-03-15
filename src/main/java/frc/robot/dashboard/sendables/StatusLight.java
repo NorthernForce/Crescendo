@@ -1,5 +1,7 @@
 package frc.robot.dashboard.sendables;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
@@ -10,6 +12,7 @@ public class StatusLight implements NFRSendableBase {
     private ObjectHolder<Boolean> value;
     private ObjectHolder<String> label;
     public String name;
+    private BooleanSupplier supplier;
 
     public StatusLight(String name) {
         value = new ObjectHolder<Boolean>("value", NetworkTableValue::makeBoolean, ObjectHolder::getBoolean);
@@ -51,7 +54,11 @@ public class StatusLight implements NFRSendableBase {
 
     @Override
     public void update() {
-       return;
+       value.setValue(supplier.getAsBoolean());
+    }
+
+    public void setSupplier(BooleanSupplier supplier) {
+        this.supplier = supplier;
     }
     
 }
