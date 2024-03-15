@@ -181,7 +181,8 @@ public class SwerveModuleHelpers
         turnConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
         turnConfig.Audio.AllowMusicDurDisable = true;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        turnConfig.Slot0.kP = Mk4iConstants.kTurnP;
+        turnConfig.Slot0.kP = 10;
+        turnConfig.Slot0.kD = 0.07;
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.4;
         turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
