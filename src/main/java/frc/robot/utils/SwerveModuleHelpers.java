@@ -85,7 +85,7 @@ public class SwerveModuleHelpers
         public static final double kWheelRadius = Units.inchesToMeters(2);
         public static final double kWheelCircumference = 2 * kWheelRadius * Math.PI;
         public static final double kDriveP = 1;
-        public static final double kTurnP = 1;
+        public static final double kTurnP = 5;
         public static final double kMaxDriveSpeed = Units.feetToMeters(18.2);
     }
     /**

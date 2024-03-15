@@ -12,4 +12,8 @@ public class Intake extends SubsystemBase{
     public void run(double speed) {
         this.motors.set(speed);
     }
+    public double getMotorCurrent()
+    {
+        return motors.getOutputCurrent();
+    }
 }

@@ -27,14 +27,14 @@ public class CrabbyMap {
     public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16); //TODO get the id
     {
         indexerMotor.restoreFactoryDefaults();
-        indexerMotor.setSmartCurrentLimit(40);
-        indexerMotor.setIdleMode(IdleMode.kCoast);
+        indexerMotor.setSmartCurrentLimit(60);
+        indexerMotor.setIdleMode(IdleMode.kBrake);
         indexerMotor.burnFlash();
     }
     {
         intakeMotor.restoreFactoryDefaults();
-        intakeMotor.setSmartCurrentLimit(40);
-        intakeMotor.setIdleMode(IdleMode.kCoast);
+        intakeMotor.setSmartCurrentLimit(60);
+        intakeMotor.setIdleMode(IdleMode.kBrake);
         intakeMotor.burnFlash();
     }
     public final NFRTalonFX shooterMotorTop = new NFRTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 22);

@@ -131,6 +131,8 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
         Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
 
+        Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
+
         shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
         speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");

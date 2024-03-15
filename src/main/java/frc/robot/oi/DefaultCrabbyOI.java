@@ -87,7 +87,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
     @Override
     public void bindManipulatorToXboxController(CrabbyContainer container, CommandXboxController controller)
     {
-        controller.leftTrigger().whileTrue(new RunIntake(container.intake, CrabbyConstants.IntakeConstants.intakeSpeed));
+        controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
         
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
             .onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
