@@ -86,6 +86,11 @@ public class ObjectHolder<T> implements AutoCloseable {
         updateEntry(process, true);
     }
 
+    public synchronized void setDefault(NetworkTableValue val) {
+        this.internal = val;
+        updateEntryNetwork(true);
+    }
+
     // public synchronized void setValueAtIndex(NetworkTableValue val, int i) {;
     //     if (i < 0 || i >= this.vals.length) {
     //         throw new ArrayIndexOutOfBoundsException("index out of bounds");

@@ -5,7 +5,7 @@ import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
 
-public class SendablePDH implements NTSendable, AutoCloseable {
+public class SendablePDH implements NFRSendableBase {
     private NetworkTable table;
     private ObjectHolder<Double> voltage = new ObjectHolder<Double>("voltage", NetworkTableValue::makeDouble, ObjectHolder::getDouble);
     private ObjectHolder<Double> totalCurrent = new ObjectHolder<Double>("totalCurrent", NetworkTableValue::makeDouble, ObjectHolder::getDouble);
@@ -36,6 +36,11 @@ public class SendablePDH implements NTSendable, AutoCloseable {
                 channels.setDefault(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0} );
             }
         }
+    }
+
+    @Override
+    public void update() {
+        return;
     }
     
 }

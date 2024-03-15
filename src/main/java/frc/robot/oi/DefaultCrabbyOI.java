@@ -59,7 +59,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         
-        controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.shooterSpeed.getDouble(30)));
+        // controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.shooterSpeed.getDouble(30)));
+        controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.dashboard.shooterSlider.get()));
         
         controller.povLeft().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)

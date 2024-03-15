@@ -7,18 +7,23 @@ package frc.robot.subsystems;
 import org.northernforce.motors.NFRMotorController;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.dashboard.CrabbyDashboard;
 
 public class Shooter extends SubsystemBase {
     private final NFRMotorController topMotor;
     private final NFRMotorController bottomMotor;
     private double topTargetSpeed, bottomTargetSpeed;
 
-    /** Creates a new Shooter. */
-    public Shooter(NFRMotorController topMotor, NFRMotorController bottomMotor) {
+    /** Creates a new Shooter. 
+     * @param dashboard */
+    public Shooter(NFRMotorController topMotor, NFRMotorController bottomMotor, CrabbyDashboard dashboard) {
         this.topMotor = topMotor;
         this.bottomMotor = bottomMotor;
         topTargetSpeed = 0;
         bottomTargetSpeed = 0;
+
+        dashboard.topShooter.setSupplier(this::getTopMotorVelocity);
+        dashboard.bottomShooter.setSupplier(this::getBottomMotorVelocity);
     }
 
     /**

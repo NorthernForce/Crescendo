@@ -3,7 +3,7 @@ import org.northernforce.motors.NFRSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Intake extends SubsystemBase{
+public class Intake extends SubsystemBase {
     private final NFRSparkMax motors;
     public Intake(NFRSparkMax motor)
     {

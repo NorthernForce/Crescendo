@@ -3,15 +3,15 @@ package frc.robot.dashboard.sendables;
 import frc.robot.dashboard.Dashboard;
 
 public class StatusLightManager {
-    private final StatusLight canTargetLight = new StatusLight("canTarget");
-    private final StatusLight hasNoteLight = new StatusLight("hasNote");
-    private final StatusLight shooterReadyLight = new StatusLight("shooterReady");
-    private final StatusLight wristReadyLight = new StatusLight("wristReady");
-    private final StatusLight wristManualLight = new StatusLight("wristManual");
-    private final StatusLight aimReadyLight = new StatusLight("aimReady");
-    private final StatusLight readyToShootLight = new StatusLight("readyToShoot");
-    private final StatusLight closeShotEnabledLight = new StatusLight("closeShotEnabled");
-    private final StatusLight ampShotEnabledLight = new StatusLight("ampShotEnabledLight");
+    public final StatusLight canTargetLight = new StatusLight("canTarget");
+    public final StatusLight hasNoteLight = new StatusLight("hasNote");
+    public final StatusLight shooterReadyLight = new StatusLight("shooterReady");
+    public final StatusLight wristReadyLight = new StatusLight("wristReady");
+    public final StatusLight wristManualLight = new StatusLight("wristManual");
+    public final StatusLight aimReadyLight = new StatusLight("aimReady");
+    public final StatusLight readyToShootLight = new StatusLight("readyToShoot");
+    public final StatusLight closeShotEnabledLight = new StatusLight("closeShotEnabled");
+    public final StatusLight ampShotEnabledLight = new StatusLight("ampShotEnabledLight");
 
     public StatusLightManager(Dashboard dashboard) {
         dashboard.addSendable("statusLights/" + canTargetLight.name, canTargetLight);
@@ -51,5 +51,17 @@ public class StatusLightManager {
     }
     public void setAmpShotEnabledLight(boolean value) {
         ampShotEnabledLight.set(value);
+    }
+
+    public void updateAll() {
+        canTargetLight.update();
+        hasNoteLight.update();
+        shooterReadyLight.update();
+        wristReadyLight.update();
+        wristManualLight.update();
+        aimReadyLight.update();
+        readyToShootLight.update();
+        closeShotEnabledLight.update();
+        ampShotEnabledLight.update();
     }
 }

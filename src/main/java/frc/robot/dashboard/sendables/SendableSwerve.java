@@ -1,21 +1,28 @@
 package frc.robot.dashboard.sendables;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
 import frc.robot.constants.CrabbyConstants;
 
-public class SendableSwerve implements NTSendable, AutoCloseable {
+public class SendableSwerve implements NFRSendableBase {
     private NetworkTable table;
     private ObjectHolder<Translation2d[]> offsets =  new ObjectHolder<Translation2d[]>("wheelLocations", this::Translation2dToNetworkTableValue, null);
-    private ObjectHolder<SwerveModuleState[]> states = new ObjectHolder<SwerveModuleState[]>("measuredStates", this::SwerveModuleStateToNetworkTableValue, null);
+    private ObjectHolder<NFRSwerveModule[]> states = new ObjectHolder<NFRSwerveModule[]>("measuredStates", this::NFRModuleModuleToNetworkTableValue, null);
     private ObjectHolder<SwerveModuleState[]> desired = new ObjectHolder<SwerveModuleState[]>("desiredStates", this::SwerveModuleStateToNetworkTableValue, null);
     private ObjectHolder<Double> sizeLeftRight = new ObjectHolder<Double>("sizeLeftRight", NetworkTableValue::makeDouble, null);
     private ObjectHolder<Double> sizeFrontBack = new ObjectHolder<Double>("sizeFrontBack", NetworkTableValue::makeDouble, null);
     private ObjectHolder<Double> robotRotation = new ObjectHolder<Double>("robotRotation", NetworkTableValue::makeDouble, null);
+    private Supplier<NFRSwerveModule[]> moduleStateSupplier;
+    private Supplier<SwerveModuleState[]> moduleDesiredSupplier;
+    private DoubleSupplier robotRotationSupplier;
 
     @Override
     public void close() {
@@ -45,6 +52,15 @@ public class SendableSwerve implements NTSendable, AutoCloseable {
         return NetworkTableValue.makeDoubleArray(toReturn);
     }
 
+    private NetworkTableValue NFRModuleModuleToNetworkTableValue(NFRSwerveModule[] modules) {
+        double[] toReturn = new double[8];
+        for (int i = 0; i < 8; i += 2) {
+            toReturn[i] = modules[i/4].getRotation().getRadians();
+            toReturn[i+1] = modules[i/4].getVelocity();
+        }
+        return NetworkTableValue.makeDoubleArray(toReturn);
+    }
+
     @Override
     public void initSendable(NTSendableBuilder builder) {
         builder.setSmartDashboardType("SwerveDriveBase");
@@ -57,7 +73,7 @@ public class SendableSwerve implements NTSendable, AutoCloseable {
             }
             synchronized (states) {
                 states.init(table);
-                states.setDefault(new SwerveModuleState[] {new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()});
+                states.setDefault(SwerveModuleStateToNetworkTableValue(new SwerveModuleState[] {new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()}));
             }
             synchronized (desired) {
                 desired.init(table);
@@ -76,6 +92,28 @@ public class SendableSwerve implements NTSendable, AutoCloseable {
                 robotRotation.setDefault(0.0);
             }
         }
+    }
+
+    @Override
+    public void update() {
+        states.setValue(moduleStateSupplier.get());
+        // desired.setValue(moduleDesiredSupplier.get());
+        robotRotation.setValue(robotRotationSupplier.getAsDouble());
+    }
+
+    public void setSuppliers(Supplier<NFRSwerveModule[]> moduleStateSupplier, Supplier<SwerveModuleState[]> moduleDesiredSupplier, DoubleSupplier robotRotationSupplier) {
+        this.moduleStateSupplier = moduleStateSupplier;
+        this.moduleDesiredSupplier = moduleDesiredSupplier;
+        this.robotRotationSupplier = robotRotationSupplier;
+    }
+
+    public void setSuppliersNotDesired(Supplier<NFRSwerveModule[]> moduleStateSupplier, DoubleSupplier robotRotationSupplier) {
+        this.moduleStateSupplier = moduleStateSupplier;
+        this.robotRotationSupplier = robotRotationSupplier;
+    }
+
+    public void setSupplierDesiered(Supplier<SwerveModuleState[]> moduleDesiredSupplier) {
+        this.moduleDesiredSupplier = moduleDesiredSupplier;
     }
     
 }

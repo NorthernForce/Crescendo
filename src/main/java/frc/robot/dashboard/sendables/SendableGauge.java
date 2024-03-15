@@ -1,11 +1,13 @@
 package frc.robot.dashboard.sendables;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
 
-public class SendableGauge implements NTSendable, AutoCloseable {
+public class SendableGauge implements NFRSendableBase {
     private NetworkTable table;
     private ObjectHolder<Double> value = new ObjectHolder<Double>("value", NetworkTableValue::makeDouble, null);
     private ObjectHolder<Double> min = new ObjectHolder<Double>("min", NetworkTableValue::makeDouble, null);
@@ -13,6 +15,7 @@ public class SendableGauge implements NTSendable, AutoCloseable {
     private double defaultValue;
     private double defaultMax;
     private double defaultMin;
+    private DoubleSupplier valueSupplier;
 
 
     public SendableGauge(double defaultValue, double defaultMin, double defaultMax) {
@@ -26,6 +29,14 @@ public class SendableGauge implements NTSendable, AutoCloseable {
         value.close();
         min.close();
         max.close();
+    }
+
+    public void setSupplier(DoubleSupplier valueSupplier) {
+        this.valueSupplier = valueSupplier;
+    }
+    
+    public void update() {
+        value.setValue(valueSupplier.getAsDouble());
     }
 
     @Override

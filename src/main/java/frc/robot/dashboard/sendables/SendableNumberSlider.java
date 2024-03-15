@@ -1,11 +1,14 @@
 package frc.robot.dashboard.sendables;
 
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
 
-public class SendableNumberSlider implements NTSendable, AutoCloseable {
+public class SendableNumberSlider implements NFRSendableBase {
     private NetworkTable table;
     private ObjectHolder<Double> value = new ObjectHolder<Double>("value", NetworkTableValue::makeDouble, ObjectHolder::getDouble);
     private ObjectHolder<Double> min = new ObjectHolder<Double>("min", NetworkTableValue::makeDouble, null);
@@ -13,6 +16,8 @@ public class SendableNumberSlider implements NTSendable, AutoCloseable {
     private double defaultValue;
     private double defaultMax;
     private double defaultMin;
+    private DoubleConsumer consumer;
+    private double currentValue = 0;
 
 
     public SendableNumberSlider(double defaultValue, double defaultMin, double defaultMax) {
@@ -30,6 +35,14 @@ public class SendableNumberSlider implements NTSendable, AutoCloseable {
         value.close();
         min.close();
         max.close();
+    }
+
+    public double get() {
+        return currentValue;
+    }
+
+    public void update() {
+        currentValue = value.getValue();
     }
 
     @Override

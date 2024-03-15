@@ -5,7 +5,7 @@ import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableValue;
 
-public class Camera implements NTSendable, AutoCloseable {
+public class Camera implements NFRSendableBase {
 
     private NetworkTable table;
     private ObjectHolder<String[]> srcArr;
@@ -17,6 +17,10 @@ public class Camera implements NTSendable, AutoCloseable {
     @Override
     public void close() {
         srcArr.close();
+    }
+
+    public void update() {
+        return;
     }
 
     @Override
