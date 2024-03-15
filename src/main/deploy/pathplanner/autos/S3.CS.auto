@@ -6,6 +6,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "S3.CS.G3"
@@ -18,6 +24,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "S2.CS.G6"
@@ -27,6 +39,12 @@
           "type": "path",
           "data": {
             "pathName": "S2.CS.return"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         },
         {
