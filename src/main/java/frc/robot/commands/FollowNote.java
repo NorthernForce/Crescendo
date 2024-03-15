@@ -23,7 +23,7 @@ public class FollowNote extends Command {
      * Creates a new FollowNote command
      * @param xavier the Xavier subsystem
      * @param drive the Drive subsystem
-     * @param setStateCommands the array of SetState command you want to use
+     * @param setStateCommands the array of SetState commands you want to use
      * @param strafeSupplier a supplier which returns the direction of strafe (if any)
      * @param useOptimization whether to use swerve optimization (recommended)
      */
@@ -35,7 +35,7 @@ public class FollowNote extends Command {
         this.drive = drive;
         this.setStateCommands = setStateCommands;
         this.strafeSupplier = strafeSupplier;
-        this.pid = new PIDController(.35, 0, 0);
+        this.pid = new PIDController(.75, 0, 0);
         this.useOptimization = useOptimization;
     }
 
