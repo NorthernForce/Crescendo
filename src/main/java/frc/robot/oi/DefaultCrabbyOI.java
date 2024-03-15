@@ -36,8 +36,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.y().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
         
-        controller.a().whileTrue(new FollowNote(container.xavier, container.drive, container.setStateCommands,
-            () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1), true));
+        controller.a()
+            .whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed)
+            .deadlineWith(new FollowNote(container.xavier, container.drive, container.setStateCommands,
+                () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1), true)));
         
         controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
         
