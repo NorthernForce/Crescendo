@@ -78,7 +78,7 @@ public class CrabbyContainer implements RobotContainer
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
         angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
-        wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
+        wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig, dashboard);
         wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(wristJoint, () -> 0)
             .alongWith(Commands.runOnce(() -> manualWrist = false)));
         Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
@@ -88,7 +88,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
-        drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
+        drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro, dashboard);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
@@ -125,7 +125,7 @@ public class CrabbyContainer implements RobotContainer
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
-        shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
+        shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);
         Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);
         Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
         Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
