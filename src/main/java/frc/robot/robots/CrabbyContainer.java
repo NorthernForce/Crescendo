@@ -3,11 +3,10 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
+import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,13 +24,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
-import frc.robot.commands.NFRWristContinuous;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.oi.CrabbyOI;
 import frc.robot.oi.DefaultCrabbyOI;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.RestShooter;
 import frc.robot.subsystems.OrangePi;
@@ -40,6 +39,7 @@ import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
 import frc.robot.subsystems.OrangePi.PoseSupplier;
 import frc.robot.subsystems.OrangePi.TargetCamera;
+import frc.robot.subsystems.OrangePi.TargetDetection;
 import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
@@ -60,6 +60,7 @@ public class CrabbyContainer implements RobotContainer
     public final CrabbyMap map;
     public final CrabbyDashboard dashboard;
     public final Intake intake;
+    public final Indexer indexer;
     public final Shooter shooter;
     public boolean manualWrist;
     public double lastRecordedDistance = 0;
@@ -69,21 +70,23 @@ public class CrabbyContainer implements RobotContainer
     public CrabbyOI oi;
     public CrabbyContainer()
     {
+        
         dashboard = new CrabbyDashboard();
 
         map = new CrabbyMap();
+        intake = new Intake(map.intakeMotor);
 
-        intake = new Intake(map.intakeMotor, map.intakeBeamBreak);
+        indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
+        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
-        wristJoint.setDefaultCommand(new NFRWristContinuous(wristJoint, () -> Optional.of(0.0))
+        wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(wristJoint, () -> 0)
             .alongWith(Commands.runOnce(() -> manualWrist = false)));
+        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
+            () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
-        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
-        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
-            () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
@@ -117,10 +120,20 @@ public class CrabbyContainer implements RobotContainer
                 }
                 return lastRecordedDistance;
             });
+        Shuffleboard.getTab("General").addDouble("Target X", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).tx());
+        Shuffleboard.getTab("General").addDouble("Target Y", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).ty());
+        Shuffleboard.getTab("General").addDouble("Target Pitch", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).pitch());
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
+        Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);
+        Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
+        Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
+        Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
+
+        Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
+
         shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
         speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");
