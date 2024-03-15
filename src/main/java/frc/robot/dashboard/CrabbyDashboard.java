@@ -5,6 +5,9 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.dashboard.sendables.Camera;
+import frc.robot.dashboard.sendables.SendableGauge;
+import frc.robot.dashboard.sendables.SendableNumberSlider;
+import frc.robot.dashboard.sendables.SendableSwerve;
 import frc.robot.dashboard.sendables.StatusLightManager;
 import frc.robot.utils.AutonomousRoutine;
 
@@ -17,6 +20,11 @@ public class CrabbyDashboard extends Dashboard
     protected final Field2d autoField;
     protected final Camera camera;
     protected final StatusLightManager statusLightManager;
+    protected final SendableSwerve swerveDisplay;
+    protected final SendableGauge wristGauge;
+    protected final SendableGauge topShooter;
+    protected final SendableGauge bottomShooter;
+    protected final SendableNumberSlider shooterSlider;
     /**
      * Creates a new CrabbyDashboard
      */
@@ -27,9 +35,19 @@ public class CrabbyDashboard extends Dashboard
         autoField = new Field2d();
         camera = new Camera();
         statusLightManager = new StatusLightManager(this); //adds all status lights
+        swerveDisplay = new SendableSwerve();
+        wristGauge = new SendableGauge(22, 22, 56);
+        topShooter = new SendableGauge(0, 0, 45); //TODO Max speeds are made up based on what I remember from initial testing should be tweeked;
+        bottomShooter = new SendableGauge(0, 0, 45);
+        shooterSlider = new SendableNumberSlider(0, 0, 45);
         addSendable("Field", field);
         addSendable("auto_field", autoField);
         addSendable("Camera", camera);
+        addSendable("SwerveDisplay", swerveDisplay);
+        addSendable("wristGauge", wristGauge);
+        addSendable("TopShooter", topShooter);
+        addSendable("BottomShooter", bottomShooter);
+        addSendable("ShooterSlider", shooterSlider);
     }
     /**
      * Updates the robot pose to be put on the dashboard

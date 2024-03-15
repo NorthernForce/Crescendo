@@ -15,7 +15,7 @@ public class Camera implements NTSendable, AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         srcArr.close();
     }
 

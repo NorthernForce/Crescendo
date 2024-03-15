@@ -19,8 +19,9 @@ public class StatusLight implements NTSendable, AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close(){
         value.close();
+        label.close();
     }
 
     public synchronized void set(boolean value) {
