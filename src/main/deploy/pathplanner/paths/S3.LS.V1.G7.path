@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.864922951672713,
-        "y": 1.431514322103378
+        "x": 5.2827494345464885,
+        "y": 1.1262751524759003
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.712145713733896,
-        "y": 1.7918274507960645
+        "x": 6.129972196607671,
+        "y": 1.4865882811685869
       },
       "isLocked": false,
       "linkedName": "S3.LS.V1.G7"
@@ -30,13 +30,31 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 0.8,
       "rotationDegrees": 24.842050588384723,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.8,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,

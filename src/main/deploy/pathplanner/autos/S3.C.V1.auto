@@ -6,6 +6,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "S3.C.V1.1"
@@ -15,6 +21,12 @@
           "type": "path",
           "data": {
             "pathName": "S2.C.V1.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         },
         {
@@ -30,6 +42,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "S2.C.V1.5"
@@ -39,6 +57,12 @@
           "type": "path",
           "data": {
             "pathName": "S2.C.V1.6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         }
       ]

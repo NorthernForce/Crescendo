@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.210984463635594,
-        "y": 6.8283127075513415
+        "x": 6.604643505583308,
+        "y": 6.512328432064272
       },
       "isLocked": false,
       "linkedName": null
@@ -20,23 +20,35 @@
         "y": 6.690138362483131
       },
       "prevControl": {
-        "x": 5.613402013634385,
-        "y": 6.411091766565974
+        "x": 6.481064614907008,
+        "y": 6.632641181949031
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "S2.CS.attempt"
     }
   ],
-  "rotationTargets": [
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
     {
-      "waypointRelativePos": 0.45,
-      "rotationDegrees": -27.708921141802964,
-      "rotateFast": false
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.35,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "alignToGoal"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
-  "constraintZones": [],
-  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
