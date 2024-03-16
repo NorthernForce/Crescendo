@@ -41,6 +41,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.x().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
         
+        controller.povUp().toggleOnTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)); // TODO
+
         controller.a()
             .whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed)
             .deadlineWith(new FollowNote(container.xavier, container.drive, container.setStateCommands,
@@ -120,7 +122,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
         
-        controller.button(0).toggleOnTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)); // TODO
+        controller.povUp().toggleOnTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)); // TODO
         
         if (driverController != null)
         {
