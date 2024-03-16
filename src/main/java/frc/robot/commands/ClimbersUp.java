@@ -28,7 +28,7 @@ public class ClimbersUp extends Command{
 
     @Override
     public boolean isFinished(){
-        return climber.getBeamBreak().beamBroken();
+        return climber.isAtTopSoftLimit();
     }
 }
 
