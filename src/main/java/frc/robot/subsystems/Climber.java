@@ -5,9 +5,10 @@ import org.northernforce.motors.NFRSparkMax;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CrabbyConstants;
 
-public class Climber {
+public class Climber extends SubsystemBase {
     private NFRSparkMax motor;
     public Climber(NFRSparkMax motor){
         this.motor = motor;

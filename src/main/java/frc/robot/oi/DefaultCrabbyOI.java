@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShot;
+import frc.robot.commands.ClimbersUp;
 import frc.robot.commands.FollowNote;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
@@ -118,6 +119,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
+        
+        controller.button(0).toggleOnTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)); // TODO
         
         if (driverController != null)
         {
