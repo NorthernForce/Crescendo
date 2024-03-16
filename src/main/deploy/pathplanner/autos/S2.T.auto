@@ -12,12 +12,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "closeShot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S2.T1_start"
@@ -27,12 +21,6 @@
           "type": "path",
           "data": {
             "pathName": "S2.T1_end"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
           }
         },
         {
@@ -48,12 +36,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S2.T3_start"
@@ -63,12 +45,6 @@
           "type": "path",
           "data": {
             "pathName": "S2.T3_end"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
           }
         },
         {
@@ -82,16 +58,10 @@
           "data": {
             "pathName": "S2.T4_end"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
-          }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "To Be Implemented",
   "choreoAuto": false
 }
