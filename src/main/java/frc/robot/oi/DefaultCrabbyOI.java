@@ -92,6 +92,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
     @Override
     public void bindManipulatorToXboxController(CrabbyContainer container, CommandXboxController controller)
     {
+        NFRRotatingArmJointWithJoystick wristManual = new NFRRotatingArmJointWithJoystick(container.wristJoint,
+            () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1));
+        container.dashboard.statusLightManager.wristManualLight.setSupplier(() -> wristManual.isScheduled());
+        
         controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
         
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
@@ -99,8 +103,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed, CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         
-        container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint,
-            () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> container.manualWrist = true)));
+        container.wristJoint.setDefaultCommand(wristManual);
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));

@@ -179,6 +179,7 @@ public class SwervyContainer implements RobotContainer
         NetworkTableInstance.getDefault().flush();
         field.setRobotPose(orangePi.getPose());
         dashboard.updateRobotPose(orangePi.getPose());
+        dashboard.periodic();
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
