@@ -13,6 +13,7 @@ public class ClimbersUp extends Command{
      */
     public ClimbersUp(Climber climber, double speed){
         this.climber = climber;
+        addRequirements(climber);
         this.speed = speed;
     }
 
