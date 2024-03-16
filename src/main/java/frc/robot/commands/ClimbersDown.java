@@ -6,17 +6,15 @@ import frc.robot.subsystems.Climber;
 public class ClimbersDown extends Command{
     private Climber climber;
     private double speed;
-    private double currentLimit;
     /**
      * Lowers the climbers (raising the robot)
      * @param climber The climber object
      * @param speed The speed at which the climbing motor will run (MUST BE POSITIVE)
      * @param currentLimit If the current being drawn by the motor is greater than this number it will shut off
      */
-    public ClimbersDown(Climber climber, double speed, double currentLimit){
+    public ClimbersDown(Climber climber, double speed){
         this.climber = climber;
         this.speed = speed;
-        this.currentLimit = currentLimit;
     }
 
     @Override
@@ -31,6 +29,6 @@ public class ClimbersDown extends Command{
 
     @Override
     public boolean isFinished(){
-        return climber.getMotorCurrent() > currentLimit; //TODO: Find max motor current
+        return climber.isAtBottomSoftLimit(); //TODO: Find max motor current
     }
 }
