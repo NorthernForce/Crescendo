@@ -34,7 +34,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.back().onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
         
-        controller.y().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
+        controller.x().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
         
         controller.a()
             .whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed)
@@ -64,7 +64,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.start().toggleOnTrue(new RampShooterWithDifferential(container.shooter, () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0), () -> container.shooterSpeed.getDouble(30)));
         
-        controller.x().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
+        controller.y().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
         
@@ -118,7 +118,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
-        controller.x().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
+        controller.y().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
     }
