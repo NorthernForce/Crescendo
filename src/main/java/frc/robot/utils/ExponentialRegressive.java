@@ -35,12 +35,10 @@ public class ExponentialRegressive implements TargetingCalculator{
             }
             try {
                 csvReader = new CSVReader(new FileReader(file));
-                csvWriter = new CSVWriter(new FileWriter(file));
-                while(csvReader.readNext() != null){
-                    String[] nextLine = csvReader.readNext();
-                    addData(Double.parseDouble(nextLine[0]), Double.parseDouble(nextLine[1]));
+                csvWriter = new CSVWriter(new FileWriter(file, true));
+                csvReader.forEach(nextLine -> {
                     points.add(new Point(Double.parseDouble(nextLine[0]), Double.parseDouble(nextLine[1])));
-                }
+                });
             }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -53,6 +51,7 @@ public class ExponentialRegressive implements TargetingCalculator{
                 e.printStackTrace();
             }
         }
+        findRegressiveExponential(points);
     }
 
     /**
@@ -61,22 +60,9 @@ public class ExponentialRegressive implements TargetingCalculator{
      */
     @Override
                     
-    public double 
-            
-    
-            getValueForDistance(double 
-                    
-            
-                    distance){
-
-
-
-
-
-    return 0;   
-
-
-}
+    public double getValueForDistance(double distance){
+        return getAngleForDistance(distance);   
+    }
 
 
     /**

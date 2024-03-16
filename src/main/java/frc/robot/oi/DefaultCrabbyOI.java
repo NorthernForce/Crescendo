@@ -32,7 +32,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1), true, true));
         
-        controller.b().onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
+        controller.back().onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
         
         controller.y().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
         
@@ -45,7 +45,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
-        controller.back().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
+        controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
         
         controller.rightBumper().toggleOnTrue(new TurnToTarget(container.drive, container.setStateCommands,
             CrabbyConstants.DriveConstants.turnToTargetController, 
@@ -53,18 +53,18 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
             container.aprilTagCamera::getSpeakerTag, true, true)
-            .alongWith(new RampShooterContinuous(container.shooter,
-                () -> container.speedCalculator.getValueForDistance(container.lastRecordedDistance)))
+            .alongWith(new RampShooterWithDifferential(container.shooter,
+                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
+                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         
-        // controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.shooterSpeed.getDouble(30)));
-        controller.start().toggleOnTrue(new RampShooterContinuous(container.shooter, () -> container.dashboard.shooterSlider.get()));
+        controller.start().toggleOnTrue(new RampShooterWithDifferential(container.shooter, () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0), () -> container.shooterSpeed.getDouble(30)));
         
-        controller.povLeft().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
+        controller.x().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
         
@@ -93,7 +93,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
             .onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
-        controller.back().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed, CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
+        controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed, CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1)).alongWith(Commands.runOnce(() -> container.manualWrist = true)));
@@ -112,12 +112,13 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
             container.aprilTagCamera::getSpeakerTag, true, true)
-            .alongWith(new RampShooterContinuous(container.shooter,
-                () -> container.speedCalculator.getValueForDistance(container.lastRecordedDistance)))
+            .alongWith(new RampShooterWithDifferential(container.shooter,
+                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
+                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
-        controller.povLeft().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
+        controller.x().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
     }

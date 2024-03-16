@@ -41,6 +41,7 @@ import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.subsystems.OrangePi.TargetDetection;
 import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.ExponentialRegressive;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.TargetingCalculator;
 import frc.robot.utils.InterpolatedTargetingCalculator;
@@ -64,7 +65,9 @@ public class CrabbyContainer implements RobotContainer
     public boolean manualWrist;
     public double lastRecordedDistance = 0;
     public final GenericEntry shooterSpeed;
-    public final TargetingCalculator speedCalculator;
+    public final GenericEntry topRollerChange;
+    public final TargetingCalculator bottomSpeedCalculator;
+    public final TargetingCalculator topSpeedCalculator;
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
     public CrabbyContainer()
@@ -77,7 +80,7 @@ public class CrabbyContainer implements RobotContainer
 
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
-        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
+        angleCalculator = new ExponentialRegressive("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig, dashboard);
         wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(wristJoint, () -> 0)
             .alongWith(Commands.runOnce(() -> manualWrist = false)));
@@ -135,16 +138,20 @@ public class CrabbyContainer implements RobotContainer
 
         shooter.setDefaultCommand(new RestShooter(shooter));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
-        speedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/speedData.csv");
-        Shuffleboard.getTab("Developer").add("Add Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> lastRecordedDistance,
-            () -> shooterSpeed.getDouble(30)).ignoringDisable(true));
-        
+        topRollerChange = Shuffleboard.getTab("Developer").add("Top Roller Change", 0).getEntry();
+        bottomSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/bottomSpeedData.csv");
+        topSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/topSpeedData.csv");
+        Shuffleboard.getTab("Developer").add("Add Top Shooter Data", 
+            new AddDataToTargetingCalculator(topSpeedCalculator, () -> lastRecordedDistance, () -> shooterSpeed.getDouble(30) + topRollerChange.getDouble(0)).ignoringDisable(true)
+        );
+        Shuffleboard.getTab("Developer").add("Add Bottom Shooter Data", 
+            new AddDataToTargetingCalculator(bottomSpeedCalculator, () -> lastRecordedDistance, () -> shooterSpeed.getDouble(30)).ignoringDisable(true)
+        );
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
         musicChooser.addOption("Crab Rave", "crab-rave.chrp");
         musicChooser.addOption("The Office", "the-office.chrp");
         Shuffleboard.getTab("General").add("Music Selector", musicChooser);
-        Shuffleboard.getTab("Developer").add("Add Wrist and Shooter Data", new AddDataToTargetingCalculator(speedCalculator, () -> 0, () -> shooterSpeed.getDouble(0)).ignoringDisable(true));
         Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
             return new OrchestraCommand(musicChooser.getSelected(), List.of(
                 (NFRTalonFX)map.modules[0].getDriveController(),
