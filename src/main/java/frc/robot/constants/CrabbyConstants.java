@@ -100,14 +100,11 @@ public class CrabbyConstants {
         public static final double tolerance = 3; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
-    public static class Wrist
+    public static class ClimberConstants
     {
-        public static final NFRRotatingArmJointConfiguration wristConfig = 
-            new NFRRotatingArmJointConfiguration("wristConfig")
-            .withUseLimits(true)
-            .withUseIntegratedLimits(true)
-            .withLimits(Rotation2d.fromDegrees(22), Rotation2d.fromDegrees(56));
-        
+        public static final double climberSpeed = 1;
+        public static final double climberReverseSpeed = -1;
+        public static final double climberLimit = 10.0; //TODO: Find climber limit
     }
     public static class XavierConstants
     {
