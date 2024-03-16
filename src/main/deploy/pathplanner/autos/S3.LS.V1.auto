@@ -6,12 +6,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "closeShot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S3.LS.V1.G8"
@@ -21,12 +15,6 @@
           "type": "path",
           "data": {
             "pathName": "S3.LS.V1.backout.cut"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
           }
         },
         {
@@ -42,12 +30,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S3.LS.V1.G6"
@@ -58,16 +40,10 @@
           "data": {
             "pathName": "S3.LS.V1.guesswhosbackbackagain"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
-          }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "To Be Implemented",
   "choreoAuto": false
 }

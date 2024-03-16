@@ -35,24 +35,31 @@ public class Autos
         method that returns an AutonomousRoutine (refer to other autos as an example)
         */
         return List.of(
-            "S1.CS.V1",
+            "S1.SIMPLE",
+            "S2.SIMPLE",
+            "S3.SIMPLE",
+            "S1.G1_G2",
+            "S2.G2_G1",
+            "S2.G2_G3",
+            "S3.G3_G2"
+            // "S1.CS.V1",
             // "S1.CS.V2",
-            "S1.LS",
-            "S1.L.V1",
-            "S1.L.V2",
-            "S2.CS",
-            "S2.C.V1",
-            "S2.C.V2",
-            "S2.LS.V1",
-            "S2.S.V1",
-            "S2.S.V2",
-            "S2.T",
-            "S3.CS",
-            "S3.C.V1",
-            "S3.C.V2",
-            "S3.LS.V1",
-            "S3.S.V1",
-            "S3.S.V2"
+            // "S1.LS",
+            // "S1.L.V1",
+            // "S1.L.V2",
+            // "S2.CS",
+            // "S2.C.V1",
+            // "S2.C.V2",
+            // "S2.LS.V1",
+            // "S2.S.V1",
+            // "S2.S.V2",
+            // "S2.T",
+            // "S3.CS",
+            // "S3.C.V1",
+            // "S3.C.V2",
+            // "S3.LS.V1",
+            // "S3.S.V1",
+            // "S3.S.V2"
         );
     }
 
@@ -95,8 +102,11 @@ public class Autos
         TargetingCalculator bottomCalculator, TargetingCalculator wristCalculator)
     {
         NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
-        NamedCommands.registerCommand("autoShot", new AutoShot(drive, setStateCommands, intake, indexer, wrist, () -> 0, () -> 0, () -> 0, camera,
+        NamedCommands.registerCommand("autoShotStatic", new AutoShotStatic(drive, setStateCommands, intake, indexer, wrist, camera,
             shooter, lastRecordedDistance, topCalculator, bottomCalculator, wristCalculator));
+        NamedCommands.registerCommand("autoShootDynamic", new AutoShotDynamic(drive, intake, indexer, wrist, camera, shooter, lastRecordedDistance,
+            topCalculator, bottomCalculator, wristCalculator));
+        NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, indexer));
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
         ArrayList<AutonomousRoutine> autoRoutines = new ArrayList<>();

@@ -20,8 +20,8 @@
         "y": 0.7693172207222235
       },
       "prevControl": {
-        "x": 5.6786864280573806,
-        "y": 0.781200390525781
+        "x": 5.505498052662771,
+        "y": 1.2139354556486894
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,25 +30,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.85,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intake"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -61,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Uncategorized",
   "previewStartingState": {
     "rotation": -59.46830687131,
     "velocity": 0

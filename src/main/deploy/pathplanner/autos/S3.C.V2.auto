@@ -12,12 +12,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "closeShot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S3.C.V2.1"
@@ -27,12 +21,6 @@
           "type": "path",
           "data": {
             "pathName": "S2.C.V2.2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
           }
         },
         {
@@ -48,12 +36,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S2.C.V2.5"
@@ -64,16 +46,10 @@
           "data": {
             "pathName": "S2.C.V2.6"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
-          }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "To Be Implemented",
   "choreoAuto": false
 }

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.627089173077156,
-        "y": 6.814720590936718
+        "x": 5.923352107676933,
+        "y": 6.427207160464143
       },
       "isLocked": false,
       "linkedName": "S2.CS.attempt"
@@ -20,35 +20,23 @@
         "y": 5.774748251755228
       },
       "prevControl": {
-        "x": 7.068023377118184,
-        "y": 5.461391025088598
+        "x": 6.069424997687481,
+        "y": 6.417468967796773
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
-  "eventMarkers": [
+  "rotationTargets": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.6,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intake"
-              }
-            }
-          ]
-        }
-      }
+      "waypointRelativePos": 0.85,
+      "rotationDegrees": -27.163298403821294,
+      "rotateFast": false
     }
   ],
+  "constraintZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -61,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Uncategorized",
   "previewStartingState": null,
   "useDefaultConstraints": true
 }

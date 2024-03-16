@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.672911979924253,
+      "y": 6.600169776942364
+    },
+    "rotation": 61.349916556509
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1.SIMPLE.1"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "S1",
+  "choreoAuto": false
+}

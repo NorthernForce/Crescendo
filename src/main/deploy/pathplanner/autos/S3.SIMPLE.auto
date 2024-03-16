@@ -1,0 +1,25 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.SIMPLE.1"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "S3",
+  "choreoAuto": false
+}

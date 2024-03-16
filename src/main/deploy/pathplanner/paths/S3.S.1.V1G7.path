@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.611545616609752,
-        "y": 4.158450455789801
+        "x": 1.274776808812877,
+        "y": 3.810754922435771
       },
       "isLocked": false,
       "linkedName": null
@@ -20,35 +20,23 @@
         "y": 4.0900409202953645
       },
       "prevControl": {
-        "x": 1.8310896621793247,
-        "y": 4.115931241121742
+        "x": 1.5295357905530627,
+        "y": 3.9157465027893026
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "S3.S.1.End"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
-  "eventMarkers": [
+  "rotationTargets": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intake"
-              }
-            }
-          ]
-        }
-      }
+      "waypointRelativePos": 0.95,
+      "rotationDegrees": 13.01400897162428,
+      "rotateFast": false
     }
   ],
+  "constraintZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -61,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Uncategorized",
   "previewStartingState": {
     "rotation": -58.001695005458984,
     "velocity": 0

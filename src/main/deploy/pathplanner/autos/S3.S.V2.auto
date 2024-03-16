@@ -6,21 +6,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "closeShot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S3.S.1.V2G8"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
           }
         },
         {
@@ -36,12 +24,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "autoShot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S3.S.4.centerline.V2G8"
@@ -50,6 +32,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "To Be Implemented",
   "choreoAuto": false
 }
