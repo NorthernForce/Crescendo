@@ -24,9 +24,12 @@ import frc.robot.constants.CrabbyConstants;
 import frc.robot.robots.CrabbyContainer;
 
 public class DefaultCrabbyOI implements CrabbyOI {
+    private CommandXboxController driverController = null;
     @Override
     public void bindDriverToXBoxController(CrabbyContainer container, CommandXboxController controller)
     {
+        this.driverController = controller;
+
         container.drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(container.drive, container.setStateCommands,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
@@ -107,17 +110,20 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
         
-        controller.rightBumper().toggleOnTrue(new TurnToTarget(container.drive, container.setStateCommands,
-            CrabbyConstants.DriveConstants.turnToTargetController, 
-            () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
-            () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
-            () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
-            container.aprilTagCamera::getSpeakerTag, true, true)
-            .alongWith(new RampShooterWithDifferential(container.shooter,
-                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
-            .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+        if (driverController != null)
+        {
+            controller.rightBumper().toggleOnTrue(new TurnToTarget(container.drive, container.setStateCommands,
+                CrabbyConstants.DriveConstants.turnToTargetController, 
+                () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
+                () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
+                () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
+                container.aprilTagCamera::getSpeakerTag, true, true)
+                .alongWith(new RampShooterWithDifferential(container.shooter,
+                    () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
+                    () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
+                .alongWith(new NFRWristContinuousAngle(container.wristJoint,
+                    () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+        }
         
         controller.y().toggleOnTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
