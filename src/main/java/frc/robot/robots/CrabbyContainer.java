@@ -11,6 +11,7 @@ import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -24,12 +25,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
+import frc.robot.commands.CloseShot;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.oi.CrabbyOI;
 import frc.robot.oi.DefaultCrabbyOI;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.RestShooter;
@@ -71,6 +74,7 @@ public class CrabbyContainer implements RobotContainer
     public final TargetingCalculator topSpeedCalculator;
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
+    public final Climber climber;
     public CrabbyContainer()
     {
         
@@ -78,6 +82,8 @@ public class CrabbyContainer implements RobotContainer
 
         map = new CrabbyMap();
         intake = new Intake(map.intakeMotor);
+
+        climber = new Climber(map.climberMotor);
 
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
@@ -226,6 +232,12 @@ public class CrabbyContainer implements RobotContainer
     public List<AutonomousRoutine> getAutonomousRoutines() {
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
+        routines.add(new AutonomousRoutine("S1.SHOOT", () -> new Pose2d(new Translation2d(), DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? Rotation2d.fromDegrees(120) : Rotation2d.fromDegrees(60)),
+            new CloseShot(shooter, wristJoint, indexer, intake)));
+        routines.add(new AutonomousRoutine("S2.SHOOT", () -> new Pose2d(new Translation2d(), DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? Rotation2d.fromDegrees(180) : Rotation2d.fromDegrees(0)),
+            new CloseShot(shooter, wristJoint, indexer, intake)));
+        routines.add(new AutonomousRoutine("S3.SHOOT", () -> new Pose2d(new Translation2d(), DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? Rotation2d.fromDegrees(240) : Rotation2d.fromDegrees(-60)),
+            new CloseShot(shooter, wristJoint, indexer, intake)));
         routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose, pose -> {
                 orangePi.setGlobalPose(pose);
                 drive.resetPose(pose);

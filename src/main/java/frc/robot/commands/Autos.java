@@ -106,7 +106,7 @@ public class Autos
             shooter, lastRecordedDistance, topCalculator, bottomCalculator, wristCalculator));
         NamedCommands.registerCommand("autoShootDynamic", new AutoShotDynamic(drive, intake, indexer, wrist, camera, shooter, lastRecordedDistance,
             topCalculator, bottomCalculator, wristCalculator));
-        NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, indexer));
+        NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, indexer, intake));
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
         ArrayList<AutonomousRoutine> autoRoutines = new ArrayList<>();
