@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.gyros.NFRGyro;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 import org.northernforce.subsystems.drive.swerve.NFRSwerveModule;
@@ -8,6 +9,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -74,5 +77,30 @@ public class SwerveDrive extends NFRSwerveDrive
     {
         Pose2d pose = poseEstimator.getEstimatedPosition();
         return new Pose2d(pose.getTranslation(), Rotation2d.fromRadians(MathUtil.angleModulus(pose.getRotation().getRadians())));
+    }
+    public void scheduleCommands(NFRSwerveModuleSetState[] setStateCommands)
+    {
+        for (var setStateCommand : setStateCommands)
+        {
+            setStateCommand.schedule();
+        }
+    }
+    public void drive(ChassisSpeeds speeds, NFRSwerveModuleSetState[] setStateCommands, boolean optimize, boolean fieldRelative)
+    {
+        if (fieldRelative)
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation());
+        speeds = ChassisSpeeds.discretize(speeds, 0.02);
+        SwerveModuleState[] states = toModuleStates(speeds);
+        for (int i = 0; i < states.length; i++)
+        {
+            setStateCommands[i].setTargetState(optimize ? SwerveModuleState.optimize(states[i], getModules()[i].getRotation()) : states[i]);
+        }
+    }
+    public void cancelCommands(NFRSwerveModuleSetState[] setStateCommands)
+    {
+        for (var setStateCommand : setStateCommands)
+        {
+            setStateCommand.cancel();
+        }
     }
 }

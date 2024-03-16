@@ -6,9 +6,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "S3.S.1.V1G7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         },
         {
@@ -21,6 +33,12 @@
           "type": "path",
           "data": {
             "pathName": "S3.S.3.centerlineprep.V1G7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         },
         {
