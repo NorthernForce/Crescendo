@@ -60,6 +60,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
+            .and(() -> container.shooter.isRunning())
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         
         controller.start().toggleOnTrue(new RampShooterWithDifferential(container.shooter, () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0), () -> container.shooterSpeed.getDouble(30)));
