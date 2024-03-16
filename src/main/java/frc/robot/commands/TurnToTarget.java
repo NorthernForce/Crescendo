@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.OrangePi.TargetDetection;
 
@@ -23,6 +24,8 @@ public class TurnToTarget extends Command
     protected final DoubleSupplier xSupplier, ySupplier, thetaSupplier;
     protected final Supplier<Optional<TargetDetection>> targetSupplier;
     protected final boolean optimize, fieldRelative;
+    protected final Timer cacheTimer;
+    protected boolean hasReset = true;
     /**
      * Creates a new TurnToTarget. This allows the robot to be driven in both directions with optional field relative driving, while aligning with
      * a target.
@@ -49,17 +52,20 @@ public class TurnToTarget extends Command
         this.targetSupplier = targetSupplier;
         this.optimize = optimize;
         this.fieldRelative = fieldRelative;
+        this.cacheTimer = new Timer();
         addRequirements(drive);
         controller.enableContinuousInput(-Math.PI, Math.PI);
     }
     @Override
     public void initialize()
     {
+        hasReset = true;
         controller.reset();
         for (var command : setStateCommands)
         {
             command.schedule();
         }
+        cacheTimer.restart();
     }
     @Override
     public void execute()
@@ -67,13 +73,18 @@ public class TurnToTarget extends Command
         var detection = targetSupplier.get();
         if (detection.isPresent())
         {
+            hasReset = false;
+            cacheTimer.restart();
             controller.setSetpoint(MathUtil.angleModulus(drive.getRotation().minus(Rotation2d.fromRadians(detection.get().yaw())).getRadians()));
         }
-        ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(
-            MathUtil.angleModulus(drive.getRotation().getRadians())));
-        if (controller.atSetpoint())
-        {
-            speeds.omegaRadiansPerSecond = 0;
+        ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), thetaSupplier.getAsDouble());
+        if (!hasReset && !cacheTimer.hasElapsed(0.75)) {
+            speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(
+                MathUtil.angleModulus(drive.getRotation().getRadians())));
+            if (controller.atSetpoint())
+            {
+                speeds.omegaRadiansPerSecond = 0;
+            }
         }
         if (fieldRelative)
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
