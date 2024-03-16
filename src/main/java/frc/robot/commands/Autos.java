@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.northernforce.commands.NFRSwerveModuleSetState;
@@ -15,11 +16,15 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.constants.CrabbyConstants;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
+import frc.robot.subsystems.OrangePi.TargetCamera;
 import frc.robot.utils.AutonomousRoutine;
+import frc.robot.utils.TargetingCalculator;
 
 public class Autos
 {   
@@ -86,9 +91,12 @@ public class Autos
      */
     public static List<AutonomousRoutine> getRoutines(SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands,
         Supplier<Pose2d> poseSupplier, Consumer<Pose2d> resetPose, HolonomicPathFollowerConfig config, BooleanSupplier shouldFlipPath, Intake intake,
-        double intakeSpeed, Shooter shooter, WristJoint wrist)
+        Shooter shooter, WristJoint wrist, Indexer indexer, TargetCamera camera, DoubleSupplier lastRecordedDistance, TargetingCalculator topCalculator,
+        TargetingCalculator bottomCalculator, TargetingCalculator wristCalculator)
     {
-        NamedCommands.registerCommand("intake", new RunIntake(intake, intakeSpeed));
+        NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
+        NamedCommands.registerCommand("autoShot", new AutoShot(drive, setStateCommands, intake, indexer, wrist, () -> 0, () -> 0, () -> 0, camera,
+            shooter, lastRecordedDistance, topCalculator, bottomCalculator, wristCalculator));
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
         ArrayList<AutonomousRoutine> autoRoutines = new ArrayList<>();

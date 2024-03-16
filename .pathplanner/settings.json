@@ -3,6 +3,7 @@
   "robotLength": 0.7,
   "holonomicMode": true,
   "pathFolders": [
+    "S1.G1_G2",
     "S1.L",
     "S1.L.V1",
     "S1.L.V2",

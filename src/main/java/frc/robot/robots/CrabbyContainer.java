@@ -231,7 +231,7 @@ public class CrabbyContainer implements RobotContainer
                 drive.resetPose(pose);
             },
             CrabbyConstants.DriveConstants.holonomicConfig, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, intake,
-            CrabbyConstants.IntakeConstants.intakeSpeed, shooter, wristJoint));
+            shooter, wristJoint, indexer, aprilTagCamera, () -> lastRecordedDistance, topSpeedCalculator, bottomSpeedCalculator, angleCalculator));
         return routines;
     }
     @Override

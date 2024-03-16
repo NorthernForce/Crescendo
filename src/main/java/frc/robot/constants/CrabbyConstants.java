@@ -45,6 +45,7 @@ public class CrabbyConstants {
             new PIDConstants(5),
             new PIDConstants(5),
             6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
+        public static final double maxShootSpeed = 0.5;
     }
     public static class IntakeConstants
     {

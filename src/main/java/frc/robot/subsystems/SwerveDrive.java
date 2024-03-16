@@ -103,4 +103,9 @@ public class SwerveDrive extends NFRSwerveDrive
             setStateCommand.cancel();
         }
     }
+    public double getSpeed()
+    {
+        var chassisSpeeds = getChassisSpeeds();
+        return new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond).getDistance(new Translation2d());
+    }
 }
