@@ -27,11 +27,11 @@ import frc.robot.constants.CrabbyConstants;
 import frc.robot.robots.CrabbyContainer;
 
 public class DefaultCrabbyOI implements CrabbyOI {
-    private CommandXboxController driverController = null;
+    // private CommandXboxController driverController = null;
     @Override
     public void bindDriverToXBoxController(CrabbyContainer container, CommandXboxController controller)
     {
-        this.driverController = controller;
+        // this.driverController = controller;
 
         container.drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(container.drive, container.setStateCommands,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
@@ -42,33 +42,36 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.x().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
         
-        controller.povUp().whileTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)
-            .andThen(Commands.waitUntil(() -> false))); // TODO
+        // controller.povUp().whileTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)
+        //     .andThen(Commands.waitUntil(() -> false))); // TODO
 
-        controller.povDown().whileTrue(new ClimbersDown(container.climber, -1).andThen(Commands.waitUntil(() -> false)));
+        // controller.povDown().whileTrue(new ClimbersDown(container.climber, -1).andThen(Commands.waitUntil(() -> false)));
 
-        controller.a()
-            .whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed)
-            .deadlineWith(new FollowNote(container.xavier, container.drive, container.setStateCommands,
-                () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1), true)));
+        // controller.a()
+        //     .whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
+        //         CrabbyConstants.IntakeConstants.intakeSpeed)
+        //     .deadlineWith(new FollowNote(container.xavier, container.drive, container.setStateCommands,
+        //         () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1), true)));
         
-        controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
+        controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
+            CrabbyConstants.IntakeConstants.intakeSpeed));
         
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
-        controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
+        controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
+            CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
         
-        controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
-            CrabbyConstants.DriveConstants.turnToTargetController, 
-            () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
-            () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
-            () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
-            container.aprilTagCamera::getSpeakerTag, true, true)
-            .alongWith(new RampShooterWithDifferential(container.shooter,
-                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
-            .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+        // controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
+        //     CrabbyConstants.DriveConstants.turnToTargetController, 
+        //     () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
+        //     () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
+        //     () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
+        //     container.aprilTagCamera::getSpeakerTag, true, true)
+        //     .alongWith(new RampShooterWithDifferential(container.shooter,
+        //         () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
+        //         () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
+        //     .alongWith(new NFRWristContinuousAngle(container.wristJoint,
+        //         () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
 
         // controller.rightBumper().toggleOnTrue(new AutoShot(container.drive, container.setStateCommands, container.intake, container.indexer, container.wristJoint, 
         //     () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
@@ -109,14 +112,17 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1));
         container.dashboard.statusLightManager.wristManualLight.setSupplier(() -> wristManual.isScheduled());
         
-        controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
+        controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
+            CrabbyConstants.IntakeConstants.intakeSpeed));
         
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
             .onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
-        controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed, CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
+        controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
+            CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         
-        container.wristJoint.setDefaultCommand(wristManual);
+        container.wristJoint.setDefaultCommand(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(55),
+            Rotation2d.fromDegrees(1), 0, true));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
@@ -126,34 +132,34 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
         
-        controller.povUp().toggleOnTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)); // TODO
+        // controller.povUp().toggleOnTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)); // TODO
         
         
-        controller.povUp().whileTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)
-            .andThen(Commands.waitUntil(() -> false))); // TODO
+        // controller.povUp().whileTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)
+        //     .andThen(Commands.waitUntil(() -> false))); // TODO
 
-        controller.povDown().whileTrue(new ClimbersDown(container.climber, -1).andThen(Commands.waitUntil(() -> false)));
+        // controller.povDown().whileTrue(new ClimbersDown(container.climber, -1).andThen(Commands.waitUntil(() -> false)));
 
         container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)), container.climber));
         
-        if (driverController != null)
-        {
-            controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
-                CrabbyConstants.DriveConstants.turnToTargetController, 
-                () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
-                container.aprilTagCamera::getSpeakerTag, true, true)
-                .alongWith(new RampShooterWithDifferential(container.shooter,
-                    () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                    () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
-                .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                    () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
-            // controller.rightBumper().toggleOnTrue(new AutoShot(container.drive, container.setStateCommands, container.intake, container.indexer, container.wristJoint, 
-            //     () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
-            //     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
-            //     () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), container.aprilTagCamera, container.shooter, () -> container.lastRecordedDistance, container.topSpeedCalculator, container.bottomSpeedCalculator, container.angleCalculator));
-        }
+        // if (driverController != null)
+        // {
+        //     controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
+        //         CrabbyConstants.DriveConstants.turnToTargetController, 
+        //         () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
+        //         () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
+        //         () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
+        //         container.aprilTagCamera::getSpeakerTag, true, true)
+        //         .alongWith(new RampShooterWithDifferential(container.shooter,
+        //             () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
+        //             () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
+        //         .alongWith(new NFRWristContinuousAngle(container.wristJoint,
+        //             () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+        //     // controller.rightBumper().toggleOnTrue(new AutoShot(container.drive, container.setStateCommands, container.intake, container.indexer, container.wristJoint, 
+        //     //     () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
+        //     //     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
+        //     //     () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), container.aprilTagCamera, container.shooter, () -> container.lastRecordedDistance, container.topSpeedCalculator, container.bottomSpeedCalculator, container.angleCalculator));
+        // }
         
         controller.y().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)

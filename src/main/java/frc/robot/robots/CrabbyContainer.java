@@ -37,7 +37,8 @@ import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.RestShooter;
+import frc.robot.commands.RampShooterContinuous;
+import frc.robot.commands.RampShooterContinuous;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
@@ -133,7 +134,7 @@ public class CrabbyContainer implements RobotContainer
                 }
                 return lastRecordedDistance;
             });
-        PortForwarder.add(5808, "10.1.72.31", 22);
+        // PortForwarder.add(5808, "10.1.72.31", 22);
         Shuffleboard.getTab("General").addDouble("Target X", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).tx());
         Shuffleboard.getTab("General").addDouble("Target Y", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).ty());
         Shuffleboard.getTab("General").addDouble("Target Pitch", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).pitch());
@@ -148,7 +149,7 @@ public class CrabbyContainer implements RobotContainer
 
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
-        shooter.setDefaultCommand(new RestShooter(shooter));
+        shooter.setDefaultCommand(new RampShooterContinuous(shooter, () -> indexer.getBeamBreak().beamIntact() ? 25 : 0));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
         topRollerChange = Shuffleboard.getTab("Developer").add("Top Roller Change", 0).getEntry();
         bottomSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/bottomSpeedData.csv");

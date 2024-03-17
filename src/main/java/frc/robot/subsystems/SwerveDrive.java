@@ -30,7 +30,7 @@ public class SwerveDrive extends NFRSwerveDrive
      * @param gyro the imu.
      */
     public SwerveDrive(NFRSwerveDriveConfiguration config, NFRSwerveModule[] modules, Translation2d[] offsets,
-            NFRGyro gyro) {
+        NFRGyro gyro) {
         super(config, modules, offsets, gyro);
     }
     
@@ -42,7 +42,7 @@ public class SwerveDrive extends NFRSwerveDrive
      * @param gyro the imu.
      */
     public SwerveDrive(NFRSwerveDriveConfiguration config, NFRSwerveModule[] modules, Translation2d[] offsets,
-    NFRGyro gyro, CrabbyDashboard dashboard) {
+        NFRGyro gyro, CrabbyDashboard dashboard) {
         super(config, modules, offsets, gyro);
         dashboard.swerveDisplay.setSuppliersNotDesired(this::getModules, () -> gyro.getGyroYaw().getRadians());
     }
