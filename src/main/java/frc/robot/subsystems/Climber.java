@@ -3,17 +3,16 @@ package frc.robot.subsystems;
 import org.northernforce.motors.NFRSparkMax;
 
 import com.revrobotics.CANSparkBase.FaultID;
-import com.revrobotics.CANSparkBase.SoftLimitDirection;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.CrabbyConstants;
 
 public class Climber extends SubsystemBase {
+    private double offset = 0;
     private NFRSparkMax motor;
     public Climber(NFRSparkMax motor){
         this.motor = motor;
-        motor.setSoftLimit(SoftLimitDirection.kReverse, 0);
-        motor.setSoftLimit(SoftLimitDirection.kForward, (float)CrabbyConstants.ClimberConstants.climberLimit);
+        motor.disablePositiveLimit();
+        motor.disableNegativeLimit();
+        offset = motor.getEncoder().getPosition();
     }
 
     public void startMotor(double speed){
@@ -37,5 +36,10 @@ public class Climber extends SubsystemBase {
     public boolean isAtTopSoftLimit()
     {
         return motor.getFault(FaultID.kSoftLimitFwd);
+    }
+
+    public double getPos()
+    {
+        return motor.getEncoder().getPosition() - offset;
     }
 }

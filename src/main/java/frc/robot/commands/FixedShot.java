@@ -23,6 +23,7 @@ public class FixedShot extends SequentialCommandGroup {
      * @param targetAngle the target angle of the wrist
      * @param angularTolerance the tolerance for being aligned
      * @param intakeSpeed the speed to run the intake at
+     * 
      * @param clearanceTime the time to wait after feeding the piece to the shooter
      */
     public FixedShot(Shooter shooter, WristJoint wrist, Indexer intake, Intake intak, double shooterSpeed, double shooterTolerance, Rotation2d targetAngle,
@@ -31,7 +32,7 @@ public class FixedShot extends SequentialCommandGroup {
         addCommands(
             new ParallelCommandGroup(
                 new NFRRotatingArmJointSetAngle(wrist, targetAngle, angularTolerance, 0, true),
-                new RampShooter(shooter, intakeSpeed, shooterTolerance)
+                new RampShooter(shooter, shooterSpeed, shooterTolerance)
             ),
             new ShootIndexerAndIntake(intake, intak, intakeSpeed, CrabbyConstants.IntakeConstants.intakeSpeed),
             new WaitCommand(clearanceTime)

@@ -95,9 +95,9 @@ public class CrabbyConstants {
                 .withKD(kD);
         public static final TalonFXConfiguration shooterMotorConfiguration = defaultTalonConfiguration.withSlot0(slot0Config)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
-        public static final double closeShotSpeed = 30;
-        public static final double ampBottomSpeed = 15;
-        public static final double ampTopSpeed = 9;
+        public static final double closeShotSpeed = 25;
+        public static final double ampBottomSpeed = 14;
+        public static final double ampTopSpeed = 7;
         public static final double tolerance = 3; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
@@ -105,7 +105,7 @@ public class CrabbyConstants {
     {
         public static final double climberSpeed = 1;
         public static final double climberReverseSpeed = -1;
-        public static final double climberLimit = 10.0; //TODO: Find climber limit
+        public static final double climberLimit = 480.0; //TODO: Find climber limit
     }
     public static class XavierConstants
     {

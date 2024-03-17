@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -113,7 +114,8 @@ public class Autos
         getAllAutos().forEach(name -> autoRoutines.add(new AutonomousRoutine(name, Pose2d::new, new SequentialCommandGroup(
             Commands.runOnce(() -> drive.scheduleCommands(setStateCommands)),
             new PathPlannerAuto(name),
-            Commands.runOnce(() -> drive.cancelCommands(setStateCommands))
+            Commands.runOnce(() -> drive.cancelCommands(setStateCommands)),
+            new NFRSwerveDriveStop(drive, setStateCommands, true)
         ))));
         return autoRoutines;
     }

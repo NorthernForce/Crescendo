@@ -12,6 +12,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ClimbersDown;
 import frc.robot.commands.CloseShot;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
@@ -84,6 +86,8 @@ public class CrabbyContainer implements RobotContainer
         intake = new Intake(map.intakeMotor);
 
         climber = new Climber(map.climberMotor);
+        
+        Shuffleboard.getTab("General").addDouble("pos", () -> climber.getPos());
 
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
@@ -129,6 +133,7 @@ public class CrabbyContainer implements RobotContainer
                 }
                 return lastRecordedDistance;
             });
+        PortForwarder.add(5808, "10.1.72.31", 22);
         Shuffleboard.getTab("General").addDouble("Target X", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).tx());
         Shuffleboard.getTab("General").addDouble("Target Y", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).ty());
         Shuffleboard.getTab("General").addDouble("Target Pitch", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).pitch());

@@ -30,6 +30,6 @@ public class ClimbersDown extends Command{
 
     @Override
     public boolean isFinished(){
-        return climber.isAtBottomSoftLimit(); //TODO: Find max motor current
+        return climber.getPos() <= -10; //TODO: Find max motor current
     }
 }
