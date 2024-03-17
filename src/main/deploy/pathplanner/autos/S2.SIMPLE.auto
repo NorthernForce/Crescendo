@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.2534821106323994,
+      "y": 5.519354578330648
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -20,6 +26,6 @@
       ]
     }
   },
-  "folder": "S2",
+  "folder": null,
   "choreoAuto": false
 }

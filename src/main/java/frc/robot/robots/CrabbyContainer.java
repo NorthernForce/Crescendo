@@ -12,7 +12,6 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -26,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ClimbersDown;
 import frc.robot.commands.CloseShot;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
@@ -37,7 +35,6 @@ import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.RampShooterContinuous;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
@@ -149,7 +146,7 @@ public class CrabbyContainer implements RobotContainer
 
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
-        shooter.setDefaultCommand(new RampShooterContinuous(shooter, () -> indexer.getBeamBreak().beamIntact() ? 25 : 0));
+        shooter.setDefaultCommand(new RampShooterContinuous(shooter, () -> indexer.getBeamBreak().beamBroken() ? 25 : 0));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
         topRollerChange = Shuffleboard.getTab("Developer").add("Top Roller Change", 0).getEntry();
         bottomSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/bottomSpeedData.csv");
@@ -225,6 +222,8 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void setInitialPose(Pose2d pose)
     {
+        orangePi.setGlobalPose(pose);
+        drive.resetPose(pose);
     }
     @Override
     public void periodic()

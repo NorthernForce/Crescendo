@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.703002293974583,
+      "y": 4.4929760898295354
+    },
+    "rotation": -60.594280800949534
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -31,9 +37,15 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "S3.G3_G2.2"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "autoShotStatic"
+            "name": "closeShot"
           }
         },
         {
@@ -43,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S3.G3_G2.2"
+                  "pathName": "S3.G3_G2.3"
                 }
               },
               {
@@ -56,14 +68,20 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "S3.G3_G2.4"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "autoShotStatic"
+            "name": "closeShot"
           }
         }
       ]
     }
   },
-  "folder": "S3",
+  "folder": null,
   "choreoAuto": false
 }

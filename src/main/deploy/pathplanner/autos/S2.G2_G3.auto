@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.250888728346081,
+      "y": 5.619148354631248
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -31,9 +37,15 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "S2.G2_G3.2"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "autoShotStatic"
+            "name": "closeShot"
           }
         },
         {
@@ -43,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S2.G2_G3.2"
+                  "pathName": "S2.G2_G3.3"
                 }
               },
               {
@@ -56,14 +68,20 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "S2.G2_G3.4"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "autoShotStatic"
+            "name": "closeShot"
           }
         }
       ]
     }
   },
-  "folder": "S2",
+  "folder": null,
   "choreoAuto": false
 }

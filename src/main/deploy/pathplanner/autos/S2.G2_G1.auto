@@ -37,9 +37,15 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "S2.G2_G1.2"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "autoShot"
+            "name": "closeShot"
           }
         },
         {
@@ -47,29 +53,35 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "intake"
+                  "pathName": "S2.G2_G1.3"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "S2.G2_G1.2"
+                  "name": "intake"
                 }
               }
             ]
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "S2.G2_G1.4"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "autoShot"
+            "name": "closeShot"
           }
         }
       ]
     }
   },
-  "folder": "S2",
+  "folder": null,
   "choreoAuto": false
 }
