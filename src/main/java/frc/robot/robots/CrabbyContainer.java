@@ -12,7 +12,6 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -26,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ClimbersDown;
 import frc.robot.commands.CloseShot;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
@@ -223,6 +221,8 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void setInitialPose(Pose2d pose)
     {
+        orangePi.setGlobalPose(pose);
+        drive.resetPose(pose);
     }
     @Override
     public void periodic()
