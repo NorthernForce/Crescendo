@@ -29,7 +29,7 @@ public class ClimbersUp extends Command{
 
     @Override
     public boolean isFinished(){
-        return climber.isAtTopSoftLimit();
+        return climber.getPos() >= 500;
     }
 }
 
