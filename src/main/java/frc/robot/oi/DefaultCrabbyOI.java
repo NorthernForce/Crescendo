@@ -35,11 +35,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.back().onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
         
         controller.x().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
-        
-        // controller.povUp().whileTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)
-        //     .andThen(Commands.waitUntil(() -> false))); // TODO
-
-        // controller.povDown().whileTrue(new ClimbersDown(container.climber, -1).andThen(Commands.waitUntil(() -> false)));
 
         // controller.a()
         //     .whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
@@ -76,7 +71,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .and(() -> container.shooter.isRunning())
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         
-        // controller.start().whileTrue.(new RampShooterWithDifferential(container.shooter, () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0), () -> container.shooterSpeed.getDouble(30)));
+        controller.start().whileTrue(new RampShooterWithDifferential(container.shooter,
+            () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0), () -> container.shooterSpeed.getDouble(30)));
         
         controller.rightBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
@@ -125,16 +121,9 @@ public class DefaultCrabbyOI implements CrabbyOI {
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
-        
-        // controller.povUp().toggleOnTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)); // TODO
-        
-        
-        // controller.povUp().whileTrue(new ClimbersUp(container.climber, CrabbyConstants.ClimberConstants.climberSpeed)
-        //     .andThen(Commands.waitUntil(() -> false))); // TODO
 
-        // controller.povDown().whileTrue(new ClimbersDown(container.climber, -1).andThen(Commands.waitUntil(() -> false)));
-
-        container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)), container.climber));
+        container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)),
+            container.climber));
         
         // if (driverController != null)
         // {

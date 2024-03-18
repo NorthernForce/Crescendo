@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.constants.CrabbyConstants;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -26,17 +25,17 @@ public class FixedShot extends SequentialCommandGroup {
      * 
      * @param clearanceTime the time to wait after feeding the piece to the shooter
      */
-    public FixedShot(Shooter shooter, WristJoint wrist, Indexer intake, Intake intak, double shooterSpeed, double shooterTolerance, Rotation2d targetAngle,
-        Rotation2d angularTolerance, double intakeSpeed, double clearanceTime)
+    public FixedShot(Shooter shooter, WristJoint wrist, Indexer indexer, Intake intake, double shooterSpeed, double shooterTolerance, Rotation2d targetAngle,
+        Rotation2d angularTolerance, double indexerSpeed, double intakeSpeed, double clearanceTime)
     {
         addCommands(
             new ParallelCommandGroup(
                 new NFRRotatingArmJointSetAngle(wrist, targetAngle, angularTolerance, 0, true),
                 new RampShooter(shooter, shooterSpeed, shooterTolerance)
             ),
-            new ShootIndexerAndIntake(intake, intak, intakeSpeed, CrabbyConstants.IntakeConstants.intakeSpeed),
+            new ShootIndexerAndIntake(indexer, intake, indexerSpeed, intakeSpeed),
             new WaitCommand(clearanceTime)
         );
-        addRequirements(shooter, wrist, intake);
+        addRequirements(shooter, wrist, intake, indexer);
     }
 }

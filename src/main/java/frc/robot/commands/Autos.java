@@ -102,11 +102,8 @@ public class Autos
         Shooter shooter, WristJoint wrist, Indexer indexer, TargetCamera camera, DoubleSupplier lastRecordedDistance, TargetingCalculator topCalculator,
         TargetingCalculator bottomCalculator, TargetingCalculator wristCalculator)
     {
-        NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
-        NamedCommands.registerCommand("autoShotStatic", new AutoShotStatic(drive, setStateCommands, intake, indexer, wrist, camera,
-            shooter, lastRecordedDistance, topCalculator, bottomCalculator, wristCalculator));
-        NamedCommands.registerCommand("autoShootDynamic", new AutoShotDynamic(drive, intake, indexer, wrist, camera, shooter, lastRecordedDistance,
-            topCalculator, bottomCalculator, wristCalculator));
+        NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerShootSpeed,
+            CrabbyConstants.IntakeConstants.intakeSpeed));
         NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, indexer, intake));
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);

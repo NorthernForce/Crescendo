@@ -84,8 +84,7 @@ public class CrabbyContainer implements RobotContainer
         intake = new Intake(map.intakeMotor);
 
         climber = new Climber(map.climberMotor);
-        
-        Shuffleboard.getTab("General").addDouble("pos", () -> climber.getPos());
+        Shuffleboard.getTab("General").addDouble("Climber Position", () -> climber.getPosition());
 
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 

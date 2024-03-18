@@ -38,7 +38,7 @@ public class Climber extends SubsystemBase {
         return motor.getFault(FaultID.kSoftLimitFwd);
     }
 
-    public double getPos()
+    public double getPosition()
     {
         return motor.getEncoder().getPosition() - offset;
     }
