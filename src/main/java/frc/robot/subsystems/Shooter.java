@@ -4,23 +4,27 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.motors.NFRMotorController;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.dashboard.CrabbyDashboard;
+import frc.robot.utils.LoggableHardware;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase implements LoggableHardware {
     private final NFRMotorController topMotor;
     private final NFRMotorController bottomMotor;
     private double topTargetSpeed, bottomTargetSpeed;
+    private final double tolerance;
 
     /** Creates a new Shooter. 
      * @param dashboard */
-    public Shooter(NFRMotorController topMotor, NFRMotorController bottomMotor, CrabbyDashboard dashboard) {
+    public Shooter(NFRMotorController topMotor, NFRMotorController bottomMotor, double tolerance, CrabbyDashboard dashboard) {
         this.topMotor = topMotor;
         this.bottomMotor = bottomMotor;
         topTargetSpeed = 0;
         bottomTargetSpeed = 0;
+        this.tolerance = tolerance;
 
         dashboard.topShooter.setSupplier(this::getTopMotorVelocity);
         dashboard.bottomShooter.setSupplier(this::getBottomMotorVelocity);
@@ -60,7 +64,7 @@ public class Shooter extends SubsystemBase {
         return bottomMotor.getSelectedEncoder().getVelocity();
     }
 
-    public boolean isAtSpeed(double tolerance)
+    public boolean isAtSpeed()
     {
         return Math.abs(getTopMotorVelocity() - topTargetSpeed) < tolerance
             && Math.abs(getBottomMotorVelocity() - bottomTargetSpeed) < tolerance;
@@ -81,5 +85,19 @@ public class Shooter extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+    }
+
+    @Override
+    public void startLogging(double period) {
+    }
+
+    @Override
+    public void logOutputs(String name) {
+        Logger.recordOutput(name + "/TopTargetSpeed", topTargetSpeed);
+        Logger.recordOutput(name + "/BottomTargetSpeed", bottomTargetSpeed);
+        Logger.recordOutput(name + "/TopSpeed", getTopMotorVelocity());
+        Logger.recordOutput(name + "/BottomSpeed", getBottomMotorVelocity());
+        Logger.recordOutput(name + "/IsRunning", isRunning());
+        Logger.recordOutput(name + "/IsAtSpeed", isAtSpeed());
     }
 }

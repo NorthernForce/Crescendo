@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.motors.NFRSparkMax;
 
 import com.revrobotics.CANSparkBase.FaultID;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utils.LoggableHardware;
 
-public class Climber extends SubsystemBase {
+public class Climber extends SubsystemBase implements LoggableHardware {
     private double offset = 0;
     private NFRSparkMax motor;
     public Climber(NFRSparkMax motor){
@@ -41,5 +43,16 @@ public class Climber extends SubsystemBase {
     public double getPosition()
     {
         return motor.getEncoder().getPosition() - offset;
+    }
+
+    @Override
+    public void startLogging(double period) {
+    }
+
+    @Override
+    public void logOutputs(String name) {
+        Logger.recordOutput(name + "/Position", getPosition());
+        Logger.recordOutput(name + "/TopSoftLimit", isAtTopSoftLimit());
+        Logger.recordOutput(name + "/BottomSoftLimit", isAtBottomSoftLimit());
     }
 }

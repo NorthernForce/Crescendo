@@ -2,13 +2,14 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
-
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.motors.MotorEncoderMismatchException;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
-public class WristJoint extends NFRRotatingArmJoint
+import frc.robot.utils.LoggableHardware;
+public class WristJoint extends NFRRotatingArmJoint implements LoggableHardware
 {
     public CrabbyDashboard dashboard;
     public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig, CrabbyDashboard dashboard)
@@ -30,5 +31,12 @@ public class WristJoint extends NFRRotatingArmJoint
         wristController.burnFlash();
 
         dashboard.wristGauge.setSupplier(() -> getRotation().getDegrees());
+    }
+    @Override
+    public void startLogging(double period) {
+    }
+    @Override
+    public void logOutputs(String name) {
+        Logger.recordOutput(name + "/Angle", getRotation());
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.subsystems.NFRSubsystem;
 
 import edu.wpi.first.math.Pair;
@@ -30,13 +31,14 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.dashboard.Dashboard.Alert;
 import frc.robot.dashboard.Dashboard.AlertType;
 import frc.robot.utils.AlertProvider;
+import frc.robot.utils.LoggableHardware;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldConstants;
 
 /**
  * This is a subsystem for the Orange Pi 5+ that runs nfr_ros.
  */
-public class OrangePi extends NFRSubsystem implements AlertProvider
+public class OrangePi extends NFRSubsystem implements AlertProvider, LoggableHardware
 {
     /**
      * This is the configuration class for the OrangePi subsystem.
@@ -257,16 +259,18 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     /**
      * Each target camera subscribes to a topic for getting target detection structs
      */
-    public class TargetCamera
+    public class TargetCamera implements LoggableHardware
     {
         protected final StructArraySubscriber<TargetDetection> detections;
+        protected final TargetDetectionStruct struct;
         /**
          * Creates a new Target Camera.
          * @param name topic on nt to subscribe to
          */
         public TargetCamera(String name)
         {
-            detections = table.getStructArrayTopic(name, new TargetDetectionStruct()).subscribe(new TargetDetection[] {});
+            struct = new TargetDetectionStruct();
+            detections = table.getStructArrayTopic(name, struct).subscribe(new TargetDetection[] {});
         }
         /**
          * Returns the list of target detections.
@@ -317,6 +321,14 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         {
             return getTarget(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7);
         }
+        @Override
+        public void startLogging(double period) {
+        }
+        @Override
+        public void logOutputs(String name) {
+            Logger.recordOutput(name + "/HasSpeakerTag", getSpeakerTag().isPresent());
+            Logger.recordOutput(name + "/Detections", struct, getDetections());
+        }
     }
     /**
      * Each pose supplier supplies to poses/poseName for getting pose estimations via vision.
@@ -355,5 +367,14 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
     public List<Alert> getPossibleAlerts()
     {
         return List.of(orangePiMissing);
+    }
+    @Override
+    public void startLogging(double period) {
+    }
+    @Override
+    public void logOutputs(String name) {
+        Logger.recordOutput(name + "/IsConnected", isConnected());
+        Logger.recordOutput(name + "/PoseEstimation", getPose());
+        Logger.recordOutput(name + "/CommandVelocity", getCommandVelocity());
     }
 }

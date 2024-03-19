@@ -67,7 +67,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         //     () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
         //     () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1), container.aprilTagCamera, container.shooter, () -> container.lastRecordedDistance, container.topSpeedCalculator, container.bottomSpeedCalculator, container.angleCalculator));
         
-        controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
+        controller.rightTrigger().and(() -> container.shooter.isAtSpeed())
             .and(() -> container.shooter.isRunning())
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         
@@ -114,7 +114,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(55),
             Rotation2d.fromDegrees(1), 0, true));
         
-        controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
+        controller.rightTrigger().and(() -> container.shooter.isAtSpeed())
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
 
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,

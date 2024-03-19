@@ -2,9 +2,14 @@ package frc.robot;
 
 import java.util.Map;
 
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.northernforce.util.NFRRobotChooser;
 
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.robots.CrabbyContainer;
 import frc.robot.dashboard.Dashboard;
@@ -18,16 +23,32 @@ import frc.robot.utils.RobotContainer;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private RobotContainer container;
   private Dashboard dashboard;
   private AutonomousRoutine routine;
+  private static boolean shouldReplay = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    Logger.recordMetadata("ProjectName", "Crescendo"); // Set a metadata value
+
+    if (isReal() || !shouldReplay) {
+        Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    } else {
+        setUseTiming(false); // Run as fast as possible
+        String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+        Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+    }
+
+    // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+    Logger.start();
+
     container = (RobotContainer)new NFRRobotChooser(() -> new CrabbyContainer(), Map.of(
       "Crabby", () -> new CrabbyContainer(),
       "Swervy", () -> new SwervyContainer())).getNFRRobotContainer();

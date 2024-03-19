@@ -9,17 +9,15 @@ import frc.robot.subsystems.Shooter;
 
 public class RampShooter extends Command {
     private double speed;
-    private double tolerance;
     private Shooter shooter;
     /** Creates a new RampShooter. 
      * @param speed the velocity to run the motor at (in rotation per 100ms)
     */
-    public RampShooter(Shooter shooter, double speed, double tolerance) {
+    public RampShooter(Shooter shooter, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(shooter);
         this.speed = speed;
         this.shooter = shooter;
-        this.tolerance = tolerance;
     }
 
     // Called when the command is initially scheduled.
@@ -41,6 +39,6 @@ public class RampShooter extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return shooter.isRunning() && shooter.isAtSpeed(tolerance);
+        return shooter.isRunning() && shooter.isAtSpeed();
     }
 }

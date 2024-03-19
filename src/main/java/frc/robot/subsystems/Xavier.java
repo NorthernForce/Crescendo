@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.subsystems.NFRSubsystem;
 
 import edu.wpi.first.networktables.FloatSubscriber;
@@ -10,11 +11,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.dashboard.Dashboard.Alert;
 import frc.robot.dashboard.Dashboard.AlertType;
 import frc.robot.utils.AlertProvider;
+import frc.robot.utils.LoggableHardware;
 
 /**
  * Subsystem for note detection running on Xavier coprocessor
  */
-public class Xavier extends NFRSubsystem implements AlertProvider
+public class Xavier extends NFRSubsystem implements AlertProvider, LoggableHardware
 {
     /**
      * Configuration class for Xavier subsystem
@@ -81,5 +83,13 @@ public class Xavier extends NFRSubsystem implements AlertProvider
     public List<Alert> getPossibleAlerts()
     {
         return List.of(xavierDisconnected);
+    }
+    @Override
+    public void startLogging(double period) {
+    }
+    @Override
+    public void logOutputs(String name) {
+        Logger.recordOutput(name + "/NoteYaw", getYawRadians());
+        Logger.recordOutput(name + "/IsConnected", isConnected());
     }
 }
