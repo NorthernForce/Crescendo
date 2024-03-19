@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "testPoly",
+      "request": "launch",
+      "mainClass": "frc.robot.utils.testPoly",
+      "projectName": "Crescendo"
+    },
+    {
+      "type": "java",
       "name": "Launch test",
       "request": "launch",
       "mainClass": "frc.robot.utils.test",
