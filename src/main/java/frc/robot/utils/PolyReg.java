@@ -6,10 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.opencv.core.Point;
 
@@ -94,41 +90,34 @@ public class PolyReg implements TargetingCalculator{
     // {
 
     // }
-    public double determinantOfMatrix(double[][] current)
+    public static double determinantOfMatrix(double[][] current)
     {
-        Map<Double,double[][]> hashResult = new HashMap<>();
-        double[][] result = new double[current.length][current.length];
+        double[][] result = new double[current.length][current[0].length];
         double[][] tempLittleMatrixes = new double[current.length-1][current[0].length-1];
+
         double tempResult = 0;
         int cx = 0;
         int cy = 0;
         int colDown = 0;
         int rowDown = 0;
-        double origTempResult = tempResult;
-
+        int changeX = 0;
+        int changed = 0;
         int pos = 0;
-        for(int mx = 0; mx < current[0].length; mx++)
+        for(int mx = 0; mx < result[0].length; mx++)
         {
-            cx++;
-            if(cx == points.size())
-            {
-                cx = 0;
-                cy++;
-            }
             rowDown = 0;
             colDown = 0;
-            tempResult = 0;
-            for(int y = 1; y < current.length; y++)
+            for(int y = 1; y < result.length; y++)
             {
 
                 
-                for(int x = 0; x < current[0].length; x++)
+                for(int x = 0; x < result[0].length; x++)
                 {
                     if(x != mx)
                     {
                         tempLittleMatrixes[colDown][rowDown] = current[y][x];
                         rowDown++;
-
+                        changed++;
                         if(rowDown == tempLittleMatrixes[0].length)
                         {
                             rowDown = 0;
@@ -136,20 +125,18 @@ public class PolyReg implements TargetingCalculator{
                         }
                         
                     }
-
+                    else
+                    {
+                        changeX = 1;
+                    }
                 }   
 
             }
             tempResult+=current[0][mx]*(pos%2 == 0 ? 1 : -1)*(tempLittleMatrixes.length == 2 ? (tempLittleMatrixes[0][0]*tempLittleMatrixes[1][1]-tempLittleMatrixes[0][1]*tempLittleMatrixes[1][0]) : determinantOfMatrix(tempLittleMatrixes));
-            if(current.length == points.size())
-            {
-                result[cy][cx] = tempResult-origTempResult;
-            }
-            origTempResult = tempResult;
             pos++;
         }
-        double[][] noBottomFeeder =result;
-        return tempResult;
+        double noBottomFeeder =tempResult;
+        return noBottomFeeder;
     }
 
     public VariableOperator evalSkelequation(double x)
