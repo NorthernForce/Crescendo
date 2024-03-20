@@ -6,7 +6,6 @@ import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -82,6 +81,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
+        
+        controller.start().toggleOnTrue(new RampShooterWithDifferential(
+            container.shooter, () -> container.shooterSpeed.getDouble(0) + container.topRollerChange.getDouble(0),
+                () -> container.shooterSpeed.getDouble(0)));
     }
     @Override
     public void bindDriverToJoystick(CrabbyContainer container, CommandGenericHID joystick)
@@ -111,9 +114,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
             CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         
-        container.wristJoint.setDefaultCommand(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(55),
-            Rotation2d.fromDegrees(1), 0, true));
-        
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
 
@@ -124,6 +124,9 @@ public class DefaultCrabbyOI implements CrabbyOI {
 
         container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)),
             container.climber));
+
+        container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
+                .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
         
         // if (driverController != null)
         // {

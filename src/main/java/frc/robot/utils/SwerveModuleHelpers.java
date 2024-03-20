@@ -109,6 +109,9 @@ public class SwerveModuleHelpers
         driveConfig.CurrentLimits.SupplyCurrentLimit = 40;
         driveConfig.CurrentLimits.SupplyCurrentThreshold = 40;
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.01;
+        driveConfig.CurrentLimits.StatorCurrentLimit = 40;
+        driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.4;
         driveConfig.Audio.AllowMusicDurDisable = true;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         driveConfig.Slot0.kP = 0.01;
@@ -123,6 +126,8 @@ public class SwerveModuleHelpers
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
         turnConfig.CurrentLimits.SupplyCurrentLimit = 40;
         turnConfig.CurrentLimits.SupplyCurrentThreshold = 40;
+        turnConfig.CurrentLimits.StatorCurrentLimit = 40;
+        turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         turnConfig.CurrentLimits.SupplyTimeThreshold = 0.01;
         turnConfig.Audio.AllowMusicDurDisable = true;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;

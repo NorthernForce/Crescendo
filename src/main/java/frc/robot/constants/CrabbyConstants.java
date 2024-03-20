@@ -27,6 +27,8 @@ public class CrabbyConstants {
             .withSupplyCurrentLimit(40)
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentThreshold(40)
+            .withStatorCurrentLimit(40)
+            .withStatorCurrentLimitEnable(true)
             .withSupplyTimeThreshold(0.01)); // TODO: if necessary,
         // add some common configurations to this
     public static class DriveConstants {
@@ -55,7 +57,7 @@ public class CrabbyConstants {
     public static class IndexerConstants
     {
         public static final double indexerSpeed = 0.6;
-        public static final double indexerShootSpeed = 0.5;
+        public static final double indexerShootSpeed = 0.8;
         public static final double indexerPurgeSpeed = -1; //TODO find indexerPurgeSpeed
     }
     public static class WristConstants
@@ -82,22 +84,25 @@ public class CrabbyConstants {
     }
     public static class ShooterConstants
     {
-        public static final double kV = 0.0119; // Multiplied by setpoint (velocity)
-        public static final double kS = 0.0; // Added to setpoint (constant)
-        public static final double kP = 0.02; // Multiplied by error (velocity)
-        public static final double kI = 0.0; // Accumulation of error
-        public static final double kD = 0.0; // Accumulation of rate of change 
-        public static final Slot0Configs slot0Config = new Slot0Configs()
-                .withKV(kV)
-                .withKS(kS)
-                .withKP(kP)
-                .withKI(kI)
-                .withKD(kD);
-        public static final TalonFXConfiguration shooterMotorConfiguration = defaultTalonConfiguration.withSlot0(slot0Config)
+        public static final Slot0Configs topSlot = new Slot0Configs()
+                .withKV(0.0102)
+                .withKS(0)
+                .withKP(0.01)
+                .withKI(0)
+                .withKD(0);
+        public static final Slot0Configs bottomSlot = new Slot0Configs()
+                .withKV(0.05)
+                .withKS(0)
+                .withKP(0.0115)
+                .withKI(0)
+                .withKD(0);
+        public static final TalonFXConfiguration topShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
-        public static final double closeShotSpeed = 25;
-        public static final double ampBottomSpeed = 14;
-        public static final double ampTopSpeed = 7;
+        public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
+        public static final double closeShotSpeed = 25; // TODO
+        public static final double ampBottomSpeed = 14; // TODO
+        public static final double ampTopSpeed = 7; // TODO
         public static final double tolerance = 3; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
