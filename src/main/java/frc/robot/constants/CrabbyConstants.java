@@ -27,7 +27,7 @@ public class CrabbyConstants {
             .withSupplyCurrentLimit(40)
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentThreshold(40)
-            .withSupplyTimeThreshold(0.5)); // TODO: if necessary,
+            .withSupplyTimeThreshold(0.01)); // TODO: if necessary,
         // add some common configurations to this
     public static class DriveConstants {
         public static final Translation2d[] offsets = new Translation2d[] {
