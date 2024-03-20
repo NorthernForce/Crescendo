@@ -66,6 +66,11 @@ public class Shooter extends SubsystemBase {
             && Math.abs(getBottomMotorVelocity() - bottomTargetSpeed) < tolerance;
     }
 
+    public boolean isRunning()
+    {
+        return topTargetSpeed != 0 || bottomTargetSpeed != 0;
+    }
+
     public void stop() {
         topMotor.set(0);
         bottomMotor.set(0);

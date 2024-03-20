@@ -41,6 +41,6 @@ public class RampShooter extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return shooter.isAtSpeed(tolerance);
+        return shooter.isRunning() && shooter.isAtSpeed(tolerance);
     }
 }
