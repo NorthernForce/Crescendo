@@ -124,7 +124,7 @@ public class PolyReg implements TargetingCalculator{
             //     }
             //     System.out.println("\n");
             // }
-                result[y][x] = determinantOfMatrix(externalMiniOperator(current, x, y), 1) * -1 *(pos % 2 * 2 -1);
+                result[y][x] = determinantOfMatrix(externalMiniOperator(current, x, y), 1)  * -1 *(pos % 2 * 2 -1);
                 pos++;
             }
         }

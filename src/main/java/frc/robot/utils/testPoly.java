@@ -2,7 +2,7 @@ package frc.robot.utils;
 
 public class testPoly {
     public static void main(String[] args) {
-        double[][] test = {{5,4,8,6,9},{6,8,2,4,-5},{9,5,7,3,6},{33,75,4322,472,-475},{-43,-65,437,-2222,1289}};
+        double[][] test = {{1,2,3},{4,5,6},{7,2,9}};
         System.out.println(test.length);
         double result = PolyReg.determinantOfMatrix(test,1);
         System.out.println(result + "\n\n");
