@@ -77,21 +77,63 @@ public class PolyReg implements TargetingCalculator{
 
         return origMatrices[0]; // TODO CHANGE THIS!!!
     }
-    // public double[][] findInverseMatrices(double[][] current)
-    // {
-    //     double[][] result = new double[current.length][current[0].length];
-    //     double multAmount = 1.0 / ((Supplier<Double>) () -> 
-    //     {
-            
-    //     }).get();
-
-    // }
-    // public double[][] matriceOfMinors(double[][] current)
-    // {
-
-    // }
-    public static double determinantOfMatrix(double[][] current)
+    public static double[][] findInverseMatrices(double[][] current)
     {
+        double[][] original = adjugateMatrix(current);
+        double[][] result = new double[current.length][current[0].length];
+        double multAmount = 1.0 / ((Supplier<Double>) () -> 
+        {
+            return determinantOfMatrix(current,1);
+        }).get();
+        for(int y = 0; y < result.length; y++)
+        {
+            for(int x = 0; x < result[0].length; x++)
+            {
+                original[y][x]*=multAmount;
+            }
+        }
+        return original;
+
+    }
+    public static double[][] adjugateMatrix(double[][] current)
+    {
+        double[][] original = matrixOfCofactors(current);
+        double[][] result = new double[current.length][current[0].length];
+        for(int y = 0; y < current.length; y++)
+        {
+            for(int x = 0; x < current[0].length; x++)
+            {
+                result[y][x] = original[x][y];
+            }
+        }
+        return result;
+    }
+    public static double[][] matrixOfCofactors(double[][] current)
+    {
+        int pos = 0;
+        double[][] result = new double[current.length][current[0].length];
+        for(int y = 0; y < current.length; y++)
+        {
+            for(int x = 0; x < current[0].length; x++)
+            {
+            //     for(int yy = 0; yy < externalMiniOperator(current, x, y).length; y++)
+            //     {
+            //     for(int xx = 0; xx < externalMiniOperator(current, x, y)[0].length; xx++)
+            //     {
+            //         System.out.println(externalMiniOperator(current, x, y)[yy][xx]);
+            //     }
+            //     System.out.println("\n");
+            // }
+                result[y][x] = determinantOfMatrix(externalMiniOperator(current, x, y), 1) * -1 *(pos % 2 * 2 -1);
+                pos++;
+            }
+        }
+        return result;
+    }
+    public static double determinantOfMatrix(double[][] current, double multBy)
+    {   
+        if(current.length > 2)
+        {
         double[][] result = new double[current.length][current[0].length];
         double[][] tempLittleMatrixes = new double[current.length-1][current[0].length-1];
 
@@ -132,13 +174,43 @@ public class PolyReg implements TargetingCalculator{
                 }   
 
             }
-            tempResult+=current[0][mx]*(pos%2 == 0 ? 1 : -1)*(tempLittleMatrixes.length == 2 ? (tempLittleMatrixes[0][0]*tempLittleMatrixes[1][1]-tempLittleMatrixes[0][1]*tempLittleMatrixes[1][0]) : determinantOfMatrix(tempLittleMatrixes));
+            tempResult+=current[0][mx]*-1*(pos%2*2-1)*determinantOfMatrix(tempLittleMatrixes,1);
             pos++;
         }
         double noBottomFeeder =tempResult;
         return noBottomFeeder;
+        }
+        else
+        {
+            return (current[0][0]*current[1][1]-current[0][1]*current[1][0]) * multBy;
+        }
     }
+    public static double[][] externalMiniOperator(double[][] current, int mx, int my)
+    {
+        int rowDown = 0;
+        int colDown = 0;
+        double[][] tempLittleMatrixes = new double[current.length-1][current[0].length-1];
+            for(int y = 0; y < current.length; y++)
+            {
+                
+                for(int x = 0; x < current[0].length; x++)
+                {
+                    if(x != mx && y != my)
+                    {
+                        tempLittleMatrixes[colDown][rowDown] = current[y][x];
+                        rowDown++;
+                        if(rowDown == tempLittleMatrixes[0].length)
+                        {
+                            rowDown = 0;
+                            colDown++;
+                        }
+                        
+                    }
+                }   
 
+            }
+            return tempLittleMatrixes;
+    }
     public VariableOperator evalSkelequation(double x)
     {
         VariableOperator operator = (operands) -> {
