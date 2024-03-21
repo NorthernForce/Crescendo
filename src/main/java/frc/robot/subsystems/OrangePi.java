@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -339,11 +340,12 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
                     cacheInvalidater.putIfAbsent(detection.fiducialID, new Timer());
                     cacheInvalidater.get(detection.fiducialID).restart();
                 }
-                for (var fiducialID : cache.keySet())
+                for (Iterator<Integer> fiducialID = cacheInvalidater.keySet().iterator(); fiducialID.hasNext();)
                 {
-                    if (cacheInvalidater.get(fiducialID).hasElapsed(timeToInvalidate))
+                    Integer id = fiducialID.next();
+                    if (!cacheInvalidater.get(id).hasElapsed(timeToInvalidate))
                     {
-                        cache.remove(fiducialID);
+                        fiducialID.remove();
                     }
                 }
             }
