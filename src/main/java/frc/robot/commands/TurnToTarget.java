@@ -7,9 +7,7 @@ import java.util.function.Supplier;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,6 +49,7 @@ public class TurnToTarget extends Command
         this.fieldRelative = fieldRelative;
         addRequirements(drive);
         controller.enableContinuousInput(-Math.PI, Math.PI);
+        controller.setSetpoint(0);
     }
     @Override
     public void initialize()
@@ -65,16 +64,11 @@ public class TurnToTarget extends Command
     public void execute()
     {
         var detection = targetSupplier.get();
+        ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), thetaSupplier.getAsDouble());
         if (detection.isPresent())
         {
-            controller.setSetpoint(MathUtil.angleModulus(drive.getRotation().minus(Rotation2d.fromRadians(detection.get().yaw())).getRadians()));
+            speeds.omegaRadiansPerSecond = controller.calculate(detection.get().yaw());
         }
-        ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(
-            MathUtil.angleModulus(drive.getRotation().getRadians())));
-        // if (controller.atSetpoint())
-        // {
-        //     speeds.omegaRadiansPerSecond = 0;
-        // }
         if (fieldRelative)
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
         SwerveModuleState[] states = drive.toModuleStates(speeds);
