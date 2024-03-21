@@ -3,6 +3,8 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleSupplier;
+
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
@@ -73,12 +75,31 @@ public class CrabbyContainer implements RobotContainer
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
     public final Climber climber;
+    public final DoubleSupplier speakerDistance;
     public CrabbyContainer()
     {
         
         dashboard = new CrabbyDashboard();
 
         map = new CrabbyMap();
+
+        orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
+        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera", 0.75);
+        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
+        });
+        dashboard.register(orangePi);
+        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
+        Shuffleboard.getTab("General").addDouble("Target X",
+                () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).tx());
+        Shuffleboard.getTab("General").addDouble("Target Y",
+                () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).ty());
+        Shuffleboard.getTab("General").addDouble("Target Pitch",
+                () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).pitch());
+        speakerDistance = () -> {
+            return aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight,
+                CrabbyConstants.OrangePiConstants.cameraPitch).orElse(0.0);
+        };
+
         intake = new Intake(map.intakeMotor);
 
         climber = new Climber(map.climberMotor);
@@ -88,7 +109,7 @@ public class CrabbyContainer implements RobotContainer
 
         angleCalculator = new ExponentialRegressive("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig, dashboard);
-        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
+        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, speakerDistance,
             () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
@@ -110,27 +131,6 @@ public class CrabbyContainer implements RobotContainer
         };
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
-        orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera", 0.75);
-        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
-        dashboard.register(orangePi);
-        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
-        Shuffleboard.getTab("General").addDouble("Distance",
-            () ->
-            {
-                var distance =
-                    aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch);
-                if (distance.isPresent())
-                {
-                    lastRecordedDistance = distance.get();
-                }
-                return lastRecordedDistance;
-            });
-        // PortForwarder.add(5808, "10.1.72.31", 22);
-        Shuffleboard.getTab("General").addDouble("Target X", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).tx());
-        Shuffleboard.getTab("General").addDouble("Target Y", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).ty());
-        Shuffleboard.getTab("General").addDouble("Target Pitch", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).pitch());
-
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);
@@ -147,10 +147,10 @@ public class CrabbyContainer implements RobotContainer
         bottomSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/bottomSpeedData.csv");
         topSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/topSpeedData.csv");
         Shuffleboard.getTab("Developer").add("Add Top Shooter Data", 
-            new AddDataToTargetingCalculator(topSpeedCalculator, () -> lastRecordedDistance, () -> shooterSpeed.getDouble(30) + topRollerChange.getDouble(0)).ignoringDisable(true)
+            new AddDataToTargetingCalculator(topSpeedCalculator, speakerDistance, () -> shooterSpeed.getDouble(30) + topRollerChange.getDouble(0)).ignoringDisable(true)
         );
         Shuffleboard.getTab("Developer").add("Add Bottom Shooter Data", 
-            new AddDataToTargetingCalculator(bottomSpeedCalculator, () -> lastRecordedDistance, () -> shooterSpeed.getDouble(30)).ignoringDisable(true)
+            new AddDataToTargetingCalculator(bottomSpeedCalculator, speakerDistance, () -> shooterSpeed.getDouble(30)).ignoringDisable(true)
         );
         SendableChooser<String> musicChooser = new SendableChooser<>();
         musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
@@ -244,7 +244,7 @@ public class CrabbyContainer implements RobotContainer
                 drive.resetPose(pose);
             },
             CrabbyConstants.DriveConstants.holonomicConfig, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, intake,
-            shooter, wristJoint, indexer, aprilTagCamera, () -> lastRecordedDistance, topSpeedCalculator, bottomSpeedCalculator, angleCalculator));
+            shooter, wristJoint, indexer, aprilTagCamera, speakerDistance, topSpeedCalculator, bottomSpeedCalculator, angleCalculator));
         return routines;
     }
     @Override

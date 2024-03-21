@@ -56,10 +56,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
             container.aprilTagCamera::getSpeakerTag, true, true)
             .alongWith(new RampShooterWithDifferential(container.shooter,
-                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
+                () -> container.topSpeedCalculator.getValueForDistance(container.speakerDistance.getAsDouble()),
+                () -> container.bottomSpeedCalculator.getValueForDistance(container.speakerDistance.getAsDouble())))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.speakerDistance.getAsDouble())))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .and(() -> container.shooter.isRunning())
@@ -136,10 +136,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
                 container.aprilTagCamera::getSpeakerTag, true, true)
                 .alongWith(new RampShooterWithDifferential(container.shooter,
-                    () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                    () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
+                    () -> container.topSpeedCalculator.getValueForDistance(container.speakerDistance.getAsDouble()),
+                    () -> container.bottomSpeedCalculator.getValueForDistance(container.speakerDistance.getAsDouble())))
                 .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                    () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+                    () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.speakerDistance.getAsDouble())))));
         }
         
         controller.rightBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
