@@ -140,10 +140,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
                     () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
                 .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                     () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
-            // controller.rightBumper().toggleOnTrue(new AutoShot(container.drive, container.setStateCommands, container.intake, container.indexer, container.wristJoint, 
-            //     () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
-            //     () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
-            //     () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), container.aprilTagCamera, container.shooter, () -> container.lastRecordedDistance, container.topSpeedCalculator, container.bottomSpeedCalculator, container.angleCalculator));
         }
         
         controller.rightBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
