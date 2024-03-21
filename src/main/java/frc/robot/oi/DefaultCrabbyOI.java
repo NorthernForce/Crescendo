@@ -37,12 +37,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.back().onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
         
         controller.x().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
-
-        // controller.a()
-        //     .whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
-        //         CrabbyConstants.IntakeConstants.intakeSpeed)
-        //     .deadlineWith(new FollowNote(container.xavier, container.drive, container.setStateCommands,
-        //         () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1), true)));
         
         controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
             CrabbyConstants.IntakeConstants.intakeSpeed).andThen(new PurgeIndexer(container.indexer, container.intake,
@@ -66,19 +60,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
-
-        // controller.rightBumper().toggleOnTrue(new AutoShot(container.drive, container.setStateCommands, container.intake, container.indexer, container.wristJoint, 
-        //     () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
-        //     () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
-        //     () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1), container.aprilTagCamera, container.shooter, () -> container.lastRecordedDistance, container.topSpeedCalculator, container.bottomSpeedCalculator, container.angleCalculator));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .and(() -> container.shooter.isRunning())
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
-        
-        controller.rightBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
-            CrabbyConstants.WristConstants.tolerance, 0, true)
-            .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
         
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
