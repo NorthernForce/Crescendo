@@ -50,9 +50,9 @@ def includeDesktopSupport = false
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
 dependencies {
+    implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'    
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
-    implementation 'org.codehaus.groovy:groovy-all:3.0.9' 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
 

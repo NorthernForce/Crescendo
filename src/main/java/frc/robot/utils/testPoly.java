@@ -1,19 +1,16 @@
 package frc.robot.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.opencv.core.Point;
+
 public class testPoly {
     public static void main(String[] args) {
-        double[][] test = {{1,2,3},{4,5,6},{7,2,9}};
-        System.out.println(test.length);
-        double result = PolyReg.determinantOfMatrix(test,1);
-        System.out.println(result + "\n\n");
-        for(double[] x : PolyReg.findInverseMatrices(test))
-        {
-            for(double y : x)
-            {
-                System.out.print(y + " ");
-            }
-            System.out.println();
-        }
+        double[][] current = {{0,50,-9},{76,-58,4},{-306,720,5}};
+        ArrayList<Point> points = new ArrayList<Point>(Arrays.asList(new Point(0,0), new Point(1.5,1.5), new Point(4,1)));
+        PolyReg polyReg = new PolyReg("sussy baka on a stick", points);
+        //for(double[] y : polyReg.findInverseMatrices(current)) for(double x : y) {System.out.print(x + " ");} System.out.println();
         
     }
 }
