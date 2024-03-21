@@ -39,7 +39,7 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
-        public static final PIDController turnToTargetController = new PIDController(2, 0, 0);
+        public static final PIDController turnToTargetController = new PIDController(4, 0, 5);
         static {
             turnToTargetController.setTolerance(0.03);
         }

@@ -71,10 +71,10 @@ public class TurnToTarget extends Command
         }
         ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(
             MathUtil.angleModulus(drive.getRotation().getRadians())));
-        if (controller.atSetpoint())
-        {
-            speeds.omegaRadiansPerSecond = 0;
-        }
+        // if (controller.atSetpoint())
+        // {
+        //     speeds.omegaRadiansPerSecond = 0;
+        // }
         if (fieldRelative)
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
         SwerveModuleState[] states = drive.toModuleStates(speeds);
