@@ -35,22 +35,18 @@ import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
 import frc.robot.oi.DefaultSwervyOI;
 import frc.robot.oi.SwervyOI;
-import frc.robot.subsystems.OrangePi;
+import frc.robot.subsystems.NFRPhotonCamera;
 import frc.robot.subsystems.Xavier;
 import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.OrangePi.PoseSupplier;
-import frc.robot.subsystems.OrangePi.TargetCamera;
 
 public class SwervyContainer implements RobotContainer
 {   
     public final SwerveDrive drive;
     public final NFRSwerveModuleSetState[] setStateCommands;
     public final NFRSwerveModuleSetState[] setStateCommandsVelocity;
-    public final OrangePi orangePi;
+    public final NFRPhotonCamera orangePi;
     public final Xavier xavier;
     public final Field2d field;
-    public final TargetCamera aprilTagCamera;
-    public final PoseSupplier aprilTagSupplier;
     public final Notifier flushNotifier;
     public final SwervyMap map;
     public final SwervyDashboard dashboard;
@@ -81,22 +77,12 @@ public class SwervyContainer implements RobotContainer
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
 
-        orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
-        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
-            drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
-        });
+        orangePi = new NFRPhotonCamera(SwervyConstants.OrangePiConstants.config);
         dashboard.register(orangePi);
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addDouble("Distance",
             () ->
             {
-                var distance =
-                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
-                if (distance.isPresent())
-                {
-                    lastRecordedDistance = distance.get();
-                }
                 return lastRecordedDistance;
             });
 
@@ -173,15 +159,23 @@ public class SwervyContainer implements RobotContainer
     @Override
     public void setInitialPose(Pose2d pose)
     {
+        drive.resetPose(pose);
     }
     @Override
     public void periodic()
     {
-        orangePi.setOdometry(drive.getChassisSpeeds());
-        orangePi.setIMU(drive.getRotation());
-        NetworkTableInstance.getDefault().flush();
-        field.setRobotPose(orangePi.getPose());
-        dashboard.updateRobotPose(orangePi.getPose());
+        var distance = orangePi.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
+        if (distance.isPresent())
+        {
+            lastRecordedDistance = distance.get();
+        }
+        var estimatedPose = orangePi.getPose();
+        if (estimatedPose.isPresent())
+        {
+            drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
+        }
+        field.setRobotPose(drive.getEstimatedPose());
+        dashboard.updateRobotPose(drive.getEstimatedPose());
         dashboard.periodic();
     }
     @Override
@@ -189,7 +183,6 @@ public class SwervyContainer implements RobotContainer
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
         routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose, pose -> {
-                orangePi.setGlobalPose(pose);
                 drive.resetPose(pose);
             },
             SwervyConstants.DriveConstants.holonomicConfig, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red));

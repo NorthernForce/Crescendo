@@ -15,10 +15,13 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
+import frc.robot.subsystems.NFRPhotonCamera.NFRPhotonCameraConfiguration;
 import frc.robot.subsystems.Xavier.XavierConfiguration;
 
 public class CrabbyConstants {
@@ -27,7 +30,9 @@ public class CrabbyConstants {
             .withSupplyCurrentLimit(40)
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentThreshold(40)
-            .withSupplyTimeThreshold(0.5)); // TODO: if necessary,
+            .withStatorCurrentLimit(40)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyTimeThreshold(0.01)); // TODO: if necessary,
         // add some common configurations to this
     public static class DriveConstants {
         public static final Translation2d[] offsets = new Translation2d[] {
@@ -37,10 +42,7 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
-        public static final PIDController turnToTargetController = new PIDController(2, 0, 0);
-        static {
-            turnToTargetController.setTolerance(0.03);
-        }
+        public static final PIDController controller = new PIDController(4.2, 0, 0.5);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
             new PIDConstants(5),
@@ -55,7 +57,7 @@ public class CrabbyConstants {
     public static class IndexerConstants
     {
         public static final double indexerSpeed = 0.6;
-        public static final double indexerShootSpeed = 0.5;
+        public static final double indexerShootSpeed = 0.8;
         public static final double indexerPurgeSpeed = -1; //TODO find indexerPurgeSpeed
     }
     public static class WristConstants
@@ -82,22 +84,25 @@ public class CrabbyConstants {
     }
     public static class ShooterConstants
     {
-        public static final double kV = 0.0119; // Multiplied by setpoint (velocity)
-        public static final double kS = 0.0; // Added to setpoint (constant)
-        public static final double kP = 0.02; // Multiplied by error (velocity)
-        public static final double kI = 0.0; // Accumulation of error
-        public static final double kD = 0.0; // Accumulation of rate of change 
-        public static final Slot0Configs slot0Config = new Slot0Configs()
-                .withKV(kV)
-                .withKS(kS)
-                .withKP(kP)
-                .withKI(kI)
-                .withKD(kD);
-        public static final TalonFXConfiguration shooterMotorConfiguration = defaultTalonConfiguration.withSlot0(slot0Config)
+        public static final Slot0Configs topSlot = new Slot0Configs()
+                .withKV(0.0102)
+                .withKS(0)
+                .withKP(0.01)
+                .withKI(0)
+                .withKD(0);
+        public static final Slot0Configs bottomSlot = new Slot0Configs()
+                .withKV(0.05)
+                .withKS(0)
+                .withKP(0.0115)
+                .withKI(0)
+                .withKD(0);
+        public static final TalonFXConfiguration topShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
-        public static final double closeShotSpeed = 25;
-        public static final double ampBottomSpeed = 14;
-        public static final double ampTopSpeed = 7;
+        public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
+        public static final double closeShotSpeed = 25; // TODO
+        public static final double ampBottomSpeed = 14; // TODO
+        public static final double ampTopSpeed = 7; // TODO
         public static final double tolerance = 3; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
@@ -113,8 +118,11 @@ public class CrabbyConstants {
     }
     public static class OrangePiConstants
     {
-        public static final OrangePiConfiguration config = new OrangePiConfiguration("orange pi", "xavier");
         public static final double cameraHeight = Units.inchesToMeters(26);
-        public static final Rotation2d cameraPitch = Rotation2d.fromDegrees(25);
+        public static final Rotation2d cameraPitch = Rotation2d.fromDegrees(22.5);
+        public static final NFRPhotonCameraConfiguration config = new NFRPhotonCameraConfiguration("orange pi", "Unnamed", new Transform3d(
+            new Translation3d(0, 0, cameraHeight),
+            new Rotation3d(0, 0, cameraPitch.getRadians())
+        ));
     }
 }

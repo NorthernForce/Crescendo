@@ -40,8 +40,8 @@ public class CrabbyMap implements LoggableHardware {
         intakeMotor.setIdleMode(IdleMode.kBrake);
         // intakeMotor.burnFlash();
     }
-    public final LoggableTalonFX shooterMotorTop = new LoggableTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 22);
-    public final LoggableTalonFX shooterMotorBottom = new LoggableTalonFX(CrabbyConstants.ShooterConstants.shooterMotorConfiguration, 23);
+    public final LoggableTalonFX shooterMotorTop = new LoggableTalonFX(CrabbyConstants.ShooterConstants.topShooterConfiguration, 22);
+    public final LoggableTalonFX shooterMotorBottom = new LoggableTalonFX(CrabbyConstants.ShooterConstants.bottomShooterConfiguration, 23);
     public final LoggableSparkMax wristSparkMax = new LoggableSparkMax(MotorType.kBrushless, 17);
     {
         REVPhysicsSim.getInstance().addSparkMax(wristSparkMax, DCMotor.getNEO(1));
