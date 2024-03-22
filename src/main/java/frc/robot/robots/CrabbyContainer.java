@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -62,6 +63,7 @@ public class CrabbyContainer implements RobotContainer
     public final Shooter shooter;
     public boolean manualWrist;
     public double lastRecordedDistance = 0;
+    public Rotation2d lastRecordedSpeakerYaw = Rotation2d.fromDegrees(0);
     public final GenericEntry shooterSpeed;
     public final GenericEntry topRollerChange;
     public final TargetingCalculator bottomSpeedCalculator;
@@ -153,6 +155,13 @@ public class CrabbyContainer implements RobotContainer
         }));
         Shuffleboard.getTab("Developer").addDouble("Speaker Yaw", () -> orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(100)).getDegrees());
     }
+    public double predictNextDistance()
+    {
+        ChassisSpeeds speeds = drive.getChassisSpeeds();
+        double r = speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond;
+        double theta = Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
+        return Math.sqrt(r * r + lastRecordedDistance * lastRecordedDistance - 2 * r * lastRecordedDistance * Math.cos(theta - lastRecordedSpeakerYaw.getRadians() - drive.getRotation().getDegrees()));
+    }
     @Override
     @Deprecated
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
@@ -216,6 +225,10 @@ public class CrabbyContainer implements RobotContainer
         // {
         //     drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
         // }
+        var yaw = orangePi.getSpeakerTagYaw();
+        if (yaw.isPresent()) {
+            lastRecordedSpeakerYaw = yaw.get();
+        }
         dashboard.periodic();
     }
     @Override
