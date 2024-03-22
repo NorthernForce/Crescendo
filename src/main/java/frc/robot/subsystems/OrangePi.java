@@ -7,10 +7,12 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.northernforce.subsystems.NFRSubsystem;
+import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.geometry.struct.Twist2dStruct;
@@ -28,7 +30,6 @@ import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.dashboard.Dashboard.Alert;
-import org.photonvision.PhotonCamera;
 import frc.robot.dashboard.Dashboard.AlertType;
 import frc.robot.utils.AlertProvider;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -263,7 +264,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
      */
     public class TargetCamera
     {
-        protected final PhotonCamera photonCamera;
+        protected final PhotonCamera camera = new PhotonCamera("Unnamed");
         protected final StructArraySubscriber<TargetDetection> detections;
         /**
          * Creates a new Target Camera.
@@ -279,7 +280,13 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
          */
         public TargetDetection[] getDetections()
         {
-            return detections.get();
+            var dets = camera.getLatestResult().targets;
+            TargetDetection[] detections = new TargetDetection[dets.size()];
+            for (int i = 0; i < dets.size(); i++)
+            {
+                detections[i] = new TargetDetection(dets.get(i).getArea(),
+                    0, 0, dets.get(i).getPitch(), dets.get(i).getYaw(), dets.get(i).getBestCameraToTarget().getTranslation().getDistance(new Translation3d()), dets.get(i).getFiducialId());
+            }
         }
         /**
          * Get a specific tag detection if present
