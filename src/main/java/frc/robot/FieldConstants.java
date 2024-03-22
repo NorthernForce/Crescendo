@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -43,5 +45,13 @@ public class FieldConstants
         public static final double speakerHeight = Units.inchesToMeters(57);
         public static final Translation2d redSpeaker = new Translation2d(16.579342, 5.547867999999999);
         public static final Translation2d blueSpeaker = new Translation2d(-0.038099999999999995, 5.547867999999999);
+    }
+    public static class AmpPositions
+    {
+        /** Blue origin relative */
+        public static final Pose2d blueAmp = new Pose2d(1.8415, 8.2042 - Units.inchesToMeters(15), Rotation2d.fromDegrees(90));
+        /** Blue origin relative */
+        public static final Pose2d redAmp = new Pose2d(14.700757999999999, 8.2042 - Units.inchesToMeters(15),
+            Rotation2d.fromDegrees(90));
     }
 }
