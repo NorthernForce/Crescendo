@@ -51,10 +51,10 @@ public class CrabbyMap implements LoggableHardware {
     public final LoggableSparkMax climberMotor = new LoggableSparkMax(MotorType.kBrushless, 15);
     {
         REVPhysicsSim.getInstance().addSparkMax(climberMotor, DCMotor.getNEO(1));
-        // climberMotor.restoreFactoryDefaults();
+        climberMotor.restoreFactoryDefaults();
         climberMotor.setSmartCurrentLimit(40);
         climberMotor.setIdleMode(IdleMode.kBrake);
-        // climberMotor.burnFlash();
+        climberMotor.burnFlash();
     }
     @Override
     public void startLogging(double period) {
