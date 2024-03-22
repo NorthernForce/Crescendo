@@ -87,7 +87,7 @@ public class CrabbyContainer implements RobotContainer
 
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
-        angleCalculator = new ExponentialRegressive("/home/lvuser/angleData.csv");
+        angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
         wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig, dashboard);
         Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
             () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));

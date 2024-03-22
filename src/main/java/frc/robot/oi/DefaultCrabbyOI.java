@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
-import frc.robot.commands.RampShooterContinuous;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIndexerAndIntake;
@@ -40,7 +39,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
             CrabbyConstants.IntakeConstants.intakeSpeed).andThen(new PurgeIndexer(container.indexer, container.intake,
-                CrabbyConstants.IntakeConstants.intakePurgeSpeed, CrabbyConstants.IndexerConstants.indexerPurgeSpeed).withTimeout(0.25)
+                CrabbyConstants.IntakeConstants.intakePurgeSpeed, CrabbyConstants.IndexerConstants.indexerPurgeSpeed).withTimeout(0.20)
                 .andThen(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
                     CrabbyConstants.IntakeConstants.intakeSpeed))));
         
@@ -59,10 +58,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)).minus(Rotation2d.fromDegrees(0 * container.lastRecordedDistance)))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-            .and(() -> container.shooter.isRunning())
+            .and(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
@@ -141,10 +140,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                     () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         }
-        
-        controller.rightBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.closeShotRotation,
-            CrabbyConstants.WristConstants.tolerance, 0, true)
-            .alongWith(new RampShooterContinuous(container.shooter, () -> CrabbyConstants.ShooterConstants.closeShotSpeed)));
     }
     @Override
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick)

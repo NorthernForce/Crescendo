@@ -28,6 +28,7 @@ import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.dashboard.Dashboard.Alert;
+import org.photonvision.PhotonCamera;
 import frc.robot.dashboard.Dashboard.AlertType;
 import frc.robot.utils.AlertProvider;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -239,8 +240,11 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
         @Override
         public TargetDetection unpack(ByteBuffer buffer)
         {
-            return new TargetDetection(buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), -buffer.getDouble(), buffer.getDouble(),
+            TargetDetection det = new TargetDetection(buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(),
                 buffer.getDouble(), (int)buffer.getLong());
+            double yaw = Math.atan((det.tx - 622.5) / 990.7);
+            double pitch = Math.atan((360. - det.ty) / (990 / Math.cos(yaw)));
+            return new TargetDetection(det.area, det.tx, det.ty, pitch, yaw, det.depth, det.fiducialID);
         }
         @Override
         public void pack(ByteBuffer buffer, TargetDetection detection)
@@ -248,7 +252,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
             buffer.putDouble(detection.area);
             buffer.putDouble(detection.tx);
             buffer.putDouble(detection.ty);
-            buffer.putDouble(-detection.pitch);
+            buffer.putDouble(detection.pitch);
             buffer.putDouble(detection.yaw);
             buffer.putDouble(detection.depth);
             buffer.putLong(detection.fiducialID);
@@ -259,6 +263,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
      */
     public class TargetCamera
     {
+        protected final PhotonCamera photonCamera;
         protected final StructArraySubscriber<TargetDetection> detections;
         /**
          * Creates a new Target Camera.
@@ -304,7 +309,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
             {
                 if (detection.fiducialID == targetId)
                 {
-                    return Optional.of(detection.calculateDistanceWithPitch(cameraPitch, cameraHeight, FieldConstants.SpeakerConstants.speakerHeight));
+                    return Optional.of(detection.calculateDistanceWithDepth(cameraHeight, FieldConstants.SpeakerConstants.speakerHeight));
                 }
             }
             return Optional.empty();

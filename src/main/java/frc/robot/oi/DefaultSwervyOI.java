@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.FollowNote;
 import frc.robot.commands.TurnToTarget;
+import frc.robot.constants.CrabbyConstants;
 import frc.robot.robots.SwervyContainer;
 
 public class DefaultSwervyOI implements SwervyOI
@@ -29,7 +30,7 @@ public class DefaultSwervyOI implements SwervyOI
         controller.a().whileTrue(new FollowNote(container.xavier, container.drive, container.setStateCommands,
                 () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1), true));
         
-        controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands, new PIDController(1, 0, 0), 
+        controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands, CrabbyConstants.DriveConstants.turnToTargetController, 
                 () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
