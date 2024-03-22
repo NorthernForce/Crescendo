@@ -111,7 +111,7 @@ public class SwerveModuleHelpers
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.01;
         driveConfig.CurrentLimits.StatorCurrentLimit = 40;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.4;
+        driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2;
         driveConfig.Audio.AllowMusicDurDisable = true;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         driveConfig.Slot0.kP = 0.01;
@@ -133,7 +133,7 @@ public class SwerveModuleHelpers
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         turnConfig.Slot0.kP = Mk4iConstants.kTurnP;
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.4;
+        driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2;
         turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
         NFRTalonFX turnMotor = new NFRTalonFX(canbus, turnConfig, turnID);
         turnMotor.setInverted(true);
@@ -168,9 +168,11 @@ public class SwerveModuleHelpers
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.CurrentLimits.SupplyCurrentLimit = 40;
         driveConfig.CurrentLimits.SupplyCurrentThreshold = 40;
-        driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
-        driveConfig.Audio.AllowMusicDurDisable = true;
+        driveConfig.CurrentLimits.SupplyTimeThreshold = 0.01;
+        driveConfig.CurrentLimits.StatorCurrentLimit = 40;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2;
+        driveConfig.Audio.AllowMusicDurDisable = true;
         driveConfig.Slot0.kP = 0.01;
         driveConfig.Slot0.kI = 0.1;
         driveConfig.Slot0.kV = 0.01;
@@ -183,9 +185,11 @@ public class SwerveModuleHelpers
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
         turnConfig.CurrentLimits.SupplyCurrentLimit = 40;
         turnConfig.CurrentLimits.SupplyCurrentThreshold = 40;
-        turnConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
-        turnConfig.Audio.AllowMusicDurDisable = true;
+        turnConfig.CurrentLimits.StatorCurrentLimit = 40;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        turnConfig.CurrentLimits.SupplyTimeThreshold = 0.01;
+        turnConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2;
+        turnConfig.Audio.AllowMusicDurDisable = true;
         turnConfig.Slot0.kP = 10;
         turnConfig.Slot0.kD = 0.07;
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;

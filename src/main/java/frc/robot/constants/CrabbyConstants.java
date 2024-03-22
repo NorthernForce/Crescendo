@@ -14,13 +14,14 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
+import frc.robot.subsystems.NFRPhotonCamera.NFRPhotonCameraConfiguration;
 import frc.robot.subsystems.Xavier.XavierConfiguration;
 
 public class CrabbyConstants {
@@ -41,10 +42,7 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
-        public static final ProfiledPIDController turnToTargetController = new ProfiledPIDController(6.5, 0, 0.7, new TrapezoidProfile.Constraints(7, 10));
-        static {
-            turnToTargetController.setTolerance(0.02);
-        }
+        public static final PIDController controller = new PIDController(4.2, 0, 0.5);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
             new PIDConstants(5),
@@ -120,8 +118,11 @@ public class CrabbyConstants {
     }
     public static class OrangePiConstants
     {
-        public static final OrangePiConfiguration config = new OrangePiConfiguration("orange pi", "xavier");
         public static final double cameraHeight = Units.inchesToMeters(26);
         public static final Rotation2d cameraPitch = Rotation2d.fromDegrees(22.5);
+        public static final NFRPhotonCameraConfiguration config = new NFRPhotonCameraConfiguration("orange pi", "Unnamed", new Transform3d(
+            new Translation3d(0, 0, cameraHeight),
+            new Rotation3d(0, 0, cameraPitch.getRadians())
+        ));
     }
 }

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
@@ -40,5 +41,7 @@ public class FieldConstants
     public static class SpeakerConstants
     {
         public static final double speakerHeight = Units.inchesToMeters(57);
+        public static final Translation2d redSpeaker = new Translation2d(16.579342, 5.547867999999999);
+        public static final Translation2d blueSpeaker = new Translation2d(-0.038099999999999995, 5.547867999999999);
     }
 }

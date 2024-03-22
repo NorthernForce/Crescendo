@@ -35,16 +35,12 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.RampShooterContinuous;
-import frc.robot.subsystems.OrangePi;
+import frc.robot.subsystems.NFRPhotonCamera;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
-import frc.robot.subsystems.OrangePi.PoseSupplier;
-import frc.robot.subsystems.OrangePi.TargetCamera;
-import frc.robot.subsystems.OrangePi.TargetDetection;
 import frc.robot.subsystems.Xavier;
 import frc.robot.utils.AutonomousRoutine;
-import frc.robot.utils.ExponentialRegressive;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.TargetingCalculator;
 import frc.robot.utils.InterpolatedTargetingCalculator;
@@ -55,10 +51,8 @@ public class CrabbyContainer implements RobotContainer
     public final NFRSwerveModuleSetState[] setStateCommands;
     public final NFRSwerveModuleSetState[] setStateCommandsVelocity;
 
-    public final OrangePi orangePi;
+    public final NFRPhotonCamera orangePi;
     public final Xavier xavier;
-    public final TargetCamera aprilTagCamera;
-    public final PoseSupplier aprilTagSupplier;
     public final WristJoint wristJoint;
     public final CrabbyMap map;
     public final CrabbyDashboard dashboard;
@@ -111,26 +105,9 @@ public class CrabbyContainer implements RobotContainer
         };
         Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
-        orangePi = new OrangePi(CrabbyConstants.OrangePiConstants.config);
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
-        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {});
+        orangePi = new NFRPhotonCamera(CrabbyConstants.OrangePiConstants.config);
         dashboard.register(orangePi);
-        Shuffleboard.getTab("General").addBoolean("Xavier Connected", orangePi::isConnected);
-        Shuffleboard.getTab("General").addDouble("Distance",
-            () ->
-            {
-                var distance =
-                    aprilTagCamera.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch);
-                if (distance.isPresent())
-                {
-                    lastRecordedDistance = distance.get();
-                }
-                return lastRecordedDistance;
-            });
-        // PortForwarder.add(5808, "10.1.72.31", 22);
-        Shuffleboard.getTab("General").addDouble("Target X", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).tx());
-        Shuffleboard.getTab("General").addDouble("Target Y", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).ty());
-        Shuffleboard.getTab("General").addDouble("Target Pitch", () -> aprilTagCamera.getSpeakerTag().orElse(new TargetDetection(0, 0, 0, 0, 0, 0, 0)).pitch());
+        Shuffleboard.getTab("Developer").addDouble("Distance", () -> lastRecordedDistance);
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         
@@ -218,15 +195,17 @@ public class CrabbyContainer implements RobotContainer
     @Override
     public void setInitialPose(Pose2d pose)
     {
-        orangePi.setGlobalPose(pose);
         drive.resetPose(pose);
     }
     @Override
     public void periodic()
     {
-        orangePi.setOdometry(drive.getChassisSpeeds());
-        orangePi.setIMU(drive.getRotation());
-        dashboard.updateRobotPose(orangePi.getPose());
+        var distance =
+            orangePi.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch);
+        if (distance.isPresent())
+        {
+            lastRecordedDistance = distance.get();
+        }
         dashboard.periodic();
     }
     @Override
@@ -240,11 +219,10 @@ public class CrabbyContainer implements RobotContainer
         routines.add(new AutonomousRoutine("S3.SHOOT", () -> new Pose2d(new Translation2d(), DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? Rotation2d.fromDegrees(240) : Rotation2d.fromDegrees(-60)),
             new CloseShot(shooter, wristJoint, indexer, intake)));
         routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose, pose -> {
-                orangePi.setGlobalPose(pose);
                 drive.resetPose(pose);
             },
             CrabbyConstants.DriveConstants.holonomicConfig, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red, intake,
-            shooter, wristJoint, indexer, aprilTagCamera, () -> lastRecordedDistance, topSpeedCalculator, bottomSpeedCalculator, angleCalculator));
+            shooter, wristJoint, indexer, orangePi, () -> lastRecordedDistance, topSpeedCalculator, bottomSpeedCalculator, angleCalculator));
         return routines;
     }
     @Override

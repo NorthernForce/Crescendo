@@ -49,11 +49,11 @@ public class DefaultCrabbyOI implements CrabbyOI {
             CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
         
         controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
-            CrabbyConstants.DriveConstants.turnToTargetController, 
+            CrabbyConstants.DriveConstants.controller,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
-            container.aprilTagCamera::getSpeakerTag, true, true)
+            container.orangePi::getSpeakerTagYaw, true, true)
             .alongWith(new RampShooterWithDifferential(container.shooter,
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
@@ -129,11 +129,11 @@ public class DefaultCrabbyOI implements CrabbyOI {
         if (driverController != null)
         {
             controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
-                CrabbyConstants.DriveConstants.turnToTargetController, 
+                CrabbyConstants.DriveConstants.controller, 
                 () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
-                container.aprilTagCamera::getSpeakerTag, true, true)
+                container.orangePi::getSpeakerTagYaw, true, true)
                 .alongWith(new RampShooterWithDifferential(container.shooter,
                     () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
                     () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
