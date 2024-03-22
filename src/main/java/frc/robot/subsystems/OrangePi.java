@@ -287,6 +287,7 @@ public class OrangePi extends NFRSubsystem implements AlertProvider
                 detections[i] = new TargetDetection(dets.get(i).getArea(),
                     0, 0, dets.get(i).getPitch(), dets.get(i).getYaw(), dets.get(i).getBestCameraToTarget().getTranslation().getDistance(new Translation3d()), dets.get(i).getFiducialId());
             }
+            return detections;
         }
         /**
          * Get a specific tag detection if present
