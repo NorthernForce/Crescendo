@@ -115,6 +115,6 @@ public class FWCCrabbyDashboard extends FWCDashboard implements CrabbyDashboard
     }
     @Override
     public void setWristManual(BooleanSupplier supplier) {
-        statusLightManager.wristManualLight.set(supplier.getAsBoolean());
+        statusLightManager.wristManualLight.setSupplier(supplier);
     }
 }
