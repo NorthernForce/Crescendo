@@ -44,4 +44,5 @@ public class FieldConstants
         public static final Translation2d redSpeaker = new Translation2d(16.579342, 5.547867999999999);
         public static final Translation2d blueSpeaker = new Translation2d(-0.038099999999999995, 5.547867999999999);
     }
+    public static final double fieldWidth = 16.4846;
 }

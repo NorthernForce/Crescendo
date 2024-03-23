@@ -100,11 +100,13 @@ public class CrabbyConstants {
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
         public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
-        public static final double closeShotSpeed = 25; // TODO
+        public static final double closeShotBottomSpeed = 27; // TODO
+        public static final double closeShotTopSpeed = 27; // TODO
         public static final double ampBottomSpeed = 14; // TODO
         public static final double ampTopSpeed = 7; // TODO
         public static final double tolerance = 3; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
+        public static final double idleSpeed = 35;
     }
     public static class ClimberConstants
     {

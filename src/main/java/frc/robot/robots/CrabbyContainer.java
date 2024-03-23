@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.FieldConstants;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CloseShot;
@@ -119,7 +120,8 @@ public class CrabbyContainer implements RobotContainer
 
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
-        shooter.setDefaultCommand(new RampShooterContinuous(shooter, () -> indexer.getBeamBreak().beamBroken() ? 25 : 0));
+        shooter.setDefaultCommand(new RampShooterContinuous(shooter, () -> isOnAllianceHalf() ?
+            CrabbyConstants.ShooterConstants.idleSpeed : 0));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
         topRollerChange = Shuffleboard.getTab("Developer").add("Top Roller Change", 0).getEntry();
         bottomSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/bottomSpeedData.csv");
@@ -206,6 +208,11 @@ public class CrabbyContainer implements RobotContainer
         {
             lastRecordedDistance = distance.get();
         }
+        var estimatedPose = orangePi.getPose();
+        if (estimatedPose.isPresent()) {
+            drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
+        }
+        dashboard.updateRobotPose(drive.getEstimatedPose());
         dashboard.periodic();
     }
     @Override
@@ -229,5 +236,14 @@ public class CrabbyContainer implements RobotContainer
     public Dashboard getDashboard()
     {
         return dashboard;
+    }
+    private boolean isOnAllianceHalf()
+    {
+        if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red) {
+            return drive.getEstimatedPose().getX() >= FieldConstants.fieldWidth / 2;
+        }
+        else {
+            return drive.getEstimatedPose().getX() <= FieldConstants.fieldWidth / 2;
+        }
     }
 }
