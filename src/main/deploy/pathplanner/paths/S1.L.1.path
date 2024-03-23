@@ -3,29 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7580499388909596,
-        "y": 6.549529994187981
+        "x": 0.7164448865934772,
+        "y": 6.698023382157876
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6390268948993718,
-        "y": 6.34465163232556
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.8956141809888902,
-        "y": 6.255871008851844
-      },
-      "prevControl": {
-        "x": 2.021466503709225,
-        "y": 6.173919664106876
-      },
-      "nextControl": {
-        "x": 4.131733482331597,
-        "y": 6.371757193352721
+        "x": 1.8550809509026434,
+        "y": 5.633974096651898
       },
       "isLocked": false,
       "linkedName": null
@@ -36,17 +20,41 @@
         "y": 7.444165507653889
       },
       "prevControl": {
-        "x": 7.040986369338552,
-        "y": 7.205140752147731
+        "x": 6.410812895699865,
+        "y": 6.734901080913273
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.35,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.7,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.7,
     "maxAcceleration": 3.0,
@@ -59,9 +67,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S1.L",
+  "folder": null,
   "previewStartingState": {
-    "rotation": 60.0,
+    "rotation": 60.03752277806355,
     "velocity": 0
   },
   "useDefaultConstraints": false

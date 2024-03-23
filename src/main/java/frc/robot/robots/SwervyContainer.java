@@ -5,57 +5,52 @@ import java.util.List;
 import java.util.Map;
 
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
-import org.northernforce.commands.NFRSwerveDriveStop;
-import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.motors.NFRTalonFX;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
+import frc.robot.commands.Autos;
 import frc.robot.commands.OrchestraCommand;
-import frc.robot.commands.TurnToTarget;
-import frc.robot.commands.auto.Autos;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.dashboard.SwervyDashboard;
-import frc.robot.commands.FollowNote;
-import frc.robot.subsystems.OrangePi;
+import frc.robot.oi.DefaultSwervyOI;
+import frc.robot.oi.SwervyOI;
+import frc.robot.subsystems.NFRPhotonCamera;
 import frc.robot.subsystems.Xavier;
 import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.OrangePi.PoseSupplier;
-import frc.robot.subsystems.OrangePi.TargetCamera;
 
 public class SwervyContainer implements RobotContainer
 {   
-    protected final SwerveDrive drive;
-    protected final NFRSwerveModuleSetState[] setStateCommands;
-    protected final NFRSwerveModuleSetState[] setStateCommandsVelocity;
-    protected final OrangePi orangePi;
-    protected final Xavier xavier;
-    protected final Field2d field;
-    protected final TargetCamera aprilTagCamera;
-    protected final PoseSupplier aprilTagSupplier;
-    protected final Notifier flushNotifier;
-    protected final SwervyMap map;
-    protected final SwervyDashboard dashboard;
-    protected double lastRecordedDistance = 0;
+    public final SwerveDrive drive;
+    public final NFRSwerveModuleSetState[] setStateCommands;
+    public final NFRSwerveModuleSetState[] setStateCommandsVelocity;
+    public final NFRPhotonCamera orangePi;
+    public final Xavier xavier;
+    public final Field2d field;
+    public final Notifier flushNotifier;
+    public final SwervyMap map;
+    public final SwervyDashboard dashboard;
+    public double lastRecordedDistance = 0;
+    public SwervyOI oi;
     public SwervyContainer()
     {
         dashboard = new SwervyDashboard();
@@ -79,22 +74,12 @@ public class SwervyContainer implements RobotContainer
         field = new Field2d();
         Shuffleboard.getTab("General").add("Field", field);
 
-        orangePi = new OrangePi(SwervyConstants.OrangePiConstants.config);
-        aprilTagCamera = orangePi.new TargetCamera("apriltag_camera");
-        aprilTagSupplier = orangePi.new PoseSupplier("apriltag_camera", estimate -> {
-            drive.addVisionEstimate(estimate.getSecond(), estimate.getFirst());
-        });
+        orangePi = new NFRPhotonCamera(SwervyConstants.OrangePiConstants.config);
         dashboard.register(orangePi);
         Shuffleboard.getTab("General").addBoolean("Orange Pi Connected", orangePi::isConnected);
         Shuffleboard.getTab("General").addDouble("Distance",
             () ->
             {
-                var distance =
-                    aprilTagCamera.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
-                if (distance.isPresent())
-                {
-                    lastRecordedDistance = distance.get();
-                }
                 return lastRecordedDistance;
             });
 
@@ -126,62 +111,43 @@ public class SwervyContainer implements RobotContainer
         CameraServer.startAutomaticCapture();
     }
     @Override
+    @Deprecated
     public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
     {
-        if (driverHID instanceof XboxController)
+    }
+    @Override
+    public void bindOI() {
+        oi = new DefaultSwervyOI();
+        if (DriverStation.getJoystickIsXbox(0))
         {
-            XboxController driverController = (XboxController)driverHID;
-            
-            drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
-                () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1), true, true));
-            
-            new JoystickButton(driverController, XboxController.Button.kB.value)
-                .onTrue(Commands.runOnce(drive::clearRotation, drive));
-            
-            new JoystickButton(driverController, XboxController.Button.kY.value)
-                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            
-            new JoystickButton(driverController, XboxController.Button.kA.value)
-                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
-                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1), true));
-            
-            new JoystickButton(driverController, XboxController.Button.kX.value)
-                .whileTrue(new TurnToTarget(drive, setStateCommands, new PIDController(1, 0, 0), 
-                    () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
-                    () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
-                    () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
-                    aprilTagCamera::getSpeakerTag, true, true));
+            oi.bindDriverToXBoxController(this, new CommandXboxController(0));
         }
         else
         {
-            drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(drive, setStateCommands,
-                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(1), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverHID.getRawAxis(4), 0.1, 1), true, true));
-            
-            new JoystickButton(driverHID, XboxController.Button.kB.value)
-                .onTrue(Commands.runOnce(drive::clearRotation, drive));
-            
-            new JoystickButton(driverHID, XboxController.Button.kY.value)
-                .whileTrue(new NFRSwerveDriveStop(drive, setStateCommands, true));
-            
-            new JoystickButton(driverHID, XboxController.Button.kA.value)
-                .whileTrue(new FollowNote(xavier, drive, setStateCommands,
-                    () -> -MathUtil.applyDeadband(driverHID.getRawAxis(0), 0.1, 1), true));
+            oi.bindDriverToJoystick(this, new CommandGenericHID(0));
+        }
+        if (DriverStation.getJoystickIsXbox(1))
+        {
+            oi.bindManipulatorToXboxController(this, new CommandXboxController(1));
+        }
+        else
+        {
+            oi.bindManipulatorToJoystick(this, new CommandGenericHID(1));
         }
     }
+    @Deprecated
     @Override
     public Map<String, Command> getAutonomousOptions()
     {
         return Map.of();
     }
+    @Deprecated
     @Override
     public Map<String, Pose2d> getStartingLocations()
     {
         return Map.of("Simple Starting Location", new Pose2d(5, 5, Rotation2d.fromDegrees(0)));
     }
+    @Deprecated
     @Override
     public Pair<String, Command> getDefaultAutonomous()
     {
@@ -191,23 +157,32 @@ public class SwervyContainer implements RobotContainer
     public void setInitialPose(Pose2d pose)
     {
         drive.resetPose(pose);
-        orangePi.setGlobalPose(pose);
     }
     @Override
     public void periodic()
     {
-        orangePi.setOdometry(drive.getChassisSpeeds());
-        orangePi.setIMU(drive.getRotation());
-        NetworkTableInstance.getDefault().flush();
-        field.setRobotPose(orangePi.getPose());
-        dashboard.updateRobotPose(orangePi.getPose());
+        var distance = orangePi.getDistanceToSpeaker(SwervyConstants.OrangePiConstants.cameraHeight, SwervyConstants.OrangePiConstants.cameraPitch);
+        if (distance.isPresent())
+        {
+            lastRecordedDistance = distance.get();
+        }
+        var estimatedPose = orangePi.getPose();
+        if (estimatedPose.isPresent())
+        {
+            drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
+        }
+        field.setRobotPose(drive.getEstimatedPose());
+        dashboard.updateRobotPose(drive.getEstimatedPose());
+        dashboard.periodic();
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
         ArrayList<AutonomousRoutine> routines = new ArrayList<>();
         routines.add(new AutonomousRoutine("Do Nothing", Pose2d::new, Commands.none()));
-        routines.addAll(Autos.getRoutines(drive, setStateCommandsVelocity, drive::getEstimatedPose,
-            SwervyConstants.DriveConstants.holonomicDriveController));
+        routines.addAll(Autos.getRoutines(drive, setStateCommands, drive::getEstimatedPose, pose -> {
+                drive.resetPose(pose);
+            },
+            SwervyConstants.DriveConstants.holonomicConfig, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red));
         return routines;
     }
     @Override
