@@ -11,22 +11,25 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class AutoTurnToCoordinates extends Command {
+public class AutoTurnToAprilTag extends Command {
     protected final NFRSwerveDrive drive;
-    protected final Supplier<Translation2d> targetCoordinates;
+    protected final Supplier<Optional<Rotation2d>> targetRotation;
     protected final Rotation2d tolerance;
-    public AutoTurnToCoordinates(NFRSwerveDrive drive, Supplier<Translation2d> targetCoordinates, Rotation2d tolerance)
+    public AutoTurnToAprilTag(NFRSwerveDrive drive, Supplier<Optional<Rotation2d>> targetRotation, Rotation2d tolerance)
     {
         this.drive = drive;
-        this.targetCoordinates = targetCoordinates;
+        this.targetRotation = targetRotation;
         this.tolerance = tolerance;
     }
     @Override
     public void initialize()
     {
         PPHolonomicDriveController.setRotationTargetOverride(() -> {
-            return Optional.of(targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle()
-                .plus(Rotation2d.fromDegrees(180)));
+            var targ = targetRotation.get();
+            if (targ.isPresent()) {
+                return Optional.of(drive.getRotation().minus(targ.get()));
+            }
+            else return Optional.empty();
         });
     }
     @Override
@@ -37,7 +40,7 @@ public class AutoTurnToCoordinates extends Command {
     @Override
     public boolean isFinished()
     {
-        return Math.abs(targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle()
-            .plus(Rotation2d.fromDegrees(180)).getDegrees() - drive.getRotation().getDegrees()) <= tolerance.getDegrees();
+        var targ = targetRotation.get();
+        return targ.isPresent() ? Math.abs(targ.get().getDegrees()) < tolerance.getDegrees() : false;
     }
 }

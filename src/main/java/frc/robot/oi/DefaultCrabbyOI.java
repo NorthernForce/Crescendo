@@ -117,11 +117,11 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
 
-        container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)),
-            container.climber));
+        // container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)),
+            // container.climber));
 
-        container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
-                .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
+        // container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
+                // .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
         
         controller.start().toggleOnTrue(new RampShooterWithDifferential(container.shooter,
                 () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0),

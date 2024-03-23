@@ -1,10 +1,22 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.3756161320151827,
+      "y": 5.570246205735591
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
         {
           "type": "path",
           "data": {
@@ -12,13 +24,26 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "S2.T.2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -43,13 +68,26 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "S2.T.4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -74,13 +112,26 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "S2.T.6"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "sequential",
+          "type": "deadline",
           "data": {
             "commands": [
               {
