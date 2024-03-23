@@ -130,7 +130,7 @@ public class NFRPhotonCamera extends NFRSubsystem implements AlertProvider
                 return Optional.of(
                     Math.sqrt(
                         Math.pow(detection.getBestCameraToTarget().getTranslation().getDistance(new Translation3d()), 2)
-                        + Math.pow(cameraHeight - FieldConstants.SpeakerConstants.speakerHeight, 2)));
+                        - Math.pow(cameraHeight - FieldConstants.SpeakerConstants.speakerHeight, 2)));
             }
         }
         return Optional.empty();

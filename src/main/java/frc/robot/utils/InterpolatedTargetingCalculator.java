@@ -33,7 +33,12 @@ public class InterpolatedTargetingCalculator implements TargetingCalculator{
                 csvReader = new CSVReader(new FileReader(file));
                 csvWriter = new CSVWriter(new FileWriter(file, true));
                 csvReader.forEach(nextLine -> {
+                    try {
                     treeMap.put(Double.parseDouble(nextLine[0]), Double.parseDouble(nextLine[1]));
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
             }
             catch (FileNotFoundException e) {
