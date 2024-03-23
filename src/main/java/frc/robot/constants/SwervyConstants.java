@@ -8,9 +8,10 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.OrangePi.OrangePiConfiguration;
+import frc.robot.subsystems.NFRPhotonCamera.NFRPhotonCameraConfiguration;
 import frc.robot.subsystems.Xavier.XavierConfiguration;
 
 public class SwervyConstants
@@ -37,7 +38,7 @@ public class SwervyConstants
     }
     public static class OrangePiConstants
     {
-        public static final OrangePiConfiguration config = new OrangePiConfiguration("orangepi", "xavier");
+        public static final NFRPhotonCameraConfiguration config = new NFRPhotonCameraConfiguration("orangepi", "Unnamed", new Transform3d());
         public static final double cameraHeight = Units.inchesToMeters(17);
         public static final Rotation2d cameraPitch = Rotation2d.fromDegrees(0);
     }
