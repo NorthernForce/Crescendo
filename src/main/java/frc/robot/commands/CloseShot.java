@@ -9,8 +9,8 @@ import frc.robot.subsystems.WristJoint;
 public class CloseShot extends FixedShot {
 
     public CloseShot(Shooter shooter, WristJoint wrist, Indexer indexer, Intake intake) {
-        super(shooter, wrist, indexer, intake, CrabbyConstants.ShooterConstants.closeShotSpeed, CrabbyConstants.ShooterConstants.tolerance,
-            CrabbyConstants.WristConstants.closeShotRotation, CrabbyConstants.WristConstants.tolerance, CrabbyConstants.IndexerConstants.indexerShootSpeed,
-            CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.ShooterConstants.clearanceTime);
+        super(shooter, wrist, indexer, intake, CrabbyConstants.ShooterConstants.closeShotTopSpeed, CrabbyConstants.ShooterConstants.closeShotBottomSpeed,
+            CrabbyConstants.ShooterConstants.tolerance, CrabbyConstants.WristConstants.closeShotRotation, CrabbyConstants.WristConstants.tolerance,
+            CrabbyConstants.IndexerConstants.indexerShootSpeed, CrabbyConstants.IntakeConstants.intakeSpeed, CrabbyConstants.ShooterConstants.clearanceTime);
     }
 }
