@@ -2,50 +2,48 @@ package frc.robot.subsystems;
 
 import org.northernforce.motors.NFRSparkMax;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.sensors.NFRBeamBreak;
 
 public class Indexer extends SubsystemBase {
-    private NFRSparkMax indexerMotor; //Neo that runs indexer
-    private NFRBeamBreak beamBreak; //Beam break sensor to stop note intake
-
-    /**
-     * Wrapper class for SparkMax and beam break.
-     * Handles intaking and shooting of indexer
-     */
-    public Indexer(NFRSparkMax motor, NFRBeamBreak beamBreak){
-        indexerMotor = motor;
+    private final NFRSparkMax motors;
+    private final NFRBeamBreak beamBreak;
+    /** Creates a new Intake subsystem
+     * @param motors the motor of the intake
+     * @param beamBreak the beam break
+    */
+    public Indexer(NFRSparkMax motors, NFRBeamBreak beamBreak) {
+        this.motors = motors;
         this.beamBreak = beamBreak;
     }
-
     /**
-     * Starts the motor
-     * @param speed Speed to start the motor at
+     * Runs the intake motors
+     * @param speed raw speed value to run motors at
      */
-    public void startMotor(double speed){
-        indexerMotor.set(speed);
+    public void run(double speed) {
+        this.motors.set(speed);
     }
 
     /**
-     * Stops the motor
+     * @return the beam break object
      */
-    public void stopMotor(){
-        indexerMotor.set(0);
+    public NFRBeamBreak getBeamBreak() {
+        return beamBreak;
     }
 
     /**
-     * Returns the state of the beam break
-     * @return Beam break state (true: intact, false: broken)
+     * @return the beam break status (true: intact, false: broken)
      */
-    public boolean getBeamBreakState(){
+    public boolean getBeamBreakState() {
         return beamBreak.beamIntact();
     }
-
-    /**
-     * Returns the beam break object
-     * @return Beam break object
-     */
-    public NFRBeamBreak getBeamBreak(){
-        return beamBreak;
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Motor Speeds", () -> this.motors.get(), speed -> this.motors.set(speed));
+    }
+    public double getMotorCurrent()
+    {
+        return motors.getOutputCurrent();
     }
 }

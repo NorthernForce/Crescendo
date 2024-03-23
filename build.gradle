@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2024.1.1"
+    id "edu.wpi.first.GradleRIO" version "2024.3.2"
 }
 
 java {
@@ -52,7 +52,7 @@ def includeDesktopSupport = false
 dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
-
+    implementation 'org.codehaus.groovy:groovy-all:3.0.9' 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
 
@@ -70,6 +70,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+    implementation 'com.opencsv:opencsv:3.7'
 }
 
 test {
