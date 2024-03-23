@@ -1,6 +1,6 @@
 package frc.robot.dashboard.sendables;
 
-import frc.robot.dashboard.Dashboard;
+import frc.robot.dashboard.FWCDashboard;
 
 public class StatusLightManager {
     public final StatusLight canTargetLight = new StatusLight("canTarget");
@@ -13,7 +13,7 @@ public class StatusLightManager {
     public final StatusLight closeShotEnabledLight = new StatusLight("closeShotEnabled");
     public final StatusLight ampShotEnabledLight = new StatusLight("ampShotEnabledLight");
 
-    public StatusLightManager(Dashboard dashboard) {
+    public StatusLightManager(FWCDashboard dashboard) {
         dashboard.addSendable("statusLights/" + canTargetLight.name, canTargetLight);
         dashboard.addSendable("statusLights/" + hasNoteLight.name, hasNoteLight);
         dashboard.addSendable("statusLights/" + shooterReadyLight.name, shooterReadyLight);

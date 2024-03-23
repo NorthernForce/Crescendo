@@ -10,7 +10,7 @@ import frc.robot.utils.AutonomousRoutine;
 /**
  * This is a Dashboard specifically meant to interface with FWC for the swervy robot
  */
-public class SwervyDashboard extends Dashboard
+public class FWCSwervyDashboard extends FWCDashboard implements Dashboard
 {
     protected final Field2d field;
     protected final Field2d autoField;
@@ -18,7 +18,7 @@ public class SwervyDashboard extends Dashboard
     /**
      * Creates a new SwervyDashboard
      */
-    public SwervyDashboard()
+    public FWCSwervyDashboard()
     {
         super("FWC");
         field = new Field2d();

@@ -2,7 +2,7 @@ package frc.robot.utils;
 
 import java.util.List;
 
-import frc.robot.dashboard.Dashboard.Alert;
+import frc.robot.dashboard.FWCDashboard.Alert;
 
 public interface AlertProvider {
     /**
