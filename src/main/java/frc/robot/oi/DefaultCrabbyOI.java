@@ -35,6 +35,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
         this.driverController = controller;
         controller.back().onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
         
+        controller.back().onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
+        
         controller.x().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
 
         // controller.a()
