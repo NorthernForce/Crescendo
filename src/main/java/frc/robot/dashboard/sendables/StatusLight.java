@@ -12,7 +12,7 @@ public class StatusLight implements NFRSendableBase {
     private ObjectHolder<Boolean> value;
     private ObjectHolder<String> label;
     public String name;
-    private BooleanSupplier supplier;
+    private BooleanSupplier supplier = () -> false;
 
     public StatusLight(String name) {
         value = new ObjectHolder<Boolean>("value", NetworkTableValue::makeBoolean, ObjectHolder::getBoolean);

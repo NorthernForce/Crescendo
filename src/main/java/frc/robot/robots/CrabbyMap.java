@@ -44,5 +44,11 @@ public class CrabbyMap {
         wristSparkMax.setSmartCurrentLimit(40);
         wristSparkMax.setIdleMode(IdleMode.kBrake);
     }
-   
+    public final NFRSparkMax climberMotor = new NFRSparkMax(MotorType.kBrushless, 15);
+    {
+        climberMotor.restoreFactoryDefaults();
+        climberMotor.setSmartCurrentLimit(40);
+        climberMotor.setIdleMode(IdleMode.kBrake);
+        climberMotor.burnFlash();
+    }
 }

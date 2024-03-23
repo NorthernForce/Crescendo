@@ -15,7 +15,7 @@ public class ShootIndexerAndIntake extends Command {
      * @param speed raw speed value for intake motors
      */
     public ShootIndexerAndIntake(Indexer indexer, Intake intake, double indexerSpeed, double intakeSpeed) {
-        addRequirements(indexer);
+        addRequirements(indexer, intake);
         this.intake = intake;
         this.indexer = indexer;
         this.indexerSpeed = indexerSpeed;
