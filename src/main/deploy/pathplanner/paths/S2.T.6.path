@@ -3,34 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.28973292584782,
-        "y": 5.7844864444177295
+        "x": 4.277597546891417,
+        "y": 5.599460783737701
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.189953812885087,
-        "y": 7.060189683843188
+        "x": 5.446180666975807,
+        "y": 7.050451491175817
       },
       "isLocked": false,
-      "linkedName": "S2.T.6"
+      "linkedName": "S2.T.5"
     },
     {
       "anchor": {
-        "x": 2.242315279411105,
-        "y": 5.297576811049233
+        "x": 7.939157989822505,
+        "y": 5.794224637085098
       },
       "prevControl": {
-        "x": 4.482099592906184,
-        "y": 5.774748251750359
+        "x": 6.06942499768836,
+        "y": 6.329825233785139
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S2.T.6"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.45,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -39,11 +50,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -4.864514437760495,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S2.T Pain + the voices won't go away",
+  "folder": "S2.T",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

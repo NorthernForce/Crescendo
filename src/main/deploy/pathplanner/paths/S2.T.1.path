@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.356139746680443,
-        "y": 5.55076982040085
+        "x": 1.3756161320151827,
+        "y": 5.570246205735591
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.706078024255693,
-        "y": 5.1709803063734245
+        "x": 1.3658779393478129,
+        "y": 4.820405370348108
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.9683725678246144,
-        "y": 2.4345481668424793
+        "x": 4.180215620217718,
+        "y": 4.908049104354437
       },
       "prevControl": {
-        "x": 5.650682712990575,
-        "y": 4.148470076299583
+        "x": 1.3171869760109631,
+        "y": 4.888572719019697
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "S2.T.2"
+      "linkedName": "S2.T.1"
     }
   ],
   "rotationTargets": [],
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S2.T Pain + the voices won't go away",
+  "folder": "S2.T",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
