@@ -5,6 +5,7 @@ import org.northernforce.motors.NFRSparkMax;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.CrabbyConstants;
 import frc.robot.sensors.NFRBeamBreak;
 import frc.robot.utils.LoggableHardware;
 
@@ -59,5 +60,8 @@ public class Indexer extends SubsystemBase implements LoggableHardware {
     public void logOutputs(String name) {
         Logger.recordOutput(name + "/HasPiece", hasPiece());
         Logger.recordOutput(name + "/Speed", motors.get());
+        Logger.recordOutput(name + "/TargetSpeed", CrabbyConstants.IndexerConstants.indexerSpeed);
+        Logger.recordOutput(name + "/TargetPurgeSpeed", CrabbyConstants.IndexerConstants.indexerPurgeSpeed);
+        Logger.recordOutput(name + "/TargetShootSpeed", CrabbyConstants.IndexerConstants.indexerShootSpeed);
     }
 }

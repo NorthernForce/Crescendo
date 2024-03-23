@@ -21,17 +21,18 @@ import frc.robot.constants.CrabbyConstants;
 import frc.robot.robots.CrabbyContainer;
 
 public class DefaultCrabbyOI implements CrabbyOI {
-    // private CommandXboxController driverController = null;
+    private CommandXboxController driverController;
+    private CommandXboxController manipulatorController;
+
     @Override
     public void bindDriverToXBoxController(CrabbyContainer container, CommandXboxController controller)
     {
-        // this.driverController = controller;
 
         container.drive.setDefaultCommand(new NFRSwerveDriveWithJoystick(container.drive, container.setStateCommands,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1), true, true));
-        
+        this.driverController = controller;
         controller.back().onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
         
         controller.x().whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
@@ -90,7 +91,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(joystick.getRawAxis(1), 0.1, 1),
             () -> -MathUtil.applyDeadband(joystick.getRawAxis(0), 0.1, 1),
             () -> -MathUtil.applyDeadband(joystick.getRawAxis(4), 0.1, 1), true, true));
-        
         joystick.button(2).onTrue(Commands.runOnce(container.drive::clearRotation, container.drive));
         
         joystick.button(3).whileTrue(new NFRSwerveDriveStop(container.drive, container.setStateCommands, true));
@@ -101,7 +101,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         NFRRotatingArmJointWithJoystick wristManual = new NFRRotatingArmJointWithJoystick(container.wristJoint,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1));
         container.dashboard.statusLightManager.wristManualLight.setSupplier(() -> wristManual.isScheduled());
-        
+        manipulatorController = controller;
         controller.leftTrigger().whileTrue(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
             CrabbyConstants.IntakeConstants.intakeSpeed));
         
@@ -151,5 +151,15 @@ public class DefaultCrabbyOI implements CrabbyOI {
     @Override
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick)
     {
+    }
+
+    public CommandXboxController getDriverController()
+    {
+        return driverController;
+    }
+    @Override
+    public CommandXboxController getManipulatorController() 
+    {
+        return manipulatorController;
     }
 }

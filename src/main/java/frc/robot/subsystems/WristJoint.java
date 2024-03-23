@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 import org.northernforce.motors.MotorEncoderMismatchException;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
+
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.utils.LoggableHardware;
@@ -38,5 +39,8 @@ public class WristJoint extends NFRRotatingArmJoint implements LoggableHardware
     @Override
     public void logOutputs(String name) {
         Logger.recordOutput(name + "/Angle", getRotation());
+        Logger.recordOutput(name + "/TargetAngle", CrabbyConstants.WristConstants.ampRotation.getDegrees());
+        
+        Logger.recordOutput(name + "/TargetCloseShotAngle", CrabbyConstants.WristConstants.closeShotRotation.getDegrees());        
     }
 }

@@ -9,4 +9,6 @@ public interface CrabbyOI {
     public void bindDriverToJoystick(CrabbyContainer container, CommandGenericHID joystick);
     public void bindManipulatorToXboxController(CrabbyContainer container, CommandXboxController controller);
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick);
+    public CommandXboxController getDriverController();
+    public CommandXboxController getManipulatorController();
 }

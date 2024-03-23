@@ -46,14 +46,14 @@ public class Robot extends LoggedRobot {
         Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
     }
 
-    // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-    Logger.start();
 
     container = (RobotContainer)new NFRRobotChooser(() -> new CrabbyContainer(), Map.of(
       "Crabby", () -> new CrabbyContainer(),
       "Swervy", () -> new SwervyContainer())).getNFRRobotContainer();
     dashboard = container.getDashboard();
     dashboard.displayAutonomousRoutines(container.getAutonomousRoutines());
+    // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+    Logger.start();
   }
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
