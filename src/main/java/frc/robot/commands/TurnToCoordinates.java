@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -9,21 +8,19 @@ import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class TurnToTarget extends Command
+public class TurnToCoordinates extends Command
 {
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final PIDController controller;
-    protected final DoubleSupplier xSupplier, ySupplier, thetaSupplier;
-    protected final Supplier<Optional<Rotation2d>> targetSupplier;
+    protected final DoubleSupplier xSupplier, ySupplier;
+    protected final Supplier<Translation2d> targetSupplier;
     protected final boolean optimize, fieldRelative;
-    protected final Timer timer;
     /**
      * Creates a new TurnToTarget. This allows the robot to be driven in both directions with optional field relative driving, while aligning with
      * a target.
@@ -32,13 +29,12 @@ public class TurnToTarget extends Command
      * @param controller the pid controller to calculate closed-loop feedback
      * @param xSupplier the x supplier (field relative optional)
      * @param ySupplier the y supplier (field relative optional)
-     * @param thetaSupplier the theta supplier to be used in the absense of a target
      * @param targetSupplier the supplier for a target (ie an apriltag to turn to face)
      * @param optimize whether to optimize each swerve module (cut to the quickest possible state)
      * @param fieldRelative whether the translational control will be relative to the field or the robot
      */
-    public TurnToTarget(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, PIDController controller,
-        DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier thetaSupplier, Supplier<Optional<Rotation2d>> targetSupplier,
+    public TurnToCoordinates(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, PIDController controller,
+        DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier thetaSupplier, Supplier<Translation2d> targetSupplier,
         boolean optimize, boolean fieldRelative)
     {
         this.drive = drive;
@@ -46,12 +42,9 @@ public class TurnToTarget extends Command
         this.controller = controller;
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
-        this.thetaSupplier = thetaSupplier;
         this.targetSupplier = targetSupplier;
         this.optimize = optimize;
         this.fieldRelative = fieldRelative;
-        this.timer = new Timer();
-        timer.start();
         addRequirements(drive);
         controller.enableContinuousInput(-Math.PI, Math.PI);
     }
@@ -59,6 +52,7 @@ public class TurnToTarget extends Command
     public void initialize()
     {
         controller.reset();
+        controller.setSetpoint(targetSupplier.get().minus(drive.getEstimatedPose().getTranslation()).getAngle().getRadians());
         for (var command : setStateCommands)
         {
             command.schedule();
@@ -67,21 +61,11 @@ public class TurnToTarget extends Command
     @Override
     public void execute()
     {
-        var detection = targetSupplier.get();
-        if (detection.isPresent())
-        {
-            timer.restart();;
-            controller.setSetpoint(MathUtil.angleModulus(drive.getRotation().minus(detection.get()).getRadians()));
-        }
         ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(
             MathUtil.angleModulus(drive.getRotation().getRadians())));
         if (controller.atSetpoint())
         {
             speeds.omegaRadiansPerSecond = 0;
-        }
-        if (timer.hasElapsed(0.75))
-        {
-            speeds.omegaRadiansPerSecond = thetaSupplier.getAsDouble();
         }
         if (fieldRelative)
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());
