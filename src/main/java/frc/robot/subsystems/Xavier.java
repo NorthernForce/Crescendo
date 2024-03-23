@@ -7,8 +7,8 @@ import org.northernforce.subsystems.NFRSubsystem;
 import edu.wpi.first.networktables.FloatSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.dashboard.Dashboard.Alert;
-import frc.robot.dashboard.Dashboard.AlertType;
+import frc.robot.dashboard.FWCDashboard.Alert;
+import frc.robot.dashboard.FWCDashboard.AlertType;
 import frc.robot.utils.AlertProvider;
 
 /**

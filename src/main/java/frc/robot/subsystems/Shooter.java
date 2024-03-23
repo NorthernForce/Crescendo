@@ -10,7 +10,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.dashboard.CrabbyDashboard;
 
 public class Shooter extends SubsystemBase {
     private final NFRTalonFX topMotor;
@@ -21,14 +20,11 @@ public class Shooter extends SubsystemBase {
 
     /** Creates a new Shooter. 
      * @param dashboard */
-    public Shooter(NFRTalonFX topMotor, NFRTalonFX bottomMotor, CrabbyDashboard dashboard) {
+    public Shooter(NFRTalonFX topMotor, NFRTalonFX bottomMotor) {
         this.topMotor = topMotor;
         this.bottomMotor = bottomMotor;
         topTargetSpeed = 0;
         bottomTargetSpeed = 0;
-
-        dashboard.topShooter.setSupplier(this::getTopMotorVelocity);
-        dashboard.bottomShooter.setSupplier(this::getBottomMotorVelocity);
     }
 
     /**
