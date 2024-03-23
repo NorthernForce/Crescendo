@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.gyros.NFRGyro;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
@@ -15,11 +16,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.dashboard.CrabbyDashboard;
+import frc.robot.utils.LoggableHardware;
 
 /**
  * Swerve drive that extends NFRSwerve Drive. Used for vital fixes
  */
-public class SwerveDrive extends NFRSwerveDrive
+public class SwerveDrive extends NFRSwerveDrive implements LoggableHardware
 {
     /**
      * Creates a new NFRSwerveDrive.
@@ -107,5 +109,18 @@ public class SwerveDrive extends NFRSwerveDrive
     {
         var chassisSpeeds = getChassisSpeeds();
         return new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond).getDistance(new Translation2d());
+    }
+
+    @Override
+    public void startLogging(double period) {
+    }
+    @Override
+    public void logOutputs(String name) {
+        Logger.recordOutput(name + "/Speed", getSpeed());
+        Logger.recordOutput(name + "/PoseEstimation", getEstimatedPose());
+        Logger.recordOutput(name + "/Rotation", getRotation());
+        Logger.recordOutput(name + "/GyroOffset", gyroOffset);
+        Logger.recordOutput(name + "/ChassisSpeeds", getChassisSpeeds());
+        Logger.recordOutput(name + "/ModuleStates", getStates());
     }
 }

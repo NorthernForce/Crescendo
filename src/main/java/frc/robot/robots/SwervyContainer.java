@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.motors.NFRTalonFX;
@@ -57,6 +58,8 @@ public class SwervyContainer implements RobotContainer
     public SwervyOI oi;
     public SwervyContainer()
     {
+        Logger.recordMetadata("RobotName", "Swervy");
+
         dashboard = new SwervyDashboard();
 
         map = new SwervyMap();

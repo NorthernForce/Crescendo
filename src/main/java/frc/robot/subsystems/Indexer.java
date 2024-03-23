@@ -1,12 +1,15 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.motors.NFRSparkMax;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.CrabbyConstants;
 import frc.robot.sensors.NFRBeamBreak;
+import frc.robot.utils.LoggableHardware;
 
-public class Indexer extends SubsystemBase {
+public class Indexer extends SubsystemBase implements LoggableHardware {
     private final NFRSparkMax motors;
     private final NFRBeamBreak beamBreak;
     /** Creates a new Intake subsystem
@@ -38,6 +41,10 @@ public class Indexer extends SubsystemBase {
     public boolean getBeamBreakState() {
         return beamBreak.beamIntact();
     }
+    public boolean hasPiece()
+    {
+        return beamBreak.beamBroken();
+    }
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Motor Speeds", () -> this.motors.get(), speed -> this.motors.set(speed));
@@ -45,5 +52,16 @@ public class Indexer extends SubsystemBase {
     public double getMotorCurrent()
     {
         return motors.getOutputCurrent();
+    }
+    @Override
+    public void startLogging(double period) {
+    }
+    @Override
+    public void logOutputs(String name) {
+        Logger.recordOutput(name + "/HasPiece", hasPiece());
+        Logger.recordOutput(name + "/Speed", motors.get());
+        Logger.recordOutput(name + "/TargetSpeed", CrabbyConstants.IndexerConstants.indexerSpeed);
+        Logger.recordOutput(name + "/TargetPurgeSpeed", CrabbyConstants.IndexerConstants.indexerPurgeSpeed);
+        Logger.recordOutput(name + "/TargetShootSpeed", CrabbyConstants.IndexerConstants.indexerShootSpeed);
     }
 }
