@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
+import org.littletonrobotics.junction.Logger;
 import org.opencv.core.Point;
 
 import com.opencsv.CSVReader;
@@ -16,7 +17,7 @@ import com.opencsv.CSVWriter;
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.RobotBase;
 
-public class PolyReg implements TargetingCalculator {
+public class PolyReg implements TargetingCalculator, LoggableHardware {
     private File file;
     private static double coeffs[];
     private CSVReader csvReader;
@@ -280,6 +281,17 @@ public class PolyReg implements TargetingCalculator {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void startLogging(double period) {        
+    }
+
+    @Override
+    public void logOutputs(String name) {
+        Logger.recordOutput(name + "/PolyPoints/xPoints", xPoints); 
+        Logger.recordOutput(name + "/PolyPoints/yPoints", yPoints);
+        Logger.recordOutput(name + "/Skelequation (XD)", getSkelequation());
     }
 
 }

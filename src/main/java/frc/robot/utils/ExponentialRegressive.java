@@ -144,7 +144,6 @@ public class ExponentialRegressive implements TargetingCalculator, LoggableHardw
 
     @Override
     public void startLogging(double period) {
-
     }
 
     @Override
