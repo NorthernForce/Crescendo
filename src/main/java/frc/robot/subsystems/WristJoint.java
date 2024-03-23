@@ -7,11 +7,10 @@ import org.northernforce.motors.MotorEncoderMismatchException;
 import org.northernforce.motors.NFRSparkMax;
 import org.northernforce.subsystems.arm.NFRRotatingArmJoint;
 import frc.robot.constants.CrabbyConstants;
-import frc.robot.dashboard.CrabbyDashboard;
+
 public class WristJoint extends NFRRotatingArmJoint
 {
-    public CrabbyDashboard dashboard;
-    public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig, CrabbyDashboard dashboard)
+    public WristJoint(NFRSparkMax wristController, NFRRotatingArmJointConfiguration wristConfig)
     {
         super(wristConfig, wristController, Optional.empty());
         try {
@@ -28,7 +27,5 @@ public class WristJoint extends NFRRotatingArmJoint
         wristController.getPIDController().setSmartMotionMaxAccel(CrabbyConstants.WristConstants.maxAccel, 0);
         wristController.getPIDController().setSmartMotionAllowedClosedLoopError(CrabbyConstants.WristConstants.allowedClosedLoopError, 0);
         wristController.burnFlash();
-
-        dashboard.wristGauge.setSupplier(() -> getRotation().getDegrees());
     }
 }

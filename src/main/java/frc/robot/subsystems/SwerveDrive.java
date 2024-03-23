@@ -14,7 +14,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.dashboard.CrabbyDashboard;
 
 /**
  * Swerve drive that extends NFRSwerve Drive. Used for vital fixes
@@ -31,19 +30,6 @@ public class SwerveDrive extends NFRSwerveDrive
     public SwerveDrive(NFRSwerveDriveConfiguration config, NFRSwerveModule[] modules, Translation2d[] offsets,
         NFRGyro gyro) {
         super(config, modules, offsets, gyro);
-    }
-    
-    /**
-     * Creates a new NFRSwerveDrive.
-     * @param config the configuration for the swerve drive.
-     * @param modules the array of modules
-     * @param offsets the array of offsets... this should be equal in length to that of the modules.
-     * @param gyro the imu.
-     */
-    public SwerveDrive(NFRSwerveDriveConfiguration config, NFRSwerveModule[] modules, Translation2d[] offsets,
-        NFRGyro gyro, CrabbyDashboard dashboard) {
-        super(config, modules, offsets, gyro);
-        dashboard.swerveDisplay.setSuppliersNotDesired(this::getModules, () -> gyro.getGyroYaw().getRadians());
     }
 
     /**
