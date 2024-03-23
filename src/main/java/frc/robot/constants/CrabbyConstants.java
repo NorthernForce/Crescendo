@@ -85,7 +85,7 @@ public class CrabbyConstants {
     public static class ShooterConstants
     {
         public static final Slot0Configs topSlot = new Slot0Configs()
-                .withKV(0.0102)
+                .withKV(0.0106)
                 .withKS(0)
                 .withKP(0.01)
                 .withKI(0)
