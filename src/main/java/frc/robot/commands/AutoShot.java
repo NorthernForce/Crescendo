@@ -4,7 +4,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.CrabbyConstants;
@@ -19,9 +18,9 @@ public class AutoShot extends SequentialCommandGroup {
     {
         addCommands(
             new ParallelCommandGroup(
-                new AutoPrepShot(drive, shooter, wristJoint, topSpeed, bottomSpeed, wristSupplier),
-                Commands.waitUntil(() -> drive.getSpeed() < 0.5 && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
-            ),
+                new AutoPrepShot(drive, shooter, wristJoint, topSpeed, bottomSpeed, wristSupplier)
+            )
+            .until(() -> drive.getSpeed() < 0.2 && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance)),
             new ShootIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed)
         );
         addRequirements(shooter, intake, indexer, wristJoint);

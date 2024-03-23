@@ -147,6 +147,7 @@ public class CrabbyContainer implements RobotContainer
                 (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
                 .ignoringDisable(true);
         }));
+        Shuffleboard.getTab("General").addDouble("Speed", drive::getSpeed);
     }
     @Override
     @Deprecated

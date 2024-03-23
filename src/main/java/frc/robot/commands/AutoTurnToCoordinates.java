@@ -25,7 +25,7 @@ public class AutoTurnToCoordinates extends Command {
     public void initialize()
     {
         PPHolonomicDriveController.setRotationTargetOverride(() -> {
-            return Optional.of(targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle());
+            return Optional.of(targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180)));
         });
     }
     @Override
@@ -36,6 +36,7 @@ public class AutoTurnToCoordinates extends Command {
     @Override
     public boolean isFinished()
     {
-        return Math.abs(drive.getRotation().minus(targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle()).getDegrees()) <= tolerance.getDegrees();
+        return Math.abs(drive.getRotation().minus(targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle()).plus(
+                Rotation2d.fromDegrees(180)).getDegrees()) <= tolerance.getDegrees();
     }
 }

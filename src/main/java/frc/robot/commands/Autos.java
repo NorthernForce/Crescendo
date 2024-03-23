@@ -43,7 +43,8 @@ public class Autos
             "S1.G1_G2",
             "S2.G2_G1",
             "S2.G2_G3",
-            "S3.G3_G2"
+            "S3.G3_G2",
+            "S2.TEST"
             // "S1.CS.V1",
             // "S1.CS.V2",
             // "S1.LS",
@@ -106,8 +107,14 @@ public class Autos
         NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerShootSpeed,
             CrabbyConstants.IntakeConstants.intakeSpeed));
         NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, indexer, intake));
-        NamedCommands.registerCommand("autoShot", new AutoShot(drive, shooter, wrist, intake, indexer, () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
-            () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+        NamedCommands.registerCommand("prepAutoShot", new AutoPrepShot(drive, shooter, wrist,
+                () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+                () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+                () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble())))
+                .until(() -> drive.getSpeed() < 0.2
+                        && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance)));
+        NamedCommands.registerCommand("autoShot", new ShootIndexerAndIntake(indexer, intake,
+                CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed));
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
         ArrayList<AutonomousRoutine> autoRoutines = new ArrayList<>();

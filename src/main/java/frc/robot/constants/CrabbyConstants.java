@@ -44,8 +44,8 @@ public class CrabbyConstants {
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
         public static final PIDController controller = new PIDController(4.2, 0, 0.5);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
-            new PIDConstants(5),
-            new PIDConstants(5),
+            new PIDConstants(3),
+            new PIDConstants(2),
             6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
         public static final double maxShootSpeed = 0.5;
     }
