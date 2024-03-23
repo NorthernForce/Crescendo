@@ -113,8 +113,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
             CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         
-        container.wristJoint.setDefaultCommand(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(55),
-            Rotation2d.fromDegrees(1), 0, true));
+        container.wristJoint.setDefaultCommand(wristManual);
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed())
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));

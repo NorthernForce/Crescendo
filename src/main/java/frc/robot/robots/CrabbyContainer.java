@@ -36,7 +36,7 @@ import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.MiscellaneousLoggage;
+//import frc.robot.subsystems.MiscellaneousLoggage;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.subsystems.OrangePi;
 import frc.robot.subsystems.Shooter;
@@ -76,7 +76,7 @@ public class CrabbyContainer implements RobotContainer
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
     public final Climber climber;
-    public MiscellaneousLoggage miscellaneousLoggage;
+    //public MiscellaneousLoggage miscellaneousLoggage;
     public CrabbyContainer()
     {
         
@@ -164,7 +164,7 @@ public class CrabbyContainer implements RobotContainer
                 .ignoringDisable(true);
         }));
         Logger.recordMetadata("RobotName", "Crabby");
-        miscellaneousLoggage = new MiscellaneousLoggage(this);
+        //miscellaneousLoggage = new MiscellaneousLoggage(this);
     }
     @Override
     @Deprecated
@@ -228,8 +228,8 @@ public class CrabbyContainer implements RobotContainer
         aprilTagCamera.logOutputs("AprilTagCamera");
         wristJoint.logOutputs("Wrist");
         drive.logOutputs("Drive");
-        map.logOutputs("Map");
-        miscellaneousLoggage.logOutputs("Other");
+        // map.logOutputs("Map");
+        //miscellaneousLoggage.logOutputs("Other");
         dashboard.updateRobotPose(orangePi.getPose());
         dashboard.periodic();
     }
