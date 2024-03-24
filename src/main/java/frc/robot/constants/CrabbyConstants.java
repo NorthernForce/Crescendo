@@ -27,12 +27,10 @@ import frc.robot.subsystems.Xavier.XavierConfiguration;
 public class CrabbyConstants {
     public static final TalonFXConfiguration defaultTalonConfiguration = new TalonFXConfiguration()
         .withCurrentLimits(new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(40)
+            .withSupplyCurrentLimit(60)
             .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentThreshold(40)
-            .withStatorCurrentLimit(40)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyTimeThreshold(0.01)); // TODO: if necessary,
+            .withSupplyCurrentThreshold(60)
+            .withSupplyTimeThreshold(0.5)); // TODO: if necessary,
         // add some common configurations to this
     public static class DriveConstants {
         public static final Translation2d[] offsets = new Translation2d[] {
