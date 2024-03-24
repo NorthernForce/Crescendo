@@ -3,7 +3,7 @@
   "robotLength": 0.7,
   "holonomicMode": true,
   "pathFolders": [
-    "S3.SIMPLE",
+    "S1.CS.V3",
     "S1.G1_G2",
     "S1.L",
     "S1.L.V1",
@@ -15,6 +15,7 @@
     "S2.G2_G3",
     "S2.SIMPLE",
     "S3.G3_G2",
+    "S3.SIMPLE",
     "Uncategorized"
   ],
   "autoFolders": [
@@ -24,8 +25,8 @@
     "S3"
   ],
   "defaultMaxVel": 4.0,
-  "defaultMaxAccel": 1.0,
-  "defaultMaxAngVel": 240.0,
+  "defaultMaxAccel": 3.0,
+  "defaultMaxAngVel": 120.0,
   "defaultMaxAngAccel": 240.0,
   "maxModuleSpeed": 3.7
 }
