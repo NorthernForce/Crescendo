@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.55,
-        "y": 7.0
+        "x": 2.7317114914989533,
+        "y": 6.795384028422887
       },
       "prevControl": {
-        "x": 1.5499999999999998,
-        "y": 7.0
+        "x": 2.308296210316615,
+        "y": 6.235383172665601
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,8 +39,8 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
-    "rotateFast": false
+    "rotation": 45.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "S1.CS.V3",
