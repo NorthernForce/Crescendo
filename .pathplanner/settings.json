@@ -24,8 +24,8 @@
     "S3"
   ],
   "defaultMaxVel": 4.0,
-  "defaultMaxAccel": 1.0,
-  "defaultMaxAngVel": 240.0,
+  "defaultMaxAccel": 3.0,
+  "defaultMaxAngVel": 120.0,
   "defaultMaxAngAccel": 240.0,
   "maxModuleSpeed": 3.7
 }

@@ -88,6 +88,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
+        Shuffleboard.getTab("General").addDouble("Wrist Target", () -> Math.toDegrees(angleCalculator.getValueForDistance(lastRecordedDistance)));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro, dashboard);

@@ -41,10 +41,11 @@ public class CrabbyConstants {
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
         public static final PIDController controller = new PIDController(4.2, 0, 0.5);
+        public static final PIDController controller2 = new PIDController(5.5, 0, 2);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
-            new PIDConstants(2),
-            6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
+            new PIDConstants(1.5, 0, 0.5),
+            5.5, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
         public static final double maxShootSpeed = 0.5;
     }
     public static class IntakeConstants
@@ -98,10 +99,10 @@ public class CrabbyConstants {
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
         public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
-        public static final double closeShotSpeed = 50; // TODO
+        public static final double closeShotSpeed = 42; // TODO
         public static final double ampBottomSpeed = 14; // TODO
         public static final double ampTopSpeed = 7; // TODO
-        public static final double tolerance = 3; // RPS
+        public static final double tolerance = 2.5; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
     public static class ClimberConstants

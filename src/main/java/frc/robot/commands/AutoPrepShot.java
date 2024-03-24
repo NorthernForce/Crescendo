@@ -26,7 +26,7 @@ public class AutoPrepShot extends ParallelDeadlineGroup {
             new ParallelCommandGroup(
                 Commands.waitUntil(() -> (drive.getSpeed() < 0.5
                     && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance)
-                    && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.15)),
+                    && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.1)),
             new AutoTurnToCoordinates(drive, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.SpeakerConstants.redSpeaker : FieldConstants.SpeakerConstants.blueSpeaker,
                 Rotation2d.fromDegrees(10))
             ),
