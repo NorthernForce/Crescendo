@@ -2,61 +2,157 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6145208021049849,
-      "y": 4.420252729089577
+      "x": 1.3756161320151827,
+      "y": 5.570246205735591
     },
-    "rotation": -60.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "S2.T1_start"
+            "name": "closeShot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S2.T1_end"
+            "pathName": "S2.T.1"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "S2.T2_start"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S2.T2_end"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepAutoShot"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "S2.T3_start"
+            "name": "autoShot"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "S2.T3_end"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S2.T4_start"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepAutoShot"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "S2.T4_end"
+            "name": "autoShot"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.T.7"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepAutoShot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         }
       ]

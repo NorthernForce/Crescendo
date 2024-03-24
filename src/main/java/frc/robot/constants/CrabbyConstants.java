@@ -45,7 +45,7 @@ public class CrabbyConstants {
         public static final PIDController controller = new PIDController(4.2, 0, 0.5);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
-            new PIDConstants(5),
+            new PIDConstants(2),
             6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
         public static final double maxShootSpeed = 0.5;
     }
@@ -100,7 +100,7 @@ public class CrabbyConstants {
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
         public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
-        public static final double closeShotSpeed = 25; // TODO
+        public static final double closeShotSpeed = 50; // TODO
         public static final double ampBottomSpeed = 14; // TODO
         public static final double ampTopSpeed = 7; // TODO
         public static final double tolerance = 3; // RPS
@@ -121,8 +121,8 @@ public class CrabbyConstants {
         public static final double cameraHeight = Units.inchesToMeters(26);
         public static final Rotation2d cameraPitch = Rotation2d.fromDegrees(22.5);
         public static final NFRPhotonCameraConfiguration config = new NFRPhotonCameraConfiguration("orange pi", "Unnamed", new Transform3d(
-            new Translation3d(0, 0, cameraHeight),
-            new Rotation3d(0, 0, cameraPitch.getRadians())
+            new Translation3d(Units.inchesToMeters(-11.1), 0, cameraHeight),
+            new Rotation3d(0, cameraPitch.getRadians(), Math.toRadians(180))
         ));
     }
 }

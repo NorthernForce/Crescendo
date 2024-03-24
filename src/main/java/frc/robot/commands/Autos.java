@@ -43,8 +43,8 @@ public class Autos
             "S1.G1_G2",
             "S2.G2_G1",
             "S2.G2_G3",
-            "S3.G3_G2"
-            // "S1.CS.V1",
+            "S3.G3_G2",
+            "S1.CS.V1",
             // "S1.CS.V2",
             // "S1.LS",
             // "S1.L.V1",
@@ -55,7 +55,7 @@ public class Autos
             // "S2.LS.V1",
             // "S2.S.V1",
             // "S2.S.V2",
-            // "S2.T",
+            "S2.T"
             // "S3.CS",
             // "S3.C.V1",
             // "S3.C.V2",
@@ -103,11 +103,22 @@ public class Autos
         Shooter shooter, WristJoint wrist, Indexer indexer, NFRPhotonCamera camera, DoubleSupplier lastRecordedDistance, TargetingCalculator topCalculator,
         TargetingCalculator bottomCalculator, TargetingCalculator wristCalculator)
     {
-        NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerShootSpeed,
-            CrabbyConstants.IntakeConstants.intakeSpeed));
+        NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake,
+        CrabbyConstants.IndexerConstants.indexerSpeed,
+        CrabbyConstants.IntakeConstants.intakeSpeed)
+        .andThen(new PurgeIndexer(indexer, intake,
+                0.7,
+                -0.7).withTimeout(0.175)
+                .andThen(new RunIndexerAndIntake(indexer, intake,
+                        CrabbyConstants.IndexerConstants.indexerSpeed,
+                        CrabbyConstants.IntakeConstants.intakeSpeed))));
         NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, indexer, intake));
-        NamedCommands.registerCommand("autoShot", new AutoShot(drive, shooter, wrist, intake, indexer, () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
-            () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+        NamedCommands.registerCommand("prepAutoShot", new AutoPrepShot(drive, camera, shooter, wrist,
+            () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+            () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+            () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+        NamedCommands.registerCommand("autoShot", new AutoShot(drive, shooter, camera, wrist, intake, indexer, () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+            () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
         ArrayList<AutonomousRoutine> autoRoutines = new ArrayList<>();
