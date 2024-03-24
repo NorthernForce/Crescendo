@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.76,
-      "y": 4.4
+      "x": 0.6924444618120005,
+      "y": 4.490555305896938
     },
     "rotation": -60.0
   },
@@ -28,28 +28,15 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "intake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "prepAutoShot"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "autoShot"
-                      }
-                    }
-                  ]
+                  "name": "dumbtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepareSpit"
                 }
               }
             ]
@@ -58,25 +45,137 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S3.chaos.2"
+            "pathName": "S3.chaos.1.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S3.chaos.3"
+            "pathName": "S3.chaos.2.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S3.chaos.4"
+            "pathName": "S3.chaos.3.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumtake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S3.chaos.5"
+            "pathName": "S3.chaos.4.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.chaos.5.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
           }
         }
       ]

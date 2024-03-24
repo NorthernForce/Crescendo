@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.northernforce.commands.NFRRotatingArmJointSetAngle;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -45,7 +46,7 @@ public class Autos
             "S2.G2_G3",
             "S3.G3_G2",
             "S1.CS.V1",
-            // "S1.CS.V2",
+            "S1.CS.V2",
             // "S1.LS",
             // "S1.L.V1",
             // "S1.L.V2",
@@ -55,9 +56,9 @@ public class Autos
             // "S2.LS.V1",
             // "S2.S.V1",
             // "S2.S.V2",
-            "S2.T"
-            // "S3.CS",
-            // "S3.C.V1",
+            "S2.T",
+            "S3.chaos"
+            // "S3.brokenchaos",
             // "S3.C.V2",
             // "S3.LS.V1",
             // "S3.S.V1",
@@ -112,6 +113,9 @@ public class Autos
                 .andThen(new RunIndexerAndIntake(indexer, intake,
                         CrabbyConstants.IndexerConstants.indexerSpeed,
                         CrabbyConstants.IntakeConstants.intakeSpeed))));
+        NamedCommands.registerCommand("dumbtake", new RunIndexerAndIntake(indexer, intake,
+        CrabbyConstants.IndexerConstants.indexerSpeed,
+        CrabbyConstants.IntakeConstants.intakeSpeed).withTimeout(6.5));
         NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, indexer, intake));
         NamedCommands.registerCommand("prepAutoShot", new AutoPrepShot(drive, camera, shooter, wrist,
             () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
@@ -119,8 +123,10 @@ public class Autos
             () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
         NamedCommands.registerCommand("autoShot", new AutoShot(drive, setStateCommands, shooter, camera, wrist, intake, indexer, () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
             () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
-        AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
+        NamedCommands.registerCommand("spit", new Spit(shooter, wrist, indexer, intake));
+            AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
+        NamedCommands.registerCommand("prepareSpit", new NFRRotatingArmJointSetAngle(wrist, Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(5), 0, true));
         ArrayList<AutonomousRoutine> autoRoutines = new ArrayList<>();
         getAllAutos().forEach(name -> autoRoutines.add(new AutonomousRoutine(name, Pose2d::new, new SequentialCommandGroup(
             Commands.runOnce(() -> drive.scheduleCommands(setStateCommands)),

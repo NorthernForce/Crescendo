@@ -52,6 +52,7 @@ public class TurnToTarget2 extends Command
     @Override
     public void execute()
     {
+        System.out.println("TurnTOTarget2");
         var detection = targetSupplier.get();
         if (detection.isPresent())
         {

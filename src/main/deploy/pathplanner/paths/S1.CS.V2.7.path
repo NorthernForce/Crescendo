@@ -47,3 +47,5 @@
   "previewStartingState": {
     "rotation": 0,
   },
+  "useDefaultConstraints": true
+}
