@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import javax.sql.rowset.spi.SyncResolver;
-
 import org.northernforce.commands.NFRSwerveModuleSetState;
 import org.northernforce.gyros.NFRGyro;
 import org.northernforce.subsystems.drive.NFRSwerveDrive;
