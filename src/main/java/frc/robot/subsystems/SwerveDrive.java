@@ -69,8 +69,10 @@ public class SwerveDrive extends NFRSwerveDrive
     @Override
     public void updateOdometry()
     {
-        poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getRotation(), getPositions());
-        odometry.update(getRotation(), getPositions());
+        synchronized (poseEstimator) {
+            poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getRotation(), getPositions());
+            odometry.update(getRotation(), getPositions());
+        }
     }
     @Override
     public Pose2d getEstimatedPose()
@@ -107,5 +109,11 @@ public class SwerveDrive extends NFRSwerveDrive
     {
         var chassisSpeeds = getChassisSpeeds();
         return new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond).getDistance(new Translation2d());
+    }
+    @Override
+    public void addVisionEstimate(double timestamp, Pose2d pose) {
+        synchronized (poseEstimator) {
+            super.addVisionEstimate(timestamp, pose);
+        }
     }
 }

@@ -46,7 +46,4 @@
   "folder": "S1.CS.V2",
   "previewStartingState": {
     "rotation": 0,
-    "velocity": 0
   },
-  "useDefaultConstraints": true
-}

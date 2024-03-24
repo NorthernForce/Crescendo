@@ -12,15 +12,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S1.CS.V1.1"
-                }
-              },
               {
                 "type": "sequential",
                 "data": {
@@ -36,17 +36,23 @@
                       "data": {
                         "name": "prepAutoShot"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "autoShot"
-                      }
                     }
                   ]
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S1.CS.V1.1"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         },
         {
@@ -94,17 +100,17 @@
                       "data": {
                         "name": "prepAutoShot"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "autoShot"
-                      }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         },
         {
@@ -145,17 +151,17 @@
                       "data": {
                         "name": "prepAutoShot"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "autoShot"
-                      }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         },
         {
