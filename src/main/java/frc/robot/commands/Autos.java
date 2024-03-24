@@ -103,8 +103,15 @@ public class Autos
         Shooter shooter, WristJoint wrist, Indexer indexer, NFRPhotonCamera camera, DoubleSupplier lastRecordedDistance, TargetingCalculator topCalculator,
         TargetingCalculator bottomCalculator, TargetingCalculator wristCalculator)
     {
-        NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerShootSpeed,
-            CrabbyConstants.IntakeConstants.intakeSpeed));
+        NamedCommands.registerCommand("intake", new RunIndexerAndIntake(indexer, intake,
+        CrabbyConstants.IndexerConstants.indexerSpeed,
+        CrabbyConstants.IntakeConstants.intakeSpeed)
+        .andThen(new PurgeIndexer(indexer, intake,
+                0.7,
+                -0.7).withTimeout(0.175)
+                .andThen(new RunIndexerAndIntake(indexer, intake,
+                        CrabbyConstants.IndexerConstants.indexerSpeed,
+                        CrabbyConstants.IntakeConstants.intakeSpeed))));
         NamedCommands.registerCommand("closeShot", new CloseShot(shooter, wrist, indexer, intake));
         NamedCommands.registerCommand("prepAutoShot", new AutoPrepShot(drive, camera, shooter, wrist,
             () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),

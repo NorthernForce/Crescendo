@@ -26,11 +26,11 @@ public class AutoPrepShot extends ParallelDeadlineGroup {
     {
         super(
             new ParallelCommandGroup(
-            Commands.waitUntil(() -> (drive.getSpeed() < 0.5
-                && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance)
-                && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.15)),
+                Commands.waitUntil(() -> (drive.getSpeed() < 0.5
+                    && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance)
+                    && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.15)),
             new AutoTurnToCoordinates(drive, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.SpeakerConstants.redSpeaker : FieldConstants.SpeakerConstants.blueSpeaker,
-                Rotation2d.fromDegrees(20))
+                Rotation2d.fromDegrees(10))
             ),
             new NFRWristContinuousAngle(wrist, wristSupplier),
             new RampShooterWithDifferential(shooter, topSpeed, bottomSpeed)

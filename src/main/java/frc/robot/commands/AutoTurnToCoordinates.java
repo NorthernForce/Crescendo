@@ -7,8 +7,11 @@ import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoTurnToCoordinates extends Command {
@@ -37,7 +40,10 @@ public class AutoTurnToCoordinates extends Command {
     @Override
     public boolean isFinished()
     {
-        return Math.abs(targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle()
-            .plus(Rotation2d.fromDegrees(180)).getDegrees() - drive.getRotation().getDegrees()) <= tolerance.getDegrees();
+        var targetRotation = targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle()
+            .plus(Rotation2d.fromDegrees(180)).getDegrees();
+        var allianceOffset = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 
+            180 : 0;
+        return Math.abs(MathUtil.inputModulus(targetRotation - drive.getRotation().getDegrees(), -180, 180) + allianceOffset) <= tolerance.getDegrees();
     }
 }
