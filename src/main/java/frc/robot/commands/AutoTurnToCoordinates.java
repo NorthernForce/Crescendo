@@ -44,6 +44,6 @@ public class AutoTurnToCoordinates extends Command {
             .plus(Rotation2d.fromDegrees(180)).getDegrees();
         var allianceOffset = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 
             180 : 0;
-        return Math.abs(MathUtil.inputModulus(targetRotation - drive.getRotation().getDegrees(), -180, 180) + allianceOffset) <= tolerance.getDegrees();
+        return Math.abs(MathUtil.inputModulus(targetRotation - drive.getRotation().getDegrees() + allianceOffset, -180, 180)) <= tolerance.getDegrees();
     }
 }

@@ -3,47 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 7.843284822372115,
+        "y": 1.2086661210359455
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 6.01473202946406,
+        "y": 4.902899682342573
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S3.brokenchaos.2"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 7.954668748843671,
+        "y": 2.8887070119819245
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 7.165699269670144,
+        "y": 3.8169063992448966
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S3.brokenchaos.3"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 120.0,
-    "maxAngularAcceleration": 240.0
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 44.999999999999964,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "S3.brokenchaos",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7036808379666589,
-        "y": 6.6998765551505
+        "x": 1.9793840773921174,
+        "y": 5.599460783737701
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8722639580510483,
-        "y": 6.875164023163159
+        "x": 2.67321423531736,
+        "y": 7.557549929914675
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S1.LS.new4"
     },
     {
       "anchor": {
-        "x": 2.8947741881248894,
-        "y": 6.9920223351715975
+        "x": 8.29947111851519,
+        "y": 5.7650100590829885
       },
       "prevControl": {
-        "x": 2.008598655394227,
-        "y": 6.865425830495789
+        "x": 5.736272213285168,
+        "y": 6.313762750982292
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "S1.CS.V2.2"
+      "linkedName": "S1.LS.new5"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.9391909457356392,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S1.CS.V2",
+  "folder": "S1.LS",
   "previewStartingState": {
-    "rotation": 60.584401166904456,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true
