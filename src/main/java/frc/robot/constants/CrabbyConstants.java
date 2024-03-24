@@ -83,16 +83,16 @@ public class CrabbyConstants {
     public static class ShooterConstants
     {
         public static final Slot0Configs topSlot = new Slot0Configs()
-                .withKV(0.0102)
+                .withKV(0.12)
                 .withKS(0)
-                .withKP(0.01)
-                .withKI(0)
+                .withKP(0.3)
+                .withKI(0.1)
                 .withKD(0);
         public static final Slot0Configs bottomSlot = new Slot0Configs()
-                .withKV(0.05)
+                .withKV(0.12)
                 .withKS(0)
-                .withKP(0.0115)
-                .withKI(0)
+                .withKP(0.3)
+                .withKI(0.1)
                 .withKD(0);
         public static final TalonFXConfiguration topShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
