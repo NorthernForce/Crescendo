@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.046914767613639,
-        "y": 7.401026427201135
+        "x": 7.954668748843671,
+        "y": 2.8887070119819245
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.046914767613639,
-        "y": 7.401026427201135
+        "x": 6.701599576038658,
+        "y": 3.1114748649250386
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S3.brokenchaos.3"
     },
     {
       "anchor": {
-        "x": 8.29947111851519,
-        "y": 7.401026427201135
+        "x": 7.778310865263706,
+        "y": 3.9654183012069724
       },
       "prevControl": {
-        "x": 7.299471118515189,
-        "y": 7.401026427201135
+        "x": 6.33031982113347,
+        "y": 2.786605079382998
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S3.brokenchaos.4"
     }
   ],
   "rotationTargets": [],
@@ -39,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 113.07041224982459,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "various.testing.schenanigans",
+  "folder": "S3.brokenchaos",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

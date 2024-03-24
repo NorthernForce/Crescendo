@@ -4,10 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "S1.CS.V1",
-    "S1.CS.V2.new",
+    "S1.CS.V2",
     "S1.L.V1",
     "S1.L.V2",
-    "S1.LS.new ",
+    "S1.LS",
     "S2.C.V1",
     "S2.CS.V1",
     "S2.CS.V2",
@@ -15,8 +15,8 @@
     "S3.C",
     "S3.LS.V1",
     "S3.S",
-    "S3.chaos",
-    "various.testing.schenanigans"
+    "S3.brokenchaos",
+    "S3.chaos"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
