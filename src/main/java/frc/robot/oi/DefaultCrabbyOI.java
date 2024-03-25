@@ -24,7 +24,6 @@ import frc.robot.robots.CrabbyContainer;
 public class DefaultCrabbyOI implements CrabbyOI {
     private CommandXboxController driverController;
     private CommandXboxController manipulatorController;
-
     @Override
     public void bindDriverToXBoxController(CrabbyContainer container, CommandXboxController controller)
     {

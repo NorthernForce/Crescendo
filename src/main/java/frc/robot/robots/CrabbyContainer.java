@@ -35,7 +35,6 @@ import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.MiscellaneousLoggage;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.subsystems.NFRPhotonCamera;
 import frc.robot.subsystems.Shooter;
@@ -70,13 +69,13 @@ public class CrabbyContainer implements RobotContainer
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
     public final Climber climber;
-    public MiscellaneousLoggage miscellaneousLoggage;
+    public CrabbyContainer crabby;
     public CrabbyContainer()
     {
         
         dashboard = new CrabbyDashboard();
 
-        map = new CrabbyMap();
+        map = new CrabbyMap(this);
         map.startLogging(0.02);
         intake = new Intake(map.intakeMotor);
 
@@ -145,6 +144,7 @@ public class CrabbyContainer implements RobotContainer
         }));
         Logger.recordMetadata("RobotName", "Crabby");
         //miscellaneousLoggage = new MiscellaneousLoggage(this);
+        crabby = this;
     }
     @Override
     @Deprecated
@@ -204,7 +204,6 @@ public class CrabbyContainer implements RobotContainer
         wristJoint.logOutputs("Wrist");
         drive.logOutputs("Drive");
         map.logOutputs("Map");
-        miscellaneousLoggage.logOutputs("Other");
         var distance =
             orangePi.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch);
         if (distance.isPresent())
