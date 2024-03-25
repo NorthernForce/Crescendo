@@ -158,7 +158,10 @@ public class CrabbyContainer implements RobotContainer
     public double predictNextDistance()
     {
         ChassisSpeeds speeds = drive.getChassisSpeeds();
-        double r = speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond;
+        double r =
+            Math.sqrt(
+                speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond)
+                * CrabbyConstants.ShooterConstants.clearanceTime;
         double theta = Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
         return Math.sqrt(r * r + lastRecordedDistance * lastRecordedDistance - 2 * r * lastRecordedDistance * Math.cos(theta - lastRecordedSpeakerYaw.getRadians() - drive.getRotation().getDegrees()));
     }
