@@ -39,7 +39,7 @@ public class ComponentLogger implements LoggableHardware {
     }
 
     public ComponentLogger(CrabbyContainer crabby) {
-        type = ComponentType.SparkMax;
+        type = ComponentType.ControllerLogger;
         m_cLogger = new ControllerLogger(crabby);
     }
     public ComponentLogger(ComponentLogger... componentLoggers) {
@@ -272,11 +272,11 @@ public class ComponentLogger implements LoggableHardware {
         switch (type) {
             case Talon:
                 for (TalonFXLogger i : m_talons) {
-                    i.logOutputs(name + "/Talons");
+                    i.logOutputs(name + "/TalonFX(s)");
                 }
             case SparkMax:
                 for (SparkLogger i : m_sparks) {
-                    i.logOutputs(name + "/Talons");
+                    i.logOutputs(name + "/SparkMax(s)");
                 }
             case ComponentLogger:
                 for (ComponentLogger i : m_componentLoggers) {
