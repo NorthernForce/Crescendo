@@ -4,19 +4,31 @@
 
 package frc.robot.subsystems;
 
-import org.northernforce.motors.NFRMotorController;
+import org.northernforce.motors.NFRTalonFX;
 
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.dashboard.CrabbyDashboard;
 
 public class Shooter extends SubsystemBase {
-    private final NFRMotorController topMotor;
-    private final NFRMotorController bottomMotor;
+    private final NFRTalonFX topMotor;
+    private final NFRTalonFX bottomMotor;
+    private final VelocityVoltage topControl, bottomControl;
+    private final VoltageOut topVoltage, bottomVoltage;
     private double topTargetSpeed, bottomTargetSpeed;
+    private final SysIdRoutine topSysID, bottomSysID;
+    private final StatusSignal<Double> topAcceleration, bottomAcceleration, topCurrent, bottomCurrent,
+        m_topVoltage, m_bottomVoltage;
 
     /** Creates a new Shooter. 
      * @param dashboard */
-    public Shooter(NFRMotorController topMotor, NFRMotorController bottomMotor, CrabbyDashboard dashboard) {
+    public Shooter(NFRTalonFX topMotor, NFRTalonFX bottomMotor, CrabbyDashboard dashboard) {
         this.topMotor = topMotor;
         this.bottomMotor = bottomMotor;
         topTargetSpeed = 0;
@@ -24,6 +36,45 @@ public class Shooter extends SubsystemBase {
 
         dashboard.topShooter.setSupplier(this::getTopMotorVelocity);
         dashboard.bottomShooter.setSupplier(this::getBottomMotorVelocity);
+
+        topControl = new VelocityVoltage(0).withSlot(0);
+        bottomControl = new VelocityVoltage(0).withSlot(0);
+
+        topVoltage = new VoltageOut(0);
+        bottomVoltage = new VoltageOut(0);
+
+        topAcceleration = topMotor.getAcceleration();
+        bottomAcceleration = bottomMotor.getAcceleration();
+        topCurrent = topMotor.getStatorCurrent();
+        bottomCurrent = bottomMotor.getStatorCurrent();
+        m_topVoltage = topMotor.getMotorVoltage();
+        m_bottomVoltage = bottomMotor.getMotorVoltage();
+
+        topSysID = new SysIdRoutine(new SysIdRoutine.Config(),
+            new SysIdRoutine.Mechanism(volts -> {
+                topMotor.setControl(topVoltage.withOutput(volts.in(Units.Volts)));
+            }, log -> {
+                log.motor("top-motor")
+                    .angularPosition(Units.Rotations.of(topMotor.getSelectedEncoder().getPosition()))
+                    .angularVelocity(Units.RotationsPerSecond.of(topMotor.getSelectedEncoder().getVelocity()))
+                    .angularAcceleration(Units.RotationsPerSecond.per(Units.Second).of(topAcceleration.getValueAsDouble()))
+                    .current(Units.Amps.of(topCurrent.getValueAsDouble()))
+                    .voltage(Units.Volts.of(m_topVoltage.getValueAsDouble()));
+            }, this)
+        );
+
+        bottomSysID = new SysIdRoutine(new SysIdRoutine.Config(),
+            new SysIdRoutine.Mechanism(volts -> {
+                bottomMotor.setControl(bottomVoltage.withOutput(volts.in(Units.Volts)));
+            }, log -> {
+                log.motor("bottom-motor")
+                    .angularPosition(Units.Rotations.of(bottomMotor.getSelectedEncoder().getPosition()))
+                    .angularVelocity(Units.RotationsPerSecond.of(bottomMotor.getSelectedEncoder().getVelocity()))
+                    .angularAcceleration(Units.RotationsPerSecond.per(Units.Second).of(bottomAcceleration.getValueAsDouble()))
+                    .current(Units.Amps.of(bottomCurrent.getValueAsDouble()))
+                    .voltage(Units.Volts.of(m_bottomVoltage.getValueAsDouble()));
+            }, this)
+        );
     }
 
     /**
@@ -31,9 +82,9 @@ public class Shooter extends SubsystemBase {
      * (-) velocity is outtake (in current design) (i think)
      */
     public void run(double speed) {
-        topMotor.setVelocity(0, speed);
         topTargetSpeed = bottomTargetSpeed = speed;
-        bottomMotor.setVelocity(0, speed);
+        topMotor.setControl(topControl.withVelocity(speed));
+        bottomMotor.setControl(bottomControl.withVelocity(speed));
     }
 
     /**
@@ -41,7 +92,7 @@ public class Shooter extends SubsystemBase {
      */
     public void runTop(double speed) {
         topTargetSpeed = speed;
-        topMotor.setVelocity(0, speed);
+        topMotor.setControl(topControl.withVelocity(speed));
     }
 
     /**
@@ -49,7 +100,7 @@ public class Shooter extends SubsystemBase {
      */
     public void runBottom(double speed) {
         bottomTargetSpeed = speed;
-        bottomMotor.setVelocity(0, speed);
+        bottomMotor.setControl(bottomControl.withVelocity(speed));
     }
 
     public double getTopMotorVelocity() {
@@ -58,6 +109,22 @@ public class Shooter extends SubsystemBase {
 
     public double getBottomMotorVelocity() {
         return bottomMotor.getSelectedEncoder().getVelocity();
+    }
+
+    public Command getDynamicTop(SysIdRoutine.Direction direction) {
+        return topSysID.dynamic(direction);
+    }
+
+    public Command getQuasistaticTop(SysIdRoutine.Direction direction) {
+        return bottomSysID.dynamic(direction);
+    }
+
+    public Command getDynamicBottom(SysIdRoutine.Direction direction) {
+        return topSysID.quasistatic(direction);
+    }
+
+    public Command getQuasistaticBottom(SysIdRoutine.Direction direction) {
+        return bottomSysID.quasistatic(direction);
     }
 
     public boolean isAtSpeed(double tolerance)

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
+
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -20,8 +21,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CloseShot;
@@ -116,6 +119,16 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
         Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
         Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
+        Shuffleboard.getTab("Test").add("SysID", new SequentialCommandGroup(
+            shooter.getDynamicTop(SysIdRoutine.Direction.kForward),
+            shooter.getDynamicBottom(SysIdRoutine.Direction.kForward),
+            shooter.getDynamicTop(SysIdRoutine.Direction.kReverse),
+            shooter.getDynamicBottom(SysIdRoutine.Direction.kReverse),
+            shooter.getQuasistaticTop(SysIdRoutine.Direction.kForward),
+            shooter.getQuasistaticBottom(SysIdRoutine.Direction.kForward),
+            shooter.getQuasistaticTop(SysIdRoutine.Direction.kReverse),
+            shooter.getQuasistaticBottom(SysIdRoutine.Direction.kReverse)
+        ));
 
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
