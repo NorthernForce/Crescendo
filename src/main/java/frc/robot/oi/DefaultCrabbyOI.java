@@ -46,7 +46,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
 
-        new Trigger(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(.2))
+        new Trigger(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(Commands.runOnce(() -> controller.getHID().setRumble(RumbleType.kBothRumble, .2)))
             .onFalse(Commands.runOnce(() -> controller.getHID().setRumble(RumbleType.kBothRumble, 0)));
         
@@ -111,7 +111,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
             .onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
-        new Trigger(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(.2))
+        new Trigger(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(Commands.runOnce(() -> controller.getHID().setRumble(RumbleType.kBothRumble, .2)))
             .onFalse(Commands.runOnce(() -> controller.getHID().setRumble(RumbleType.kBothRumble, 0)));
 
