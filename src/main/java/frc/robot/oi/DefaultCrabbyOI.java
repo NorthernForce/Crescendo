@@ -55,10 +55,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
             container.orangePi::getSpeakerTagYaw, true, true)
             .alongWith(new RampShooterWithDifferential(container.shooter,
-                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
+                () -> container.topSpeedCalculator.getValueForDistance(container.predictNextDistance()),
+                () -> container.bottomSpeedCalculator.getValueForDistance(container.predictNextDistance())))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)).minus(Rotation2d.fromDegrees(0 * container.lastRecordedDistance)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.predictNextDistance())).minus(Rotation2d.fromDegrees(0 * container.lastRecordedDistance)))));
         
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .and(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
@@ -135,10 +135,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
                 container.orangePi::getSpeakerTagYaw, true, true)
                 .alongWith(new RampShooterWithDifferential(container.shooter,
-                    () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                    () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
+                    () -> container.topSpeedCalculator.getValueForDistance(container.predictNextDistance()),
+                    () -> container.bottomSpeedCalculator.getValueForDistance(container.predictNextDistance())))
                 .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                    () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+                    () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.predictNextDistance())))));
         }
     }
     @Override
