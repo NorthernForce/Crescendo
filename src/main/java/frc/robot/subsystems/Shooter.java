@@ -60,7 +60,7 @@ public class Shooter extends SubsystemBase {
                     .angularAcceleration(Units.RotationsPerSecond.per(Units.Second).of(topAcceleration.getValueAsDouble()))
                     .current(Units.Amps.of(topCurrent.getValueAsDouble()))
                     .voltage(Units.Volts.of(m_topVoltage.getValueAsDouble()));
-            }, this)
+            }, this, "top-motor")
         );
 
         bottomSysID = new SysIdRoutine(new SysIdRoutine.Config(),
@@ -73,7 +73,7 @@ public class Shooter extends SubsystemBase {
                     .angularAcceleration(Units.RotationsPerSecond.per(Units.Second).of(bottomAcceleration.getValueAsDouble()))
                     .current(Units.Amps.of(bottomCurrent.getValueAsDouble()))
                     .voltage(Units.Volts.of(m_bottomVoltage.getValueAsDouble()));
-            }, this)
+            }, this, "bottom-motor")
         );
     }
 
@@ -116,11 +116,11 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command getQuasistaticTop(SysIdRoutine.Direction direction) {
-        return bottomSysID.dynamic(direction);
+        return topSysID.dynamic(direction);
     }
 
     public Command getDynamicBottom(SysIdRoutine.Direction direction) {
-        return topSysID.quasistatic(direction);
+        return bottomSysID.quasistatic(direction);
     }
 
     public Command getQuasistaticBottom(SysIdRoutine.Direction direction) {
