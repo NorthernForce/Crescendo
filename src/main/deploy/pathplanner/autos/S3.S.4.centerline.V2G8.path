@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.345764895563007,
+        "y": 2.931195992878345
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.0274383822789,
+        "y": 4.206899232303804
+      },
+      "isLocked": false,
+      "linkedName": "S3.S.4.centerline"
+    },
+    {
+      "anchor": {
+        "x": 7.939157989822505,
+        "y": 4.099779112962734
+      },
+      "prevControl": {
+        "x": 4.384717666232486,
+        "y": 3.3694146629099904
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 240.0,
+    "maxAngularAcceleration": 240.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "S3.S.V2G8 - Done",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
