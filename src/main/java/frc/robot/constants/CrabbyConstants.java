@@ -114,6 +114,7 @@ public class CrabbyConstants {
     public static class XavierConstants
     {
         public static final XavierConfiguration config = new XavierConfiguration("xavier", "note_detection");
+        public static final PIDController noteRotationPID = new PIDController(.75, 0, 0);
     }
     public static class OrangePiConstants
     {
