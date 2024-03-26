@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.76,
+      "y": 4.4
+    },
+    "rotation": -60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.brokenchaos.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.brokenchaos.2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.brokenchaos.3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.brokenchaos.4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3.brokenchaos.5"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

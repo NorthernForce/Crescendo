@@ -27,12 +27,10 @@ import frc.robot.subsystems.Xavier.XavierConfiguration;
 public class CrabbyConstants {
     public static final TalonFXConfiguration defaultTalonConfiguration = new TalonFXConfiguration()
         .withCurrentLimits(new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(40)
+            .withSupplyCurrentLimit(60)
             .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentThreshold(40)
-            .withStatorCurrentLimit(40)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyTimeThreshold(0.01)); // TODO: if necessary,
+            .withSupplyCurrentThreshold(60)
+            .withSupplyTimeThreshold(0.5)); // TODO: if necessary,
         // add some common configurations to this
     public static class DriveConstants {
         public static final Translation2d[] offsets = new Translation2d[] {
@@ -43,9 +41,10 @@ public class CrabbyConstants {
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
         public static final PIDController controller = new PIDController(4.2, 0, 0.5);
+        public static final PIDController controller2 = new PIDController(4.2, 0.1, 0.5);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
-            new PIDConstants(5),
+            new PIDConstants(1.5, 0, 0.5),
             6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
         public static final double maxShootSpeed = 0.5;
     }
@@ -85,25 +84,25 @@ public class CrabbyConstants {
     public static class ShooterConstants
     {
         public static final Slot0Configs topSlot = new Slot0Configs()
-                .withKV(0.0102)
+                .withKV(0.12)
                 .withKS(0)
-                .withKP(0.01)
-                .withKI(0)
+                .withKP(0.3)
+                .withKI(0.1)
                 .withKD(0);
         public static final Slot0Configs bottomSlot = new Slot0Configs()
-                .withKV(0.05)
+                .withKV(0.12)
                 .withKS(0)
-                .withKP(0.0115)
-                .withKI(0)
+                .withKP(0.3)
+                .withKI(0.1)
                 .withKD(0);
         public static final TalonFXConfiguration topShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
         public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
-        public static final double closeShotSpeed = 25; // TODO
+        public static final double closeShotSpeed = 42; // TODO
         public static final double ampBottomSpeed = 14; // TODO
         public static final double ampTopSpeed = 7; // TODO
-        public static final double tolerance = 3; // RPS
+        public static final double tolerance = 2.5; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
     public static class ClimberConstants
@@ -121,8 +120,8 @@ public class CrabbyConstants {
         public static final double cameraHeight = Units.inchesToMeters(26);
         public static final Rotation2d cameraPitch = Rotation2d.fromDegrees(22.5);
         public static final NFRPhotonCameraConfiguration config = new NFRPhotonCameraConfiguration("orange pi", "Unnamed", new Transform3d(
-            new Translation3d(0, 0, cameraHeight),
-            new Rotation3d(0, 0, cameraPitch.getRadians())
+            new Translation3d(Units.inchesToMeters(-11.1), 0, cameraHeight),
+            new Rotation3d(0, cameraPitch.getRadians(), Math.toRadians(180))
         ));
     }
 }
