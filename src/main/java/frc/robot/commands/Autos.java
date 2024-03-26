@@ -46,6 +46,7 @@ public class Autos
             "S3.G3_G2",
             "S1.CS.V1",
             "S1.CS.V3",
+            "S1.CS.LS",
             // "S1.CS.V2",
             // "S1.LS",
             // "S1.L.V1",
