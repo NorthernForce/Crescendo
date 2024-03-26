@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.CloseShot;
+import frc.robot.commands.CloseShotPreset;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
@@ -66,7 +66,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
 
-        controller.y().whileTrue(new CloseShot(container.shooter, container.wristJoint, container.indexer, container.intake));
+        controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
     }
     @Override
     public void bindDriverToJoystick(CrabbyContainer container, CommandGenericHID joystick)
@@ -129,6 +129,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+        
+                controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
     }
     @Override
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick)
