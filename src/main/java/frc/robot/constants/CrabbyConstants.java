@@ -126,7 +126,7 @@ public class CrabbyConstants {
     }
     public static class LEDConstants
     {
-        public static final int ledCount = 200; // TODO
+        public static final int ledCount = 60; // TODO
         public static final double tickPeriod = 0.02; // TODO
     }
 }

@@ -18,10 +18,12 @@ public class SetColor extends Command {
 
     @Override
     public void initialize() {
-        if (!leds.isOn()) leds.ledOn();
+        leds.ledOn();
+    }
+    @Override
+    public void execute() {
         leds.setBuffer(buffer);
     }
-
     @Override
     public boolean isFinished() {
         return false;

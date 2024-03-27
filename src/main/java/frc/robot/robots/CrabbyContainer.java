@@ -126,6 +126,7 @@ public class CrabbyContainer implements RobotContainer
 
         LEDs = new NFRleds();
         LEDs.setDefaultCommand(new SetColor(LEDs, Color.kPink).ignoringDisable(true));
+        Shuffleboard.getTab("General").addBoolean("LEDs ON", () -> LEDs.isOn());
         new Trigger(() -> indexer.getBeamBreak().beamBroken() && !readyToShoot())
             .whileTrue(new SetColor(LEDs, Color.kOrange));
         new Trigger(() -> indexer.getBeamBreak().beamIntact() && readyToShoot())

@@ -17,7 +17,10 @@ public class NFRleds extends SubsystemBase {
     public NFRleds() {
         // PWM port 9
         // Must be a PWM header, not MXP or DIO
-        m_led = new AddressableLED(9);
+        m_led = new AddressableLED(0);
+        m_led.setBitTiming(350, 900, 900, 600);
+        m_led.setSyncTime(2500);
+        m_l
         // Reuse buffer
         // Default to a length of 60, start empty output
         // Length is expensive to set, so only set it once, then just update data
