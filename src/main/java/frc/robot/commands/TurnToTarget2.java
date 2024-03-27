@@ -80,5 +80,10 @@ public class TurnToTarget2 extends Command
     @Override
     public void end(boolean interrupted)
     {
+        SwerveModuleState[] states = drive.toModuleStates(new ChassisSpeeds());
+        for (int i = 0; i < states.length; i++) {
+            setStateCommands[i].setTargetState(optimize ? SwerveModuleState.optimize(states[i],
+                    drive.getModules()[i].getRotation()) : states[i]);
+        }
     }
 }
