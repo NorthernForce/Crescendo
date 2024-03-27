@@ -4,21 +4,29 @@
 
 package frc.robot.subsystems;
 
-import org.northernforce.motors.NFRMotorController;
+import org.northernforce.motors.NFRTalonFX;
 
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.dashboard.CrabbyDashboard;
 
 public class Shooter extends SubsystemBase {
-    private final NFRMotorController topMotor;
-    private final NFRMotorController bottomMotor;
+    private final NFRTalonFX topMotor;
+    private final NFRTalonFX bottomMotor;
     private double topTargetSpeed, bottomTargetSpeed;
+    private final VelocityVoltage topControl = new VelocityVoltage(0);
+    private final VelocityVoltage bottomControl = new VelocityVoltage(0);
 
-    /** Creates a new Shooter. */
-    public Shooter(NFRMotorController topMotor, NFRMotorController bottomMotor) {
+    /** Creates a new Shooter. 
+     * @param dashboard */
+    public Shooter(NFRTalonFX topMotor, NFRTalonFX bottomMotor, CrabbyDashboard dashboard) {
         this.topMotor = topMotor;
         this.bottomMotor = bottomMotor;
         topTargetSpeed = 0;
         bottomTargetSpeed = 0;
+
+        dashboard.topShooter.setSupplier(this::getTopMotorVelocity);
+        dashboard.bottomShooter.setSupplier(this::getBottomMotorVelocity);
     }
 
     /**
@@ -26,9 +34,9 @@ public class Shooter extends SubsystemBase {
      * (-) velocity is outtake (in current design) (i think)
      */
     public void run(double speed) {
-        topMotor.setVelocity(0, speed);
+        topMotor.setControl(topControl.withVelocity(speed).withSlot(0));
         topTargetSpeed = bottomTargetSpeed = speed;
-        bottomMotor.setVelocity(0, speed);
+        bottomMotor.setControl(bottomControl.withVelocity(speed).withSlot(0));
     }
 
     /**
@@ -36,7 +44,7 @@ public class Shooter extends SubsystemBase {
      */
     public void runTop(double speed) {
         topTargetSpeed = speed;
-        topMotor.setVelocity(0, speed);
+        topMotor.setControl(topControl.withVelocity(speed).withSlot(0));
     }
 
     /**
@@ -44,7 +52,7 @@ public class Shooter extends SubsystemBase {
      */
     public void runBottom(double speed) {
         bottomTargetSpeed = speed;
-        bottomMotor.setVelocity(0, speed);
+        bottomMotor.setControl(bottomControl.withVelocity(speed).withSlot(0));
     }
 
     public double getTopMotorVelocity() {
@@ -59,6 +67,11 @@ public class Shooter extends SubsystemBase {
     {
         return Math.abs(getTopMotorVelocity() - topTargetSpeed) < tolerance
             && Math.abs(getBottomMotorVelocity() - bottomTargetSpeed) < tolerance;
+    }
+
+    public boolean isRunning()
+    {
+        return topTargetSpeed != 0 || bottomTargetSpeed != 0;
     }
 
     public void stop() {

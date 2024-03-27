@@ -33,7 +33,12 @@ public class InterpolatedTargetingCalculator implements TargetingCalculator{
                 csvReader = new CSVReader(new FileReader(file));
                 csvWriter = new CSVWriter(new FileWriter(file, true));
                 csvReader.forEach(nextLine -> {
+                    try {
                     treeMap.put(Double.parseDouble(nextLine[0]), Double.parseDouble(nextLine[1]));
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
             }
             catch (FileNotFoundException e) {
@@ -55,6 +60,7 @@ public class InterpolatedTargetingCalculator implements TargetingCalculator{
      */
     @Override
     public double getValueForDistance(double distance){
+        distance = ((int)(distance * 100))/100.0;
         try {
             return treeMap.get(distance);
         }
@@ -71,6 +77,7 @@ public class InterpolatedTargetingCalculator implements TargetingCalculator{
      * @param value the value to add to the csv file
      */
     public void addData(double distance, double value){
+        distance = ((int)(distance * 100))/100.0;
         if (!RobotBase.isSimulation())
         {
             csvWriter.writeNext(new String[]{Double.toString(distance), Double.toString(value)});
