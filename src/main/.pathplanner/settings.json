@@ -3,6 +3,7 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "S2.L",
     "S1.CS.V1",
     "S1.CS.V2",
     "S1.L.V1",
@@ -11,6 +12,7 @@
     "S2.C.V1",
     "S2.CS.V1",
     "S2.CS.V2",
+    "S2.CSC",
     "S2.T",
     "S3.C",
     "S3.LS.V1",
@@ -19,8 +21,8 @@
     "S3.chaos"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 3.0,
-  "defaultMaxAccel": 1.0,
+  "defaultMaxVel": 4.0,
+  "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "maxModuleSpeed": 4.5
