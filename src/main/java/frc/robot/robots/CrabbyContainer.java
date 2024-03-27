@@ -17,15 +17,19 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
+import frc.robot.commands.BlinkColor;
 import frc.robot.commands.CloseShot;
 import frc.robot.commands.OrchestraCommand;
+import frc.robot.commands.SetColor;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
@@ -34,6 +38,7 @@ import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.NFRleds;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.subsystems.NFRPhotonCamera;
 import frc.robot.subsystems.Shooter;
@@ -68,6 +73,7 @@ public class CrabbyContainer implements RobotContainer
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
     public final Climber climber;
+    public final NFRleds LEDs;
     public CrabbyContainer()
     {
         
@@ -118,6 +124,14 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
         Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
 
+        LEDs = new NFRleds();
+        LEDs.setDefaultCommand(new SetColor(LEDs, Color.kPink).ignoringDisable(true));
+        Shuffleboard.getTab("General").addBoolean("LEDs ON", () -> LEDs.isOn());
+        new Trigger(() -> indexer.getBeamBreak().beamBroken() && !readyToShoot())
+            .whileTrue(new SetColor(LEDs, Color.kOrange));
+        new Trigger(() -> indexer.getBeamBreak().beamIntact() && readyToShoot())
+            .whileTrue(new BlinkColor(LEDs, Color.kOrange, 0.25));
+
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
         shooter.setDefaultCommand(new RampShooterContinuous(shooter, () -> indexer.getBeamBreak().beamBroken() ? 25 : 0));
@@ -148,6 +162,9 @@ public class CrabbyContainer implements RobotContainer
                 (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
                 .ignoringDisable(true);
         }));
+    }
+    private boolean readyToShoot() {
+        return drive.getSpeed() < 0.5 && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance);
     }
     @Override
     @Deprecated
