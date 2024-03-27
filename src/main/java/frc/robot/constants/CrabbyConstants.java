@@ -80,6 +80,7 @@ public class CrabbyConstants {
         public static final double maxVelocity = 5;
         public static final double maxAccel = 2;
         public static final double allowedClosedLoopError = tolerance.getRotations();
+        public static final Rotation2d climberRotation = Rotation2d.fromDegrees(25); // TODO
     }
     public static class ShooterConstants
     {
