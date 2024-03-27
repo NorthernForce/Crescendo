@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6459456149316112,
-      "y": 6.610336071028438
+      "x": 0.75,
+      "y": 6.55
     },
     "rotation": 60.0
   },
@@ -24,58 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1.CS.V2.1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S1.CS.V2.2"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "prepAutoShot"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "autoShot"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S1.CS.V2.3"
+                  "pathName": "S1.CS.LS.1"
                 }
               },
               {
@@ -93,17 +42,17 @@
                       "data": {
                         "name": "prepAutoShot"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "autoShot"
-                      }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
           }
         },
         {
@@ -113,7 +62,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1.CS.V2.4"
+                  "pathName": "S1.CS.LS.3"
                 }
               },
               {
@@ -126,13 +75,38 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1.CS.V2.5"
+                  "pathName": "S1.CS.LS.4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepAutoShot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S1.CS.LS.5"
                 }
               },
               {
@@ -142,13 +116,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "prepAutoShot"
+                        "name": "intake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "autoShot"
+                        "name": "prepAutoShot"
                       }
                     }
                   ]
@@ -158,22 +132,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S1.CS.V2.6"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake"
-                }
-              }
-            ]
+            "name": "autoShot"
           }
         }
       ]
