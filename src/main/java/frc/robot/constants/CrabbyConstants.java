@@ -124,4 +124,9 @@ public class CrabbyConstants {
             new Rotation3d(0, cameraPitch.getRadians(), Math.toRadians(180))
         ));
     }
+    public static class LEDConstants
+    {
+        public static final int ledCount = 200; // TODO
+        public static final double tickPeriod = 0.02; // TODO
+    }
 }

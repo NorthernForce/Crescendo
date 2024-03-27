@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
+import frc.robot.commands.BlinkColor;
 import frc.robot.commands.CloseShot;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.commands.SetColor;
@@ -125,8 +126,10 @@ public class CrabbyContainer implements RobotContainer
 
         LEDs = new NFRleds();
         LEDs.setDefaultCommand(new SetColor(LEDs, Color.kPink).ignoringDisable(true));
-        new Trigger(() -> indexer.getBeamBreak().beamBroken())
+        new Trigger(() -> indexer.getBeamBreak().beamBroken() && !readyToShoot())
             .whileTrue(new SetColor(LEDs, Color.kOrange));
+        new Trigger(() -> indexer.getBeamBreak().beamIntact() && readyToShoot())
+            .whileTrue(new BlinkColor(LEDs, Color.kOrange, 0.25));
 
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
@@ -158,6 +161,9 @@ public class CrabbyContainer implements RobotContainer
                 (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
                 .ignoringDisable(true);
         }));
+    }
+    private boolean readyToShoot() {
+        return drive.getSpeed() < 0.5 && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance);
     }
     @Override
     @Deprecated
