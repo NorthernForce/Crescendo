@@ -32,9 +32,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "race",
                       "data": {
-                        "name": "intake"
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 2.88
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "intake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -66,9 +79,35 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "intake"
+                  "commands": [
+                    {
+                      "type": "race",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "prepAutoShot"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -91,9 +130,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "race",
                 "data": {
-                  "name": "intake"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -125,7 +177,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -144,7 +196,7 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
