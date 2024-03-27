@@ -8,6 +8,8 @@ import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -119,6 +121,13 @@ public class DefaultCrabbyOI implements CrabbyOI {
 
         // container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)),
             // container.climber));
+        controller.rightStick().whileTrue(
+            new SequentialCommandGroup(
+                new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(3), 0, true),
+                Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)),
+                    container.climber, container.wristJoint)
+            )
+        );
 
         // container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
                 // .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
