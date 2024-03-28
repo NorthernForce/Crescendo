@@ -3,9 +3,8 @@
   "robotLength": 0.7,
   "holonomicMode": true,
   "pathFolders": [
-    "S2.CST",
+    "S3.chaos",
     "S1.CS.LS",
-    "S3.CS",
     "S1.CS.V3",
     "S1.G1_G2",
     "S1.L",
@@ -14,9 +13,11 @@
     "S1.SIMPLE",
     "S2.C.V1",
     "S2.C.V2",
+    "S2.CST",
     "S2.G2_G1",
     "S2.G2_G3",
     "S2.SIMPLE",
+    "S3.CS",
     "S3.G3_G2",
     "S3.SIMPLE",
     "Uncategorized"

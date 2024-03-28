@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.832816986299056,
-        "y": 4.055899418212139
+        "x": 5.628072063745078,
+        "y": 4.094898451079563
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.7200449840329615,
-        "y": 4.387391197585247
+        "x": 6.5153000614789836,
+        "y": 4.426390230452671
       },
       "isLocked": false,
       "linkedName": "S3.chaos.3"
     },
     {
       "anchor": {
-        "x": 8.20200823299509,
-        "y": 4.397140955802102
+        "x": 7.929015002923118,
+        "y": 4.3678916811515345
       },
       "prevControl": {
-        "x": 6.759044016900386,
-        "y": 4.514138054404375
+        "x": 6.486050786828415,
+        "y": 4.484888779753808
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "S3.chaos",
   "previewStartingState": {
     "rotation": -3.012787504183362,
     "velocity": 0
