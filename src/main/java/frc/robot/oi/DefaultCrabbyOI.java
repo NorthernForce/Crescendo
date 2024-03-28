@@ -113,8 +113,13 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
 
-        // container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)),
-            // container.climber));
+        container.climber.setDefaultCommand(Commands.run(container.climber::stopMotor,
+            container.climber));
+        
+        controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(2), 0, true)
+            .alongWith(Commands.runOnce(() -> container.climber.startMotor(-1))));
+        controller.povUp().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(2), 0, true)
+            .alongWith(Commands.runOnce(() -> container.climber.startMotor(1))));
 
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
                 .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
@@ -130,7 +135,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
         
-                controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
+        controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
     }
     @Override
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick)
