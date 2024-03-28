@@ -52,7 +52,6 @@ public class TurnToTarget2 extends Command
     @Override
     public void execute()
     {
-        System.out.println("TurnTOTarget2");
         var detection = targetSupplier.get();
         if (detection.isPresent())
         {
@@ -74,8 +73,6 @@ public class TurnToTarget2 extends Command
     @Override
     public boolean isFinished()
     {
-        System.out.println(targetSupplier.get().orElse(Rotation2d.fromDegrees(100)).getDegrees());
-        System.out.println(drive.getChassisSpeeds().omegaRadiansPerSecond);
         return Math.abs(targetSupplier.get().orElse(Rotation2d.fromDegrees(100)).getDegrees()) < 10
             && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.15;
     }
