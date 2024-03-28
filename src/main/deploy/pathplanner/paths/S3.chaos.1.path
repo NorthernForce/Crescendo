@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 8.075261376175959,
-        "y": 1.0919729202878845
+        "x": 7.948514519356831,
+        "y": 0.8092299319990566
       },
       "prevControl": {
-        "x": 4.487350352372913,
-        "y": 1.5014627653958414
+        "x": 4.360603495553785,
+        "y": 1.2187197771070135
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,7 +40,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": -1.8476102659945597,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "S3.chaos",

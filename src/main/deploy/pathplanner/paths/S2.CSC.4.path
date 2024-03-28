@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.284568175617833,
-        "y": 0.7680775454143506
+        "x": 8.241007265862514,
+        "y": 0.984725579902468
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.413191345271198,
-        "y": 0.7680775454143505
+        "x": 7.369630435515878,
+        "y": 0.9847255799024679
       },
       "isLocked": false,
       "linkedName": "S2.CSC.4"
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S2.CSC",
+  "folder": null,
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
