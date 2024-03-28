@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch XboxDisplayer",
+      "request": "launch",
+      "mainClass": "frc.robot.subsystems.XboxDisplayer",
+      "projectName": "Crescendo"
+    },
+    {
+      "type": "java",
       "name": "Launch test",
       "request": "launch",
       "mainClass": "frc.robot.utils.test",
