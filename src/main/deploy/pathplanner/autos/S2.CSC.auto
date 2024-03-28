@@ -120,7 +120,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -145,9 +145,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S2.CSC.4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.CSC.6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {
@@ -157,7 +170,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -176,9 +189,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S2.CSC.6"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S2.CSC.6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {
