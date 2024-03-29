@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -17,12 +18,24 @@ import javax.swing.SwingUtilities;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class XboxDisplayer extends JPanel {
     private Image xboxController;
+
+    private int[][] buttonDimensions = {{266,119}, // y
+                                        {266,79}, // a
+                                        {245,99}, // b
+                                        {286,99}}; // x
+    private int[][] arrowDimensions = {{154,165}, // down
+                                        {169,149}, // right
+                                        {139,149}, // left
+                                        {154,133}}; // up
     private JFrame frame;
     private static final String TITLE = "Xbox Driver";
-    private GenericHID driver = null;
+    private CommandXboxController driver = null;
+    // private Trigger[] triggers = {driver.y(), driver.a(), driver.b(), driver.x(), driver.povDown(), driver.povRight(), driver.povLeft(), driver.povUp()};
     public XboxDisplayer() {
         frame = new JFrame();
         frame.setBounds(0, 0, 1000, 350);
@@ -50,15 +63,26 @@ public class XboxDisplayer extends JPanel {
             g.drawImage(xboxController, 50, 50, 300, 200,this);
         }
         g.setColor(Color.RED);
-        g.fillOval(267,120,21,21); // y
-        g.fillOval(267,80,21,21); // a
-        g.fillOval(246,100,21,21); // b
-        g.fillOval(287,100,21,21); // x
 
-        g.fillRect(154,164,15,15); // down POV
-        g.fillRect(169,149,15,15); // right POV
-        g.fillRect(139,149,15,15); // left POV
-        g.fillRect(154,134,15,15); // left POV
+        int circleSize = 22;
+        int joystickSize = 35;
+        Dimension squareSize = new Dimension(15,16);
+
+        // buttons
+        for(int i = 0; i < buttonDimensions.length + arrowDimensions.length; i++)
+        {
+            if(i < buttonDimensions.length)
+            {
+                g.fillOval(buttonDimensions[i][0], buttonDimensions[i][1], circleSize, circleSize);
+            } 
+            else if(i < buttonDimensions.length + arrowDimensions.length)
+            {
+                g.fillRect(arrowDimensions[i - buttonDimensions.length][0], arrowDimensions[i - buttonDimensions.length][1], squareSize.width, squareSize.height);
+            } 
+        }
+        g.fillOval(106, 93, joystickSize, joystickSize);
+
+        // joysticks
     }
 
     public static void main(String[] args) {
