@@ -63,7 +63,8 @@ public class Autos
             // "S2.T",
             "S2.CSC",
             "S3.chaos",
-            "S3.CS"
+            "S3.CS",
+            "S3.BERT"
             // "S3.brokenchaos",
             // "S3.C.V2",
             // "S3.LS.V1",

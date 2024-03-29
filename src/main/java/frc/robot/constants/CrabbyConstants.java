@@ -65,7 +65,7 @@ public class CrabbyConstants {
             new NFRRotatingArmJointConfiguration("wristConfig")
                 .withUseLimits(true)
                 .withUseIntegratedLimits(true)
-                .withLimits(Rotation2d.fromDegrees(22), Rotation2d.fromDegrees(56))
+                .withLimits(Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(56))
                 .withGearRatio(1) // TODO
                 .withGearbox(DCMotor.getNEO(1))
                 .withLength(1) // TODO

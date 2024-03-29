@@ -116,10 +116,12 @@ public class DefaultCrabbyOI implements CrabbyOI {
         container.climber.setDefaultCommand(Commands.run(container.climber::stopMotor,
             container.climber));
         
-        controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(2), 0, true)
-            .alongWith(Commands.runOnce(() -> container.climber.startMotor(-1))));
-        controller.povUp().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(2), 0, true)
-            .alongWith(Commands.runOnce(() -> container.climber.startMotor(1))));
+        // controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
+        //     .alongWith(Commands.run(() -> container.climber.startMotor(-1))));
+        controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
+            .alongWith(Commands.run(() -> container.climber.startMotor(container.climber.isDown() ? 0 : -1))));
+        controller.povUp().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
+            .alongWith(Commands.run(() -> container.climber.startMotor(1))));
 
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
                 .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
