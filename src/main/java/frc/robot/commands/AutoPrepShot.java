@@ -28,7 +28,7 @@ public class AutoPrepShot extends ParallelDeadlineGroup {
                     && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance * 9)
                     && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.1)),
             new AutoTurnToCoordinates(drive, () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.SpeakerConstants.redSpeaker : FieldConstants.SpeakerConstants.blueSpeaker,
-                Rotation2d.fromDegrees(40))
+                Rotation2d.fromDegrees(40), orangePi)
             ),
             new NFRWristContinuousAngle(wrist, wristSupplier),
             new RampShooterWithDifferential(shooter, topSpeed, bottomSpeed)

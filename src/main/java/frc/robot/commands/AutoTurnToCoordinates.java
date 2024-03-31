@@ -13,21 +13,28 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.NFRPhotonCamera;
 
 public class AutoTurnToCoordinates extends Command {
     protected final NFRSwerveDrive drive;
     protected final Supplier<Translation2d> targetCoordinates;
     protected final Rotation2d tolerance;
-    public AutoTurnToCoordinates(NFRSwerveDrive drive, Supplier<Translation2d> targetCoordinates, Rotation2d tolerance)
+    protected final NFRPhotonCamera camera;
+    public AutoTurnToCoordinates(NFRSwerveDrive drive, Supplier<Translation2d> targetCoordinates, Rotation2d tolerance, NFRPhotonCamera camera)
     {
         this.drive = drive;
         this.targetCoordinates = targetCoordinates;
         this.tolerance = tolerance;
+        this.camera = camera;
     }
     @Override
     public void initialize()
     {
         PPHolonomicDriveController.setRotationTargetOverride(() -> {
+            var speakerTagYaw = camera.getSpeakerTagYaw();
+            if (speakerTagYaw.isPresent()) {
+                return Optional.of(drive.getRotation().plus(speakerTagYaw.get()));
+            }
             return Optional.of(targetCoordinates.get().minus(drive.getEstimatedPose().getTranslation()).getAngle()
                 .plus(Rotation2d.fromDegrees(180)));
         });
