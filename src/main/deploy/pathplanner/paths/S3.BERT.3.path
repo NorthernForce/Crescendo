@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 7.85101693718827,
-        "y": 2.3301922138286084
+        "x": 8.328727312725281,
+        "y": 2.467466587354827
       },
       "prevControl": {
-        "x": 6.135059491021596,
-        "y": 2.0279497091060708
+        "x": 6.831875544092968,
+        "y": 1.835982247463071
       },
       "nextControl": null,
       "isLocked": false,
@@ -56,7 +56,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 21.801409486351925,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "S3.BERT",
