@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import org.northernforce.motors.NFRTalonFX;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.dashboard.CrabbyDashboard;
 
@@ -43,16 +45,30 @@ public class Shooter extends SubsystemBase {
      * runs the top motor at the given velocity (in rotations per 100 ms)
      */
     public void runTop(double speed) {
-        topTargetSpeed = speed;
-        topMotor.setControl(topControl.withVelocity(speed).withSlot(0));
+        if (DriverStation.isAutonomousEnabled())
+        {
+            topTargetSpeed = Math.min(61, speed);
+        }
+        else
+        {
+            topTargetSpeed = speed;
+        }
+        topMotor.setControl(topControl.withVelocity(topTargetSpeed).withSlot(0));
     }
 
     /**
      * runs the bottom motor at the given velocity (in rotations per 100 ms)
      */
     public void runBottom(double speed) {
-        bottomTargetSpeed = speed;
-        bottomMotor.setControl(bottomControl.withVelocity(speed).withSlot(0));
+        if (DriverStation.isAutonomousEnabled())
+        {
+            bottomTargetSpeed = Math.min(61, speed);
+        }
+        else
+        {
+            bottomTargetSpeed = speed;
+        }
+        bottomMotor.setControl(bottomControl.withVelocity(bottomTargetSpeed).withSlot(0));
     }
 
     public double getTopMotorVelocity() {

@@ -3,9 +3,9 @@
   "startingPose": {
     "position": {
       "x": 0.75,
-      "y": 6.55
+      "y": 4.55
     },
-    "rotation": 60.0
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1.CS.V3.1"
+                  "pathName": "S3.CS.1"
                 }
               },
               {
@@ -44,7 +44,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 2.72
+                              "waitTime": 2.67
                             }
                           }
                         ]
@@ -75,23 +75,36 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1.CS.V3.2"
+                  "pathName": "S3.CS.2"
                 }
               },
               {
-                "type": "race",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "race",
                       "data": {
-                        "name": "intake"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 3.0
+                            }
+                          }
+                        ]
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 3.84
+                        "name": "prepAutoShot"
                       }
                     }
                   ]
@@ -113,45 +126,39 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1.CS.V3.4"
+                  "pathName": "S3.CS.3"
                 }
               },
               {
-                "type": "race",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "race",
                       "data": {
-                        "name": "intake"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 3.6
+                            }
+                          }
+                        ]
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 3.05
+                        "name": "prepAutoShot"
                       }
                     }
                   ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S1.CS.V3.6"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "prepAutoShot"
                 }
               }
             ]
@@ -170,7 +177,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1.CS.V3.7"
+                  "pathName": "S3.CS.4"
                 }
               },
               {
@@ -186,7 +193,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 4.19
+                        "waitTime": 3.8
                       }
                     }
                   ]
@@ -202,7 +209,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1.CS.V3.8"
+                  "pathName": "S3.CS.5"
                 }
               },
               {

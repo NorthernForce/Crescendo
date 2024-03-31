@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.681355186784448,
-        "y": 4.095859321348272
+        "x": 2.615396774736544,
+        "y": 4.241144824332404
       },
       "prevControl": {
-        "x": 2.0451493365621563,
-        "y": 4.095859321348272
+        "x": 1.9791909245142523,
+        "y": 4.241144824332404
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -25.114834886144518,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "S2.CSC",
+  "folder": null,
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
