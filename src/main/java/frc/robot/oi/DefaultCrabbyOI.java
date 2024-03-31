@@ -66,7 +66,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed))
-            .alongWith(new AlignToAmp(container.drive, container.setStateCommandsVelocity, true))
+            .alongWith(new AlignToAmp(container.drive, container.setStateCommandsVelocity, true, () -> container.poseEstimator.getEstimatedPosition()))
         );
 
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));

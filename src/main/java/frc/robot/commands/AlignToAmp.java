@@ -1,9 +1,12 @@
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import com.pathplanner.lib.commands.PathfindHolonomic;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldConstants;
@@ -14,6 +17,7 @@ public class AlignToAmp extends PathfindHolonomic
 {
     protected final SwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
+    protected final Supplier<Pose2d> m_poseSupplier;
     protected final boolean optimize;
     /**
      * Creates a new AlignToAmp
@@ -21,7 +25,7 @@ public class AlignToAmp extends PathfindHolonomic
      * @param setStateCommands the commands to set the state of each swerve module
      * @param optimize whether to optimize each swerve module (cut to the quickest possible state)
      */
-    public AlignToAmp(SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, boolean optimize)
+    public AlignToAmp(SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, boolean optimize, Supplier<Pose2d> m_poseSupplier)
     {
         super(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.AmpPositions.redAmp : FieldConstants.AmpPositions.blueAmp,
             CrabbyConstants.DriveConstants.constraints, drive::getEstimatedPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, optimize, false),
@@ -29,6 +33,7 @@ public class AlignToAmp extends PathfindHolonomic
         this.drive = drive;
         this.setStateCommands = setStateCommands;
         this.optimize = optimize;
+        this.m_poseSupplier = m_poseSupplier;
     }
     @Override
     public void initialize()

@@ -12,6 +12,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -73,6 +75,8 @@ public class CrabbyContainer implements RobotContainer
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
     public final Climber climber;
+    public final SwerveDrivePoseEstimator poseEstimator;
+    public final Field2d field;
     public CrabbyContainer()
     {
         
@@ -157,6 +161,9 @@ public class CrabbyContainer implements RobotContainer
         }));
         Shuffleboard.getTab("Developer").addDouble("Speaker Yaw", () -> orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(100)).getDegrees());
         Pathfinding.setPathfinder(new LocalADStar());
+        poseEstimator = new SwerveDrivePoseEstimator(drive.getKinematics(), drive.getRotation(), drive.getPositions(), new Pose2d());
+        field = new Field2d();
+        Shuffleboard.getTab("General").add("AMP FIELD", field);
     }
     @Override
     @Deprecated
@@ -206,6 +213,7 @@ public class CrabbyContainer implements RobotContainer
     public void setInitialPose(Pose2d pose)
     {
         drive.resetPose(pose);
+        poseEstimator.resetPosition(drive.getRotation(), drive.getPositions(), pose);
     }
     @Override
     public void periodic()
@@ -216,11 +224,13 @@ public class CrabbyContainer implements RobotContainer
         {
             lastRecordedDistance = distance.get();
         }
-        // var estimatedPose = orangePi.getPose();
-        // if (estimatedPose.isPresent())
-        // {
-        //     drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
-        // }
+        var estimatedPose = orangePi.getPose();
+        if (estimatedPose.isPresent())
+        {
+            poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), estimatedPose.get().timestampSeconds);
+        }
+        poseEstimator.update(drive.getRotation(), drive.getPositions());
+        field.setRobotPose(field.getRobotPose());
         dashboard.periodic();
     }
     @Override
