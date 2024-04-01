@@ -40,6 +40,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
 import frc.robot.subsystems.Xavier;
+import frc.robot.subsystems.XboxDisplayer;
 import frc.robot.utils.AutonomousRoutine;
 import frc.robot.utils.RobotContainer;
 import frc.robot.utils.TargetingCalculator;
@@ -67,12 +68,13 @@ public class CrabbyContainer implements RobotContainer
     public final TargetingCalculator topSpeedCalculator;
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
+    public XboxDisplayer displayer;
     public final Climber climber;
     public CrabbyContainer()
     {
         
         dashboard = new CrabbyDashboard();
-
+        displayer = new XboxDisplayer();
         map = new CrabbyMap();
         intake = new Intake(map.intakeMotor);
 
@@ -88,7 +90,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
-        Shuffleboard.getTab("General").addDouble("Wrist Target", () -> Math.toDegrees(angleCalculator.getValueForDistance(lastRecordedDistance)));
+        // Shuffleboard.getTab("General").addDouble("Wrist Target", () -> Math.toDegrees(angleCalculator.getValueForDistance(lastRecordedDistance)));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro, dashboard);
@@ -214,6 +216,7 @@ public class CrabbyContainer implements RobotContainer
         //     drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
         // }
         dashboard.periodic();
+        displayer.repaint();
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
