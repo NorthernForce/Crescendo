@@ -31,7 +31,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.SwervyConstants;
 import frc.robot.dashboard.Dashboard;
-import frc.robot.dashboard.SwervyDashboard;
+import frc.robot.dashboard.FWCSwervyDashboard;
 import frc.robot.oi.DefaultSwervyOI;
 import frc.robot.oi.SwervyOI;
 import frc.robot.subsystems.NFRPhotonCamera;
@@ -48,12 +48,12 @@ public class SwervyContainer implements RobotContainer
     public final Field2d field;
     public final Notifier flushNotifier;
     public final SwervyMap map;
-    public final SwervyDashboard dashboard;
+    public final FWCSwervyDashboard dashboard;
     public double lastRecordedDistance = 0;
     public SwervyOI oi;
     public SwervyContainer()
     {
-        dashboard = new SwervyDashboard();
+        dashboard = new FWCSwervyDashboard();
 
         map = new SwervyMap();
 

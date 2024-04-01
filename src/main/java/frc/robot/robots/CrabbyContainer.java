@@ -3,33 +3,27 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
-import org.northernforce.motors.NFRTalonFX;
-import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.AddDataToTargetingCalculator;
+
 import frc.robot.commands.Autos;
 import frc.robot.commands.CloseShot;
-import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
+import frc.robot.dashboard.FWCCrabbyDashboard;
 import frc.robot.dashboard.CrabbyDashboard;
-import frc.robot.dashboard.Dashboard;
 import frc.robot.oi.CrabbyOI;
 import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Climber;
@@ -62,8 +56,6 @@ public class CrabbyContainer implements RobotContainer
     public final Shooter shooter;
     public boolean manualWrist;
     public double lastRecordedDistance = 0;
-    public final GenericEntry shooterSpeed;
-    public final GenericEntry topRollerChange;
     public final TargetingCalculator bottomSpeedCalculator;
     public final TargetingCalculator topSpeedCalculator;
     public final TargetingCalculator angleCalculator;
@@ -71,28 +63,18 @@ public class CrabbyContainer implements RobotContainer
     public final Climber climber;
     public CrabbyContainer()
     {
-        
-        dashboard = new CrabbyDashboard();
-
         map = new CrabbyMap();
         intake = new Intake(map.intakeMotor);
 
         climber = new Climber(map.climberMotor);
-        Shuffleboard.getTab("General").addDouble("Climber Position", () -> climber.getPosition());
 
         indexer = new Indexer(map.indexerMotor, map.indexerBeamBreak);
 
         angleCalculator = new InterpolatedTargetingCalculator("/home/lvuser/angleData.csv");
-        wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig, dashboard);
-        Shuffleboard.getTab("Developer").add("Add Wrist Data", new AddDataToTargetingCalculator(angleCalculator, () -> lastRecordedDistance, 
-            () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
-        Shuffleboard.getTab("General").addDouble("Degrees of Wrist", () -> wristJoint.getRotation().getDegrees());
+        wristJoint = new WristJoint(map.wristSparkMax, CrabbyConstants.WristConstants.wristConfig);
         manualWrist = false;
-        Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
-        Shuffleboard.getTab("General").addDouble("Wrist Target", () -> Math.toDegrees(angleCalculator.getValueForDistance(lastRecordedDistance)));
-        // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
-        drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro, dashboard);
+        drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),
             new NFRSwerveModuleSetState(map.modules[1], 0, false),
@@ -105,53 +87,20 @@ public class CrabbyContainer implements RobotContainer
             new NFRSwerveModuleSetState(map.modules[2], 0, 0, false),
             new NFRSwerveModuleSetState(map.modules[3], 0, 0, false)
         };
-        Shuffleboard.getTab("General").add("Calibrate Swerve", new NFRSwerveDriveCalibrate(drive).ignoringDisable(true));
 
         orangePi = new NFRPhotonCamera(CrabbyConstants.OrangePiConstants.config);
-        dashboard.register(orangePi);
-        Shuffleboard.getTab("Developer").addDouble("Distance", () -> lastRecordedDistance);
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
         PortForwarder.add(5806, "10.1.72.11", 5800);
         
-        shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);
-        Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);
-        Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
-        Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
-        Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
-        Shuffleboard.getTab("General").addBoolean("Climber Switch", () -> climber.isDown());
+        shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom);
 
-        Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
         shooter.setDefaultCommand(new RampShooterContinuous(shooter, () -> indexer.getBeamBreak().beamBroken() ? 25 : 0));
-        shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
-        topRollerChange = Shuffleboard.getTab("Developer").add("Top Roller Change", 0).getEntry();
         bottomSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/bottomSpeedData.csv");
         topSpeedCalculator = new InterpolatedTargetingCalculator("/home/lvuser/topSpeedData.csv");
-        Shuffleboard.getTab("Developer").add("Add Top Shooter Data", 
-            new AddDataToTargetingCalculator(topSpeedCalculator, () -> lastRecordedDistance, () -> shooterSpeed.getDouble(30) + topRollerChange.getDouble(0)).ignoringDisable(true)
-        );
-        Shuffleboard.getTab("Developer").add("Add Bottom Shooter Data", 
-            new AddDataToTargetingCalculator(bottomSpeedCalculator, () -> lastRecordedDistance, () -> shooterSpeed.getDouble(30)).ignoringDisable(true)
-        );
-        SendableChooser<String> musicChooser = new SendableChooser<>();
-        musicChooser.setDefaultOption("Mr. Blue Sky", "blue-sky.chrp");
-        musicChooser.addOption("Crab Rave", "crab-rave.chrp");
-        musicChooser.addOption("The Office", "the-office.chrp");
-        Shuffleboard.getTab("General").add("Music Selector", musicChooser);
-        Shuffleboard.getTab("General").add("Play Music", new ProxyCommand(() -> {
-            return new OrchestraCommand(musicChooser.getSelected(), List.of(
-                (NFRTalonFX)map.modules[0].getDriveController(),
-                (NFRTalonFX)map.modules[0].getTurnController(),
-                (NFRTalonFX)map.modules[1].getDriveController(),
-                (NFRTalonFX)map.modules[1].getTurnController(),
-                (NFRTalonFX)map.modules[2].getDriveController(),
-                (NFRTalonFX)map.modules[2].getTurnController(),
-                (NFRTalonFX)map.modules[3].getDriveController(),
-                (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
-                .ignoringDisable(true);
-        }));
-        Shuffleboard.getTab("Developer").addDouble("Speaker Yaw", () -> orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(100)).getDegrees());
+
+        dashboard = new FWCCrabbyDashboard(this);
     }
     @Override
     @Deprecated
@@ -236,7 +185,7 @@ public class CrabbyContainer implements RobotContainer
         return routines;
     }
     @Override
-    public Dashboard getDashboard()
+    public CrabbyDashboard getDashboard()
     {
         return dashboard;
     }

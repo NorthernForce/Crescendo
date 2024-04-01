@@ -67,6 +67,11 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
 
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
+        
+        controller.start().toggleOnTrue(new RampShooterWithDifferential(
+            container.shooter, () -> container.getDashboard().getShooterSpeed() + container.getDashboard().getTopRollerChange(),
+                () -> container.getDashboard().getShooterSpeed()).alongWith(new NFRWristContinuousAngle(container.wristJoint,
+                () -> container.getDashboard().getTargetWristAngle())));
     }
     @Override
     public void bindDriverToJoystick(CrabbyContainer container, CommandGenericHID joystick)
@@ -85,8 +90,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
     {
         NFRRotatingArmJointWithJoystick wristManual = new NFRRotatingArmJointWithJoystick(container.wristJoint,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1));
-        
-        container.dashboard.statusLightManager.wristManualLight.setSupplier(() -> wristManual.isScheduled());
+        container.dashboard.setWristManual(() -> wristManual.isScheduled());
         
         controller.leftTrigger()
                 .whileTrue(new RunIndexerAndIntake(container.indexer, container.intake,
@@ -126,10 +130,12 @@ public class DefaultCrabbyOI implements CrabbyOI {
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
                 .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
         
-        controller.a().whileTrue(new RampShooterWithDifferential(container.shooter,
-                () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0),
-                () -> container.shooterSpeed.getDouble(30))
-                .alongWith(Commands.runOnce(() -> container.manualWrist = false)));
+        controller.start().toggleOnTrue(new RampShooterWithDifferential(
+                container.shooter,
+                () -> container.getDashboard().getShooterSpeed() + container.getDashboard().getTopRollerChange(),
+                () -> container.getDashboard().getShooterSpeed())
+                .alongWith(new NFRWristContinuousAngle(container.wristJoint,
+                        () -> container.getDashboard().getTargetWristAngle())));
         
         controller.rightBumper().whileTrue(new RampShooterWithDifferential(container.shooter,
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
