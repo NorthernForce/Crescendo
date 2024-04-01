@@ -49,9 +49,9 @@ public class FieldConstants
     public static class AmpPositions
     {
         /** Blue origin relative */
-        public static final Pose2d blueAmp = new Pose2d(1.8415, 8.2042 - Units.inchesToMeters(15), Rotation2d.fromDegrees(90));
+        public static final Pose2d blueAmp = new Pose2d(1.8415 - Units.inchesToMeters(2), 8.2042 - Units.inchesToMeters(5), Rotation2d.fromDegrees(-90));
         /** Blue origin relative */
-        public static final Pose2d redAmp = new Pose2d(14.700757999999999, 8.2042 - Units.inchesToMeters(15),
-            Rotation2d.fromDegrees(90));
+        public static final Pose2d redAmp = new Pose2d(14.700757999999999 + Units.inchesToMeters(2), 8.2042 - Units.inchesToMeters(5),
+            Rotation2d.fromDegrees(-90));
     }
 }

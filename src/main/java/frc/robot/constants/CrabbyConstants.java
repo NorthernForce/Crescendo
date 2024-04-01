@@ -46,7 +46,11 @@ public class CrabbyConstants {
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
             new PIDConstants(1.5, 0, 0),
-            6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
+            6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig(true, true));
+        public static final HolonomicPathFollowerConfig ampHolonomicConfig = new HolonomicPathFollowerConfig(
+            new PIDConstants(6),
+            new PIDConstants(5, 0, 0),
+            4, offsets[0].getDistance(new Translation2d()), new ReplanningConfig(true, true));
         public static final double maxShootSpeed = 0.5;
         public static final PathConstraints constraints = new PathConstraints(2.0, 3.0, 2.0, 2.0); // TODO: tune
     }

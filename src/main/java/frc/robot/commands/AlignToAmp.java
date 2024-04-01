@@ -19,6 +19,7 @@ public class AlignToAmp extends PathfindHolonomic
     protected final NFRSwerveModuleSetState[] setStateCommands;
     protected final Supplier<Pose2d> m_poseSupplier;
     protected final boolean optimize;
+    protected final Pose2d targetPose;
     /**
      * Creates a new AlignToAmp
      * @param drive the swerve drive subsystem
@@ -28,12 +29,13 @@ public class AlignToAmp extends PathfindHolonomic
     public AlignToAmp(SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, boolean optimize, Supplier<Pose2d> m_poseSupplier)
     {
         super(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.AmpPositions.redAmp : FieldConstants.AmpPositions.blueAmp,
-            CrabbyConstants.DriveConstants.constraints, drive::getEstimatedPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, optimize, false),
-            CrabbyConstants.DriveConstants.holonomicConfig, drive);
+            CrabbyConstants.DriveConstants.constraints, m_poseSupplier, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, optimize, false),
+            CrabbyConstants.DriveConstants.ampHolonomicConfig, drive);
         this.drive = drive;
         this.setStateCommands = setStateCommands;
         this.optimize = optimize;
         this.m_poseSupplier = m_poseSupplier;
+        this.targetPose = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.AmpPositions.redAmp : FieldConstants.AmpPositions.blueAmp;
     }
     @Override
     public void initialize()
@@ -42,13 +44,19 @@ public class AlignToAmp extends PathfindHolonomic
         {
             command.schedule();
         }
+        super.initialize();
     }
     @Override
     public void end(boolean interrupted)
     {
+        super.end(interrupted);
         for (var command : setStateCommands)
         {
             command.cancel();
         }
+    }
+    @Override
+    public boolean isFinished() {
+        return super.isFinished() && Math.abs(m_poseSupplier.get().getRotation().minus(targetPose.getRotation()).getDegrees()) < 5;
     }
 }

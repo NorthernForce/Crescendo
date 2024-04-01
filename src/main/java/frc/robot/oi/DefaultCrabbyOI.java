@@ -1,19 +1,27 @@
 package frc.robot.oi;
 
+import java.util.Optional;
+
 import org.northernforce.commands.NFRRotatingArmJointSetAngle;
 import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CloseShotPreset;
+import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToAmp;
 import frc.robot.commands.NFRWristContinuousAngle;
+import frc.robot.commands.NewAlignWithAmp;
 import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RumbleController;
@@ -61,12 +69,23 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.rightTrigger().and(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
-        
+        Pose2d m_amp = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.AmpPositions.redAmp : FieldConstants.AmpPositions.blueAmp;
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed))
-            .alongWith(new AlignToAmp(container.drive, container.setStateCommandsVelocity, true, () -> container.poseEstimator.getEstimatedPosition()))
+            .alongWith(new NewAlignWithAmp(container.drive, container.setStateCommands, CrabbyConstants.DriveConstants.controller,
+                () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
+                () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
+                () -> Rotation2d.fromDegrees(90), true, true, () -> {
+                    var t = container.orangePi.getAmpTagYaw();
+                    if (t.isPresent())
+                    {
+                        return Optional.of(t.get().getRadians());
+                    }
+                    return Optional.empty();
+                },
+                    new PIDController(1, 0, 0)))
         );
 
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));

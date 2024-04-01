@@ -230,7 +230,7 @@ public class CrabbyContainer implements RobotContainer
             poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), estimatedPose.get().timestampSeconds);
         }
         poseEstimator.update(drive.getRotation(), drive.getPositions());
-        field.setRobotPose(field.getRobotPose());
+        field.setRobotPose(poseEstimator.getEstimatedPosition());
         dashboard.periodic();
     }
     @Override
