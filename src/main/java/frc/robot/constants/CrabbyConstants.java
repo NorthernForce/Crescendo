@@ -40,7 +40,7 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
-        public static final PIDController controller = new PIDController(4.2, 0, 0.5);
+        public static final PIDController controller = new PIDController(3.2, 0.14, 0.5);
         public static final PIDController controller2 = new PIDController(4.2, 0.1, 0.5);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
