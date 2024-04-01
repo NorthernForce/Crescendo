@@ -8,25 +8,19 @@ import org.northernforce.commands.NFRSwerveDriveStop;
 import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CloseShotPreset;
-import frc.robot.FieldConstants;
-import frc.robot.commands.AlignToAmp;
 import frc.robot.commands.NFRWristContinuousAngle;
-import frc.robot.commands.NewAlignWithAmp;
 import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIndexerAndIntake;
 import frc.robot.commands.ShootIndexerAndIntake;
+import frc.robot.commands.SideDrive;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.robots.CrabbyContainer;
@@ -69,23 +63,21 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.rightTrigger().and(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
-        Pose2d m_amp = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? FieldConstants.AmpPositions.redAmp : FieldConstants.AmpPositions.blueAmp;
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed))
-            .alongWith(new NewAlignWithAmp(container.drive, container.setStateCommands, CrabbyConstants.DriveConstants.controller,
+            .alongWith(new SideDrive(container.drive, container.setStateCommands, CrabbyConstants.DriveConstants.controller,
                 () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
                 () -> Rotation2d.fromDegrees(90), true, true, () -> {
                     var t = container.orangePi.getAmpTagYaw();
                     if (t.isPresent())
                     {
-                        return Optional.of(t.get().getRadians());
+                        return Optional.of(t.get().minus(container.drive.getRotation().minus(Rotation2d.fromDegrees(90))).getRadians());
                     }
                     return Optional.empty();
-                },
-                    new PIDController(1, 0, 0)))
+                }, CrabbyConstants.DriveConstants.ampController))
         );
 
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
@@ -138,11 +130,11 @@ public class DefaultCrabbyOI implements CrabbyOI {
         container.climber.setDefaultCommand(Commands.run(container.climber::stopMotor,
             container.climber));
         
-        // controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
-        //     .alongWith(Commands.run(() -> container.climber.startMotor(-1))));
-        controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
+        controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21),
+            Rotation2d.fromDegrees(2), 0, true)
             .alongWith(Commands.run(() -> container.climber.startMotor(container.climber.isDown() ? 0 : -1))));
-        controller.povUp().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
+        controller.povUp().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21),
+            Rotation2d.fromDegrees(2), 0, true)
             .alongWith(Commands.run(() -> container.climber.startMotor(1))));
 
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
