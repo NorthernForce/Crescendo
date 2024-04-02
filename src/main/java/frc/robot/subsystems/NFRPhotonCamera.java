@@ -150,17 +150,17 @@ public class NFRPhotonCamera extends NFRSubsystem implements AlertProvider
     {
         Point2D.Double aprilTag4 = new Point2D.Double(0,2);
         Point2D.Double speakerPos = new Point2D.Double(0.8,aprilTag4.getY());
-        Supplier<Rotation2d> degToAprilTag4 = () -> getSpeakerTagYaw().get();
+        Rotation2d degToAprilTag4 = getSpeakerTagYaw().get();
 
-        double distanceToSpeaker =Math.sqrt(Math.pow(lastRecordedDistance,2)+Math.pow(speakerPos.getX()-aprilTag4.getX(),2)-2.0*lastRecordedDistance*(speakerPos.getX()-aprilTag4.getX())*(Math.cos(degToAprilTag4.get().getRadians())));
+        double distanceToSpeaker =Math.sqrt(Math.pow(lastRecordedDistance,2)+Math.pow(speakerPos.getX()-aprilTag4.getX(),2)-2.0*lastRecordedDistance*(speakerPos.getX()-aprilTag4.getX())*(Math.cos(degToAprilTag4.getRadians())));
     
 
 
-        double changeDegToSpeaker = ((Math.abs(degToAprilTag4.get().getDegrees())/(double)degToAprilTag4.get().getDegrees())*
+        double changeDegToSpeaker = ((Math.abs(degToAprilTag4.getDegrees())/(double)degToAprilTag4.getDegrees())*
             Math.acos((Math.pow(speakerPos.getX()-aprilTag4.getX(),2.0)-Math.pow(lastRecordedDistance,2.0)-
             Math.pow(distanceToSpeaker,2.0))/(double)(-2.0*lastRecordedDistance*distanceToSpeaker)))*(180/Math.PI);
             
-        Supplier<Optional<Rotation2d>> degToSpeaker = () -> (Optional.of(Rotation2d.fromDegrees(degToAprilTag4.get().getDegrees()+changeDegToSpeaker)));
+        Supplier<Optional<Rotation2d>> degToSpeaker = () -> (Optional.of(Rotation2d.fromDegrees(degToAprilTag4.getDegrees()+changeDegToSpeaker)));
         return degToSpeaker;
     }
     public Optional<Rotation2d> getSpeakerTagYaw()
