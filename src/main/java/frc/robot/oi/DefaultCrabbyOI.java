@@ -108,8 +108,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
             CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         
-        controller.a().whileTrue(new AimLobbage(container.wristJoint, container.shooter));
-        
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
 
