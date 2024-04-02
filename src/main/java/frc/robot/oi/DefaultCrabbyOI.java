@@ -1,10 +1,5 @@
 package frc.robot.oi;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.util.Optional;
-import java.util.function.Supplier;
-
 import org.northernforce.commands.NFRRotatingArmJointSetAngle;
 import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveStop;
@@ -50,27 +45,12 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
             CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
-            Point2D.Double aprilTag4 = new Point2D.Double(0,2);
-            Point2D.Double speakerPos = new Point2D.Double(0.8,aprilTag4.getY());
-            Supplier<Double>  degToAprilTag4 = () -> container.orangePi.getDistanceToSpeaker(CrabbyConstants.OrangePiConstants.cameraHeight, CrabbyConstants.OrangePiConstants.cameraPitch).get(); //TODO find out how to get correct position
-
-            double distanceToSpeaker = Math.sqrt(Math.pow(container.lastRecordedDistance,2)+
-                Math.pow(speakerPos.getX()-aprilTag4.getX(),2)-container.lastRecordedDistance*
-                (speakerPos.getX()-aprilTag4.getX())*Math.cos(degToAprilTag4.get()));
-
-            double changeDegToSpeaker = ((Math.abs(degToAprilTag4.get())/degToAprilTag4.get())*
-                Math.acos((Math.pow(speakerPos.getX()-aprilTag4.getX(),2)-Math.pow(container.lastRecordedDistance,2)-
-                Math.pow(distanceToSpeaker,2))/(-2*container.lastRecordedDistance*distanceToSpeaker)));
-
-            Supplier<Optional<Rotation2d>> degToSpeaker = (container.orangePi::getSpeakerTagYaw);
-            degToSpeaker.get().get().plus(Rotation2d.fromDegrees(changeDegToSpeaker));
-            
         controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
             CrabbyConstants.DriveConstants.controller,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
-            degToSpeaker, true, true)
+            container.orangePi.getDegToSpeaker(container.lastRecordedDistance), true, true)
             .alongWith(new RampShooterWithDifferential(container.shooter,
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
