@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.northernforce.subsystems.NFRSubsystem;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -76,6 +78,7 @@ public class NFRPhotonCamera extends NFRSubsystem implements AlertProvider
     protected final Alert isMissing;
     protected final PhotonCamera camera;
     protected final PhotonPoseEstimator poseEstimator;
+    protected final String name;
     /**
      * Create a new PhotonCamera
      * @param config the configuration for the NFRPhotonCamera.
@@ -85,12 +88,15 @@ public class NFRPhotonCamera extends NFRSubsystem implements AlertProvider
         super(config);
         isMissing = new Alert(AlertType.kError, config.cameraName + " is not connected");
         camera = new PhotonCamera(config.cameraName);
-        poseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, config.cameraTransform);
+        poseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            config.cameraTransform);
+        this.name = getName();
     }
     /**
      * Checks to see if the PhotonCamera is connected
      * @return whether the PhotonCamera is connected
      */
+    @AutoLogOutput(key="{name}/IsConnected")
     public boolean isConnected()
     {
         return camera.isConnected();
@@ -142,6 +148,11 @@ public class NFRPhotonCamera extends NFRSubsystem implements AlertProvider
     public Optional<PhotonTrackedTarget> getSpeakerTag()
     {
         return getTarget(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7);
+    }
+    @AutoLogOutput(key="{name}/SpeakerTagYaw")
+    public Rotation2d getSpeakerTagYawOrDefault()
+    {
+        return getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(Double.NaN));
     }
     public Optional<Rotation2d> getSpeakerTagYaw()
     {
