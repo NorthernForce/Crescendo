@@ -9,6 +9,8 @@ import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -70,11 +72,18 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new SideDrive(container.drive, container.setStateCommands, CrabbyConstants.DriveConstants.controller,
                 () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
                 () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
-                () -> Rotation2d.fromDegrees(90), true, true, () -> {
+                () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? Rotation2d.fromDegrees(90) : Rotation2d.fromDegrees(-90), true, true, () -> {
                     var t = container.orangePi.getAmpTagYaw();
                     if (t.isPresent())
                     {
-                        return Optional.of(t.get().minus(container.drive.getRotation().minus(Rotation2d.fromDegrees(90))).getRadians());
+                        if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
+                        {
+                            return Optional.of(t.get().minus(container.drive.getRotation().minus(Rotation2d.fromDegrees(90))).getRadians());
+                        }
+                        else
+                                    return Optional.of(t.get()
+                                            .minus(container.drive.getRotation().minus(Rotation2d.fromDegrees(-90)))
+                                            .getRadians());
                     }
                     return Optional.empty();
                 }, CrabbyConstants.DriveConstants.ampController))
