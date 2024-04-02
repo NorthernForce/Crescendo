@@ -2,9 +2,15 @@ package frc.robot;
 
 import java.util.Map;
 
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.northernforce.util.NFRRobotChooser;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.robots.CrabbyContainer;
 import frc.robot.dashboard.Dashboard;
@@ -18,21 +24,53 @@ import frc.robot.utils.RobotContainer;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private RobotContainer container;
   private Dashboard dashboard;
   private AutonomousRoutine routine;
+  private final Timer timer = new Timer();
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+    Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+    Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    switch (BuildConstants.DIRTY) {
+      case 0:
+        Logger.recordMetadata("GitDirty", "All changes committed");
+        break;
+      case 1:
+        Logger.recordMetadata("GitDirty", "Uncomitted changes");
+        break;
+      default:
+        Logger.recordMetadata("GitDirty", "Unknown");
+        break;
+    }
+
+    if (isReal()) {
+      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    } else {
+      setUseTiming(false); // Run as fast as possible
+      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+    }
+
+    timer.start();
+
     container = (RobotContainer)new NFRRobotChooser(() -> new CrabbyContainer(), Map.of(
       "Crabby", () -> new CrabbyContainer(),
       "Swervy", () -> new SwervyContainer())).getNFRRobotContainer();
     dashboard = container.getDashboard();
     dashboard.displayAutonomousRoutines(container.getAutonomousRoutines());
+
+    Logger.start();
   }
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -45,6 +83,11 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     container.periodic();
     CommandScheduler.getInstance().run();
+    if (timer.hasElapsed(5))
+    {
+      timer.restart();
+      System.gc();
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
