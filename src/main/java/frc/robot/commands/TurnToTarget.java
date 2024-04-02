@@ -70,6 +70,9 @@ public class TurnToTarget extends Command
         var detection = targetSupplier.get();
         if (detection.isPresent())
         {
+            if (timer.hasElapsed(0.25)) {
+                controller.reset();
+            }
             timer.restart();;
             controller.setSetpoint(MathUtil.angleModulus(drive.getRotation().minus(detection.get()).getRadians()));
         }
