@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.dashboard.CrabbyDashboard;
@@ -19,12 +20,13 @@ import frc.robot.dashboard.CrabbyDashboard;
 public class Shooter extends SubsystemBase {
     private final NFRTalonFX topMotor;
     private final NFRTalonFX bottomMotor;
-    private final VelocityVoltage topControl, bottomControl;
     private final VoltageOut topVoltage, bottomVoltage;
-    private double topTargetSpeed, bottomTargetSpeed;
     private final SysIdRoutine topSysID, bottomSysID;
     private final StatusSignal<Double> topAcceleration, bottomAcceleration, topCurrent, bottomCurrent,
         m_topVoltage, m_bottomVoltage;
+    private double topTargetSpeed, bottomTargetSpeed;
+    private final VelocityVoltage topControl = new VelocityVoltage(0);
+    private final VelocityVoltage bottomControl = new VelocityVoltage(0);
 
     /** Creates a new Shooter. 
      * @param dashboard */
@@ -36,9 +38,6 @@ public class Shooter extends SubsystemBase {
 
         dashboard.topShooter.setSupplier(this::getTopMotorVelocity);
         dashboard.bottomShooter.setSupplier(this::getBottomMotorVelocity);
-
-        topControl = new VelocityVoltage(0).withSlot(0);
-        bottomControl = new VelocityVoltage(0).withSlot(0);
 
         topVoltage = new VoltageOut(0);
         bottomVoltage = new VoltageOut(0);
@@ -82,25 +81,39 @@ public class Shooter extends SubsystemBase {
      * (-) velocity is outtake (in current design) (i think)
      */
     public void run(double speed) {
+        topMotor.setControl(topControl.withVelocity(speed).withSlot(0));
         topTargetSpeed = bottomTargetSpeed = speed;
-        topMotor.setControl(topControl.withVelocity(speed));
-        bottomMotor.setControl(bottomControl.withVelocity(speed));
+        bottomMotor.setControl(bottomControl.withVelocity(speed).withSlot(0));
     }
 
     /**
      * runs the top motor at the given velocity (in rotations per 100 ms)
      */
     public void runTop(double speed) {
-        topTargetSpeed = speed;
-        topMotor.setControl(topControl.withVelocity(speed));
+        if (DriverStation.isAutonomousEnabled())
+        {
+            topTargetSpeed = Math.min(61, speed);
+        }
+        else
+        {
+            topTargetSpeed = speed;
+        }
+        topMotor.setControl(topControl.withVelocity(topTargetSpeed).withSlot(0));
     }
 
     /**
      * runs the bottom motor at the given velocity (in rotations per 100 ms)
      */
     public void runBottom(double speed) {
-        bottomTargetSpeed = speed;
-        bottomMotor.setControl(bottomControl.withVelocity(speed));
+        if (DriverStation.isAutonomousEnabled())
+        {
+            bottomTargetSpeed = Math.min(61, speed);
+        }
+        else
+        {
+            bottomTargetSpeed = speed;
+        }
+        bottomMotor.setControl(bottomControl.withVelocity(bottomTargetSpeed).withSlot(0));
     }
 
     public double getTopMotorVelocity() {

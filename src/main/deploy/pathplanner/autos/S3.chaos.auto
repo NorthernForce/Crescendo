@@ -1,0 +1,251 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6924444618120005,
+      "y": 4.490555305896938
+    },
+    "rotation": -60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "closeShot"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepareSpit"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.1.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.2.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.3.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.4.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.5.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "spit"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

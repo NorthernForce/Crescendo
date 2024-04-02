@@ -22,7 +22,7 @@ public class NFRWristContinuousAngle extends Command
     }
     @Override public void execute()
     {
-        m_wrist.getController().setPositionTrapezoidal(0, m_angle.get().getRotations()); //TODO get actual distance
+        m_wrist.getController().setPositionTrapezoidal(0, m_angle.get().getRotations());
     }
     @Override public boolean isFinished()
     {

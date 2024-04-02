@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.41058639382236,
+        "y": 0.7601200387585969
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.865899499222918,
+        "y": 1.0136137523968551
+      },
+      "isLocked": false,
+      "linkedName": "S3.BERT.1"
+    },
+    {
+      "anchor": {
+        "x": 3.0053871034107877,
+        "y": 3.1589216622613776
+      },
+      "prevControl": {
+        "x": 3.5708730799884414,
+        "y": 2.2814434227443288
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "S3.BERT.2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 120.0,
+    "maxAngularAcceleration": 240.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -31.607502246248806,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "S3.BERT",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
