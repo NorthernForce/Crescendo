@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+
 import org.northernforce.subsystems.NFRSubsystem;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -28,6 +31,9 @@ public class NFRPhotonCamera extends NFRSubsystem implements AlertProvider
     /**
      * This is the configuration class for the OrangePi subsystem.
      */
+
+     private Point2D.Double aprilTag4 = new Point2D.Double(0,2);
+     private Point2D.Double speakerPos = new Point2D.Double(0.8,aprilTag4.getY());
     public static class NFRPhotonCameraConfiguration extends NFRSubsystemConfiguration
     {
         protected String cameraName;
@@ -142,6 +148,37 @@ public class NFRPhotonCamera extends NFRSubsystem implements AlertProvider
     public Optional<PhotonTrackedTarget> getSpeakerTag()
     {
         return getTarget(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7);
+    }
+
+    /**
+     * Gets the degree to the speaker with the last recorded distance and angle to the april tag
+     * @param lastRecordedDistance for calculations
+     * @return a supplier to pass in to turning the robot
+     */
+    public Supplier<Optional<Rotation2d>> getDegToSpeaker(double lastRecordedDistance)
+    {
+        // points represent locations top down on the field
+        Rotation2d degToAprilTag4 = getSpeakerTagYaw().get();
+        /*
+         * distance to the speaker straight across (maybe use this as well to correspond with the
+         * speaker angle directly instead of the april tag distance?)  
+         */ 
+        double distanceToSpeaker = distanceToSpeaker(lastRecordedDistance);        
+        // the change in degrees to move from the april tag to the speaker
+        double changeDegToSpeaker = ((Math.abs(degToAprilTag4.getDegrees())/(double)degToAprilTag4.getDegrees())*
+            Math.acos((Math.pow(speakerPos.getX()-aprilTag4.getX(),2.0)-Math.pow(lastRecordedDistance,2.0)-
+            Math.pow(distanceToSpeaker,2.0))/(double)(-2.0*lastRecordedDistance*distanceToSpeaker)))*(180/Math.PI);
+        // smack em into one variable by adding them up and boom, you are facing the  speaker
+        Supplier<Optional<Rotation2d>> degToSpeaker = () -> (Optional.of(Rotation2d.fromDegrees(degToAprilTag4.getDegrees()+changeDegToSpeaker)));
+        return degToSpeaker;
+    }
+    public double distanceToSpeaker(double lastRecordedDistance)
+    {
+        Rotation2d degToAprilTag4 = getSpeakerTagYaw().get();
+        return Math.sqrt(Math.pow(lastRecordedDistance,2)+
+        Math.pow(speakerPos.getX()-aprilTag4.getX(),2)-2.0*lastRecordedDistance*
+        (speakerPos.getX()-aprilTag4.getX())*(Math.cos(degToAprilTag4.getRadians())));
+
     }
     public Optional<Rotation2d> getSpeakerTagYaw()
     {

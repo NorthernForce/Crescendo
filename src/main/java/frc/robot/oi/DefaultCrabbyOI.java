@@ -45,13 +45,12 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
             CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
-        
         controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
             CrabbyConstants.DriveConstants.controller,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
-            container.orangePi::getSpeakerTagYaw, true, true)
+            container.orangePi.getDegToSpeaker(container.lastRecordedDistance), true, true)
             .alongWith(new RampShooterWithDifferential(container.shooter,
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
