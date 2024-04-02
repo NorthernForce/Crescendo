@@ -32,7 +32,7 @@ public class CrabbyMap implements LoggableHardware {
     public final NFRPigeon2 gyro = new NFRPigeon2(1);
     public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 14);
     public final NFRBeamBreak indexerBeamBreak = new NFRBeamBreak(7);
-    public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16); //TODO get the id
+    public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16);
     {
         REVPhysicsSim.getInstance().addSparkMax(indexerMotor, DCMotor.getNEO(1));
         // indexerMotor.restoreFactoryDefaults();

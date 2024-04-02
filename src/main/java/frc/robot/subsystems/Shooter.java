@@ -5,21 +5,26 @@
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
-import org.northernforce.motors.NFRMotorController;
+import org.northernforce.motors.NFRTalonFX;
 
+import com.ctre.phoenix6.controls.VelocityVoltage;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.utils.LoggableHardware;
 
 public class Shooter extends SubsystemBase implements LoggableHardware {
-    private final NFRMotorController topMotor;
-    private final NFRMotorController bottomMotor;
+    private final NFRTalonFX topMotor;
+    private final NFRTalonFX bottomMotor;
     private double topTargetSpeed, bottomTargetSpeed;
     private final double tolerance;
+    private final VelocityVoltage topControl = new VelocityVoltage(0);
+    private final VelocityVoltage bottomControl = new VelocityVoltage(0);
 
     /** Creates a new Shooter. 
      * @param dashboard */
-    public Shooter(NFRMotorController topMotor, NFRMotorController bottomMotor, double tolerance, CrabbyDashboard dashboard) {
+    public Shooter(NFRTalonFX topMotor, NFRTalonFX bottomMotor, double tolerance, CrabbyDashboard dashboard) {
         this.topMotor = topMotor;
         this.bottomMotor = bottomMotor;
         topTargetSpeed = 0;
@@ -35,25 +40,39 @@ public class Shooter extends SubsystemBase implements LoggableHardware {
      * (-) velocity is outtake (in current design) (i think)
      */
     public void run(double speed) {
-        topMotor.setVelocity(0, speed);
+        topMotor.setControl(topControl.withVelocity(speed).withSlot(0));
         topTargetSpeed = bottomTargetSpeed = speed;
-        bottomMotor.setVelocity(0, speed);
+        bottomMotor.setControl(bottomControl.withVelocity(speed).withSlot(0));
     }
 
     /**
      * runs the top motor at the given velocity (in rotations per 100 ms)
      */
     public void runTop(double speed) {
-        topTargetSpeed = speed;
-        topMotor.setVelocity(0, speed);
+        if (DriverStation.isAutonomousEnabled())
+        {
+            topTargetSpeed = Math.min(61, speed);
+        }
+        else
+        {
+            topTargetSpeed = speed;
+        }
+        topMotor.setControl(topControl.withVelocity(topTargetSpeed).withSlot(0));
     }
 
     /**
      * runs the bottom motor at the given velocity (in rotations per 100 ms)
      */
     public void runBottom(double speed) {
-        bottomTargetSpeed = speed;
-        bottomMotor.setVelocity(0, speed);
+        if (DriverStation.isAutonomousEnabled())
+        {
+            bottomTargetSpeed = Math.min(61, speed);
+        }
+        else
+        {
+            bottomTargetSpeed = speed;
+        }
+        bottomMotor.setControl(bottomControl.withVelocity(bottomTargetSpeed).withSlot(0));
     }
 
     public double getTopMotorVelocity() {
@@ -68,6 +87,11 @@ public class Shooter extends SubsystemBase implements LoggableHardware {
     {
         return Math.abs(getTopMotorVelocity() - topTargetSpeed) < tolerance
             && Math.abs(getBottomMotorVelocity() - bottomTargetSpeed) < tolerance;
+    }
+
+    public boolean isAtSpeed(double tolerance) {
+        return Math.abs(getTopMotorVelocity() - topTargetSpeed) < tolerance
+                && Math.abs(getBottomMotorVelocity() - bottomTargetSpeed) < tolerance;
     }
 
     public boolean isRunning()

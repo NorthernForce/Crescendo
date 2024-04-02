@@ -71,8 +71,10 @@ public class SwerveDrive extends NFRSwerveDrive implements LoggableHardware
     @Override
     public void updateOdometry()
     {
-        poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getRotation(), getPositions());
-        odometry.update(getRotation(), getPositions());
+        synchronized (poseEstimator) {
+            poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getRotation(), getPositions());
+            odometry.update(getRotation(), getPositions());
+        }
     }
     @Override
     public Pose2d getEstimatedPose()
@@ -122,5 +124,11 @@ public class SwerveDrive extends NFRSwerveDrive implements LoggableHardware
         Logger.recordOutput(name + "/GyroOffset", gyroOffset);
         Logger.recordOutput(name + "/ChassisSpeeds", getChassisSpeeds());
         Logger.recordOutput(name + "/ModuleStates", getStates());
+    }
+    @Override
+    public void addVisionEstimate(double timestamp, Pose2d pose) {
+        synchronized (poseEstimator) {
+            super.addVisionEstimate(timestamp, pose);
+        }
     }
 }

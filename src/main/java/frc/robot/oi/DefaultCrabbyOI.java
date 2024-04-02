@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.CloseShotPreset;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
@@ -48,7 +49,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
-            CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
+            CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
         
         controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
             CrabbyConstants.DriveConstants.controller,
@@ -70,10 +71,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
-        
-        controller.start().toggleOnTrue(new RampShooterWithDifferential(
-            container.shooter, () -> container.shooterSpeed.getDouble(0) + container.topRollerChange.getDouble(0),
-                () -> container.shooterSpeed.getDouble(0)));
+
+        controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
     }
     @Override
     public void bindDriverToJoystick(CrabbyContainer container, CommandGenericHID joystick)
@@ -91,6 +90,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
     {
         NFRRotatingArmJointWithJoystick wristManual = new NFRRotatingArmJointWithJoystick(container.wristJoint,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1));
+        
         container.dashboard.statusLightManager.wristManualLight.setSupplier(() -> wristManual.isScheduled());
         manipulatorController = controller;
         
@@ -121,33 +121,36 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
 
-        container.climber.setDefaultCommand(Commands.run(() -> container.climber.startMotor(MathUtil.applyDeadband(-controller.getRightY(), 0.1)),
+        container.climber.setDefaultCommand(Commands.run(container.climber::stopMotor,
             container.climber));
+        
+        // controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
+        //     .alongWith(Commands.run(() -> container.climber.startMotor(-1))));
+        controller.povDown().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
+            .alongWith(Commands.run(() -> container.climber.startMotor(container.climber.isDown() ? 0 : -1))));
+        controller.povUp().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(2), 0, true)
+            .alongWith(Commands.run(() -> container.climber.startMotor(1))));
 
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
                 .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
         
-        controller.start().toggleOnTrue(new RampShooterWithDifferential(container.shooter,
+        controller.a().whileTrue(new RampShooterWithDifferential(container.shooter,
                 () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0),
-                () -> container.shooterSpeed.getDouble(30)));
-        if (driverController != null)
-        {
-            controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
-                CrabbyConstants.DriveConstants.controller, 
-                () -> -MathUtil.applyDeadband(driverController.getLeftY(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverController.getLeftX(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(driverController.getRightX(), 0.1, 1),
-                container.orangePi::getSpeakerTagYaw, true, true)
-                .alongWith(new RampShooterWithDifferential(container.shooter,
-                    () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                    () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
-                .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                    () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
-        }
+                () -> container.shooterSpeed.getDouble(30))
+                .alongWith(Commands.runOnce(() -> container.manualWrist = false)));
+        
+        controller.rightBumper().whileTrue(new RampShooterWithDifferential(container.shooter,
+                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
+                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance))
+            .alongWith(new NFRWristContinuousAngle(container.wristJoint,
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+        
+        controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
     }
     @Override
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick)
     {
+
     }
 
     public CommandXboxController getDriverController()

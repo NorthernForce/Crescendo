@@ -12,6 +12,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -89,6 +90,7 @@ public class CrabbyContainer implements RobotContainer
             () -> wristJoint.getRotation().getRadians()).ignoringDisable(true));
         manualWrist = false;
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
+        Shuffleboard.getTab("General").addDouble("Wrist Target", () -> Math.toDegrees(angleCalculator.getValueForDistance(lastRecordedDistance)));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
         
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro, dashboard);
@@ -111,8 +113,14 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("Developer").addDouble("Distance", () -> lastRecordedDistance);
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
+        PortForwarder.add(5806, "10.1.72.11", 5800);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, CrabbyConstants.ShooterConstants.tolerance, dashboard);
+        Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);
+        Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
+        Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed());
+        Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
+        Shuffleboard.getTab("General").addBoolean("Climber Switch", () -> climber.isDown());
 
         shooter.setDefaultCommand(new RampShooterContinuous(shooter, () -> indexer.getBeamBreak().beamBroken() ? 25 : 0));
         shooterSpeed = Shuffleboard.getTab("Developer").add("Shooter Speed", 30).getEntry();
@@ -145,6 +153,7 @@ public class CrabbyContainer implements RobotContainer
         Logger.recordMetadata("RobotName", "Crabby");
         //miscellaneousLoggage = new MiscellaneousLoggage(this);
         crabby = this;
+        Shuffleboard.getTab("Developer").addDouble("Speaker Yaw", () -> orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(100)).getDegrees());
     }
     @Override
     @Deprecated
@@ -210,6 +219,11 @@ public class CrabbyContainer implements RobotContainer
         {
             lastRecordedDistance = distance.get();
         }
+        // var estimatedPose = orangePi.getPose();
+        // if (estimatedPose.isPresent())
+        // {
+        //     drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
+        // }
         dashboard.periodic();
     }
     @Override

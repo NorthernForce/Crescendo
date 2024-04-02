@@ -25,13 +25,14 @@ public class FixedShot extends SequentialCommandGroup {
      * 
      * @param clearanceTime the time to wait after feeding the piece to the shooter
      */
-    public FixedShot(Shooter shooter, WristJoint wrist, Indexer indexer, Intake intake, double shooterSpeed, Rotation2d targetAngle,
+    public FixedShot(Shooter shooter, WristJoint wrist, Indexer indexer, Intake intake, double topSpeed, double bottomSpeed, Rotation2d targetAngle,
         Rotation2d angularTolerance, double indexerSpeed, double intakeSpeed, double clearanceTime)
     {
         addCommands(
             new ParallelCommandGroup(
                 new NFRRotatingArmJointSetAngle(wrist, targetAngle, angularTolerance, 0, true),
-                new RampShooter(shooter, shooterSpeed)
+                new RampShooterWithDifferential(shooter, () -> topSpeed, () -> bottomSpeed)
+                    .until(() -> shooter.isRunning() && shooter.isAtSpeed())
             ),
             new ShootIndexerAndIntake(indexer, intake, indexerSpeed, intakeSpeed),
             new WaitCommand(clearanceTime)
