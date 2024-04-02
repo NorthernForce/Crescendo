@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDRelay extends SubsystemBase
 {
-    Relay relay;
+    protected final Relay relay;
     public LEDRelay(int relayChannel)
     {
         super("LEDRelay");
