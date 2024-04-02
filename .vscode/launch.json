@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch testSpeakerAngle",
+      "request": "launch",
+      "mainClass": "frc.robot.subsystems.testSpeakerAngle",
+      "projectName": "Crescendo"
+    },
+    {
+      "type": "java",
       "name": "Launch test",
       "request": "launch",
       "mainClass": "frc.robot.utils.test",
