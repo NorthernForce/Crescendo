@@ -12,8 +12,9 @@ public class AimLobbage extends ParallelCommandGroup{
     public AimLobbage(WristJoint wrist, Shooter shooter)
     {
        addCommands(
-            new NFRRotatingArmJointSetAngle(wrist, Rotation2d.fromDegrees(30), Rotation2d.fromDegrees(0.2), 0, true), //TODO deez
-            new RampShooterWithDifferential(shooter, () -> 30, () -> 20) //TODO doze
+            new NFRRotatingArmJointSetAngle(wrist, Rotation2d.fromDegrees(41), Rotation2d.fromDegrees(2),
+                0, true), //TODO deez
+            new RampShooterWithDifferential(shooter, () -> 47, () -> 47)
        ); 
     }
 

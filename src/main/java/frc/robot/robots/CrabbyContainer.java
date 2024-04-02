@@ -11,6 +11,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -111,12 +112,14 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("Developer").addDouble("Distance", () -> lastRecordedDistance);
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
+        PortForwarder.add(5806, "10.1.72.11", 5800);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);
         Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);
         Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
         Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
         Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
+        Shuffleboard.getTab("General").addBoolean("Climber Switch", () -> climber.isDown());
 
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 

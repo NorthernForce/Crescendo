@@ -73,8 +73,8 @@ public class TurnToTarget2 extends Command
     @Override
     public boolean isFinished()
     {
-        return Math.abs(targetSupplier.get().orElse(Rotation2d.fromDegrees(100)).getDegrees()) < 10
-            && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.15;
+        return Math.abs(targetSupplier.get().orElse(Rotation2d.fromDegrees(100)).getDegrees()) < 5
+            && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.10;
     }
     @Override
     public void end(boolean interrupted)

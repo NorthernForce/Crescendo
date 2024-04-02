@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 6.0
+        "x": 2.8792513425482693,
+        "y": 5.484558433504332
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0,
-        "y": 5.5
+        "x": 2.8792513425482693,
+        "y": 4.984558433504332
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S1.CS.V3.2.end"
     },
     {
       "anchor": {

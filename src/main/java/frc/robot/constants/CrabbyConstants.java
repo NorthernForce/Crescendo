@@ -65,7 +65,7 @@ public class CrabbyConstants {
             new NFRRotatingArmJointConfiguration("wristConfig")
                 .withUseLimits(true)
                 .withUseIntegratedLimits(true)
-                .withLimits(Rotation2d.fromDegrees(22), Rotation2d.fromDegrees(56))
+                .withLimits(Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(56))
                 .withGearRatio(1) // TODO
                 .withGearbox(DCMotor.getNEO(1))
                 .withLength(1) // TODO
@@ -100,8 +100,8 @@ public class CrabbyConstants {
         public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
         public static final double closeShotSpeed = 42; // TODO
-        public static final double ampBottomSpeed = 14; // TODO
-        public static final double ampTopSpeed = 7; // TODO
+        public static final double ampBottomSpeed = 24; // TODO
+        public static final double ampTopSpeed = 12; // TODO
         public static final double tolerance = 2.5; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }
