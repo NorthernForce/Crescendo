@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -42,11 +43,17 @@ public class CrabbyConstants {
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
         public static final PIDController controller = new PIDController(3.2, 0.14, 0.5);
         public static final PIDController controller2 = new PIDController(4.2, 0.1, 0.5);
+        public static final PIDController ampController = new PIDController(2, 0.1, 0.1);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
             new PIDConstants(1.5, 0, 0),
-            6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
+            6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig(true, true));
+        public static final HolonomicPathFollowerConfig ampHolonomicConfig = new HolonomicPathFollowerConfig(
+            new PIDConstants(6),
+            new PIDConstants(5, 0, 0),
+            4, offsets[0].getDistance(new Translation2d()), new ReplanningConfig(true, true));
         public static final double maxShootSpeed = 0.5;
+        public static final PathConstraints constraints = new PathConstraints(2.0, 3.0, 2.0, 2.0); // TODO: tune
     }
     public static class IntakeConstants
     {

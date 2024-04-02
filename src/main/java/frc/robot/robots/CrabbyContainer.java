@@ -6,6 +6,10 @@ import java.util.Map;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
+
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -152,6 +156,7 @@ public class CrabbyContainer implements RobotContainer
                 .ignoringDisable(true);
         }));
         Shuffleboard.getTab("Developer").addDouble("Speaker Yaw", () -> orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(100)).getDegrees());
+        Pathfinding.setPathfinder(new LocalADStar());
     }
     @Override
     @Deprecated
@@ -211,11 +216,6 @@ public class CrabbyContainer implements RobotContainer
         {
             lastRecordedDistance = distance.get();
         }
-        // var estimatedPose = orangePi.getPose();
-        // if (estimatedPose.isPresent())
-        // {
-        //     drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
-        // }
         dashboard.periodic();
     }
     @Override
