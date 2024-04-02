@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AimLobbage;
 import frc.robot.commands.CloseShotPreset;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
@@ -44,8 +45,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
         
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
-            CrabbyConstants.IndexerConstants.indexerPurgeSpeed));
-        
+            CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
+
+        controller.a().whileTrue(new AimLobbage(container.wristJoint, container.shooter));
+
         controller.rightBumper().whileTrue(new TurnToTarget(container.drive, container.setStateCommands,
             CrabbyConstants.DriveConstants.controller,
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
@@ -126,10 +129,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         container.wristJoint.setDefaultCommand(new NFRRotatingArmJointWithJoystick(container.wristJoint, () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1))
                 .alongWith(Commands.runOnce(() -> container.manualWrist = true)));
         
-        controller.a().whileTrue(new RampShooterWithDifferential(container.shooter,
-                () -> container.shooterSpeed.getDouble(30) + container.topRollerChange.getDouble(0),
-                () -> container.shooterSpeed.getDouble(30))
-                .alongWith(Commands.runOnce(() -> container.manualWrist = false)));
+        controller.a().whileTrue(new AimLobbage(container.wristJoint, container.shooter));
         
         controller.rightBumper().whileTrue(new RampShooterWithDifferential(container.shooter,
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
