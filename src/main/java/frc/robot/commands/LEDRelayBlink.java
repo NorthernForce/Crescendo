@@ -12,6 +12,7 @@ public class LEDRelayBlink extends Command
     boolean relayState;
     public LEDRelayBlink(LEDRelay ledRelay, double interval)
     {
+        addRequirements(ledRelay);
         this.ledRelay = ledRelay;
         this.interval = interval;
         this.timer = new Timer();
@@ -20,7 +21,7 @@ public class LEDRelayBlink extends Command
     @Override
     public void initialize()
     {
-        timer.start();
+        timer.restart();
     }
     @Override
     public void execute()

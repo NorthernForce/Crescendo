@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CloseShot;
+import frc.robot.commands.LEDRelayBlink;
+import frc.robot.commands.LEDRelaySolid;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
@@ -34,6 +36,7 @@ import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDRelay;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.subsystems.NFRPhotonCamera;
 import frc.robot.subsystems.Shooter;
@@ -53,6 +56,7 @@ public class CrabbyContainer implements RobotContainer
 
     public final NFRPhotonCamera orangePi;
     public final Xavier xavier;
+    public final LEDRelay ledRelay;
     public final WristJoint wristJoint;
     public final CrabbyMap map;
     public final CrabbyDashboard dashboard;
@@ -111,6 +115,12 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("Developer").addDouble("Distance", () -> lastRecordedDistance);
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
+
+        ledRelay = new LEDRelay(0);
+        Shuffleboard.getTab("General").addBoolean("why no worky", DriverStation::isTeleopEnabled);
+        Shuffleboard.getTab("General").add("LED On", new LEDRelaySolid(ledRelay, true).ignoringDisable(true));
+        Shuffleboard.getTab("General").add("LED Off", new LEDRelaySolid(ledRelay, false).ignoringDisable(true));
+        Shuffleboard.getTab("General").add("LED Blink", new LEDRelayBlink(ledRelay, .5).ignoringDisable(true));
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);
         Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);

@@ -7,10 +7,14 @@ import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.LEDRelayBlink;
+import frc.robot.commands.LEDRelaySolid;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
@@ -43,8 +47,13 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 .andThen(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
                     CrabbyConstants.IntakeConstants.intakeSpeed))));
         
-        new Trigger(() -> container.indexer.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
-        
+        new Trigger(DriverStation::isAutonomousEnabled).whileTrue(new LEDRelayBlink(container.ledRelay, 1).ignoringDisable(true));
+        new Trigger(DriverStation::isTeleopEnabled).whileTrue(new LEDRelaySolid(container.ledRelay, true).ignoringDisable(true));
+        new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
+            .onTrue(new RumbleController(controller.getHID(), 0.5, 0.5))
+            .and(DriverStation::isTeleopEnabled)
+            .whileTrue(new LEDRelayBlink(container.ledRelay, .5));
+
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
             CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
         

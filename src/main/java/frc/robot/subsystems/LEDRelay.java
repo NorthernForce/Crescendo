@@ -12,6 +12,7 @@ public class LEDRelay extends SubsystemBase
     {
         super("LEDRelay");
         this.relay = new Relay(relayChannel, Direction.kForward);
+        this.relay.setSafetyEnabled(false);
     }
     public void setRelay(boolean state)
     {
