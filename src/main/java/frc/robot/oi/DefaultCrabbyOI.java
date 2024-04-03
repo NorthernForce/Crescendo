@@ -50,7 +50,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
-            container.orangePi.getDegToSpeaker(container.lastRecordedDistance), true, true)
+            container.getDegToSpeaker(container.lastRecordedDistance), true, true)
             .alongWith(new RampShooterWithDifferential(container.shooter,
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
