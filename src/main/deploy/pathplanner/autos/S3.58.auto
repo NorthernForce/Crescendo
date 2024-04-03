@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7141939224496041,
-      "y": 4.5043882961875195
+      "x": 0.6682960386113118,
+      "y": 4.475283590660834
     },
-    "rotation": -60.0
+    "rotation": -57.15272723788434
   },
   "command": {
     "type": "sequential",
@@ -18,32 +18,13 @@
           }
         },
         {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S3.BERT.1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S3.BERT.2"
+                  "pathName": "S3.58.1"
                 }
               },
               {
@@ -51,7 +32,7 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "race",
+                      "type": "parallel",
                       "data": {
                         "commands": [
                           {
@@ -63,7 +44,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 2.5
+                              "waitTime": 3.0
                             }
                           }
                         ]
@@ -94,7 +75,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S3.BERT.3"
+                  "pathName": "S3.58.2"
                 }
               },
               {
@@ -113,7 +94,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S3.BERT.4"
+                  "pathName": "S3.58.3"
                 }
               },
               {
@@ -133,10 +114,67 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 3.0
+                              "waitTime": 2.0
                             }
                           }
                         ]
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "prepAutoShot"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShot"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.58.4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.58.5"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake"
                       }
                     },
                     {
