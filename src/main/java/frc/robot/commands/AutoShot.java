@@ -18,13 +18,13 @@ import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.WristJoint;
 
 public class AutoShot extends SequentialCommandGroup {
-    public AutoShot(SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Shooter shooter, NFRPhotonCamera orangePi, WristJoint wristJoint, Intake intake, Indexer indexer, DoubleSupplier topSpeed, DoubleSupplier bottomSpeed, Supplier<Rotation2d> wristSupplier)
+    public AutoShot(SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, Shooter shooter, NFRPhotonCamera orangePi, WristJoint wristJoint, Intake intake, Indexer indexer, DoubleSupplier topSpeed, DoubleSupplier bottomSpeed, Supplier<Rotation2d> wristSupplier, DoubleSupplier distance)
     {
         addCommands(
             new ParallelDeadlineGroup(
                 Commands.waitUntil(() -> drive.getSpeed() < 0.5 && shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance) && 
                     Math.abs(wristJoint.getRotation().getDegrees() - wristSupplier.get().getDegrees()) < 2),
-                new AutoPrepShot(drive, orangePi, shooter, wristJoint, topSpeed, bottomSpeed, wristSupplier)
+                new AutoPrepShot(drive, orangePi, shooter, wristJoint, topSpeed, bottomSpeed, (distance.getAsDouble() < 2 ? () -> Rotation2d.fromDegrees(55): wristSupplier))
             ),
             new TurnToTarget2(drive, setStateCommands, CrabbyConstants.DriveConstants.controller2, orangePi::getSpeakerTagYaw, true),
             new ShootIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed),
