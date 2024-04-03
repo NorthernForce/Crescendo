@@ -117,7 +117,9 @@ public class CrabbyContainer implements RobotContainer
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
 
         ledRelay = new LEDRelay(0);
-        Shuffleboard.getTab("General").addBoolean("why no worky", DriverStation::isTeleopEnabled);
+        ledRelay.setDefaultCommand(
+            new LEDRelaySolid(ledRelay, false)
+        );
         Shuffleboard.getTab("General").add("LED On", new LEDRelaySolid(ledRelay, true).ignoringDisable(true));
         Shuffleboard.getTab("General").add("LED Off", new LEDRelaySolid(ledRelay, false).ignoringDisable(true));
         Shuffleboard.getTab("General").add("LED Blink", new LEDRelayBlink(ledRelay, .5).ignoringDisable(true));
