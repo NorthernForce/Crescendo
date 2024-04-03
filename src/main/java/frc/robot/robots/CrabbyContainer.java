@@ -6,11 +6,16 @@ import java.util.Map;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
+
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -123,12 +128,14 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").add("LED On", new LEDRelaySolid(ledRelay, true).ignoringDisable(true));
         Shuffleboard.getTab("General").add("LED Off", new LEDRelaySolid(ledRelay, false).ignoringDisable(true));
         Shuffleboard.getTab("General").add("LED Blink", new LEDRelayBlink(ledRelay, .5).ignoringDisable(true));
+        PortForwarder.add(5806, "10.1.72.11", 5800);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);
         Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);
         Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
         Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
         Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
+        Shuffleboard.getTab("General").addBoolean("Climber Switch", () -> climber.isDown());
 
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
@@ -161,6 +168,7 @@ public class CrabbyContainer implements RobotContainer
                 .ignoringDisable(true);
         }));
         Shuffleboard.getTab("Developer").addDouble("Speaker Yaw", () -> orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(100)).getDegrees());
+        Pathfinding.setPathfinder(new LocalADStar());
     }
     @Override
     @Deprecated
@@ -220,11 +228,6 @@ public class CrabbyContainer implements RobotContainer
         {
             lastRecordedDistance = distance.get();
         }
-        // var estimatedPose = orangePi.getPose();
-        // if (estimatedPose.isPresent())
-        // {
-        //     drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
-        // }
         dashboard.periodic();
     }
     @Override

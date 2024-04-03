@@ -143,12 +143,25 @@ public class NFRPhotonCamera extends NFRSubsystem implements AlertProvider
     {
         return getTarget(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 4 : 7);
     }
+    public Optional<PhotonTrackedTarget> getAmpTagOptional()
+    {
+        return getTarget(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 5 : 6);
+    }
     public Optional<Rotation2d> getSpeakerTagYaw()
     {
         var speakerTag = getSpeakerTag();
         if (speakerTag.isPresent())
         {
             return Optional.of(Rotation2d.fromDegrees(speakerTag.get().getYaw()));
+        }
+        return Optional.empty();
+    }
+    public Optional<Rotation2d> getAmpTagYaw()
+    {
+        var ampTag = getAmpTagOptional();
+        if (ampTag.isPresent())
+        {
+            return Optional.of(Rotation2d.fromDegrees(ampTag.get().getYaw()));
         }
         return Optional.empty();
     }

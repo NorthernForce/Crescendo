@@ -12,18 +12,19 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class TurnToTarget extends Command
+public class SideDrive extends Command
 {
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
-    protected final PIDController controller;
-    protected final DoubleSupplier xSupplier, ySupplier, thetaSupplier;
-    protected final Supplier<Optional<Rotation2d>> targetSupplier;
+    protected final PIDController controller, translational;
+    protected final DoubleSupplier xSupplier, ySupplier;
+    protected final Supplier<Optional<Double>> yawSupplier;
+    protected final Supplier<Rotation2d> thetaSupplier;
     protected final boolean optimize, fieldRelative;
-    protected final Timer timer;
     /**
      * Creates a new TurnToTarget. This allows the robot to be driven in both directions with optional field relative driving, while aligning with
      * a target.
@@ -37,9 +38,9 @@ public class TurnToTarget extends Command
      * @param optimize whether to optimize each swerve module (cut to the quickest possible state)
      * @param fieldRelative whether the translational control will be relative to the field or the robot
      */
-    public TurnToTarget(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, PIDController controller,
-        DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier thetaSupplier, Supplier<Optional<Rotation2d>> targetSupplier,
-        boolean optimize, boolean fieldRelative)
+    public SideDrive(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, PIDController controller,
+        DoubleSupplier xSupplier, DoubleSupplier ySupplier, Supplier<Rotation2d> thetaSupplier, boolean optimize, boolean fieldRelative,
+        Supplier<Optional<Double>> yawSupplier, PIDController translational)
     {
         this.drive = drive;
         this.setStateCommands = setStateCommands;
@@ -47,18 +48,18 @@ public class TurnToTarget extends Command
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
         this.thetaSupplier = thetaSupplier;
-        this.targetSupplier = targetSupplier;
         this.optimize = optimize;
         this.fieldRelative = fieldRelative;
-        this.timer = new Timer();
-        timer.start();
+        this.yawSupplier = yawSupplier;
         addRequirements(drive);
         controller.enableContinuousInput(-Math.PI, Math.PI);
+        this.translational = translational;
     }
     @Override
     public void initialize()
     {
         controller.reset();
+        translational.reset();
         for (var command : setStateCommands)
         {
             command.schedule();
@@ -67,24 +68,16 @@ public class TurnToTarget extends Command
     @Override
     public void execute()
     {
-        var detection = targetSupplier.get();
-        if (detection.isPresent())
-        {
-            if (timer.hasElapsed(0.25)) {
-                controller.reset();
-            }
-            timer.restart();;
-            controller.setSetpoint(MathUtil.angleModulus(drive.getRotation().minus(detection.get()).getRadians()));
-        }
+        var yaw = yawSupplier.get();
+        controller.setSetpoint(thetaSupplier.get().getRadians());
         ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(
             MathUtil.angleModulus(drive.getRotation().getRadians())));
         if (controller.atSetpoint())
         {
             speeds.omegaRadiansPerSecond = 0;
         }
-        if (timer.hasElapsed(0.75))
-        {
-            speeds.omegaRadiansPerSecond = thetaSupplier.getAsDouble();
+        if (yaw.isPresent()) {
+            speeds.vxMetersPerSecond = translational.calculate(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? yaw.get() : -yaw.get());
         }
         if (fieldRelative)
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation());

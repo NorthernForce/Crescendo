@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2654580294915574,
-        "y": 5.555147369219652
+        "x": 3.031275350299988,
+        "y": 2.7715146028582662
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5928943538798759,
-        "y": 6.022489537856569
+        "x": 4.15249754523844,
+        "y": 1.6015436168355337
       },
       "isLocked": false,
-      "linkedName": "S2.G2_G1.2.end"
+      "linkedName": "S3.BERT.4"
     },
     {
       "anchor": {
-        "x": 2.8981397630253705,
-        "y": 7.0198259161363925
+        "x": 7.626772498200579,
+        "y": 4.114397967513275
       },
       "prevControl": {
-        "x": 2.0561606431696946,
-        "y": 6.622224665093435
+        "x": 6.626772498200579,
+        "y": 4.114397967513275
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "S2.G2_G1.3.end"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -34,18 +34,18 @@
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0
+    "maxAngularVelocity": 120.0,
+    "maxAngularAcceleration": 240.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 40.42607874009911,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "S3.BERT",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -11.313820239919506,
     "velocity": 0
   },
   "useDefaultConstraints": true

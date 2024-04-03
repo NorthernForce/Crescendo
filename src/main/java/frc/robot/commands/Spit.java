@@ -16,9 +16,9 @@ public class Spit extends SequentialCommandGroup {
     {
         addCommands(
             new ParallelCommandGroup(
-                new RampShooterWithDifferential(shooter, () -> 40, () -> 25)
+                new RampShooterWithDifferential(shooter, () -> 30, () -> 25)
                     .until(() -> shooter.isRunning() && shooter.isAtSpeed(3)),
-                new NFRRotatingArmJointSetAngle(wrist, Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(3), 0, true)
+                new NFRRotatingArmJointSetAngle(wrist, Rotation2d.fromDegrees(22), Rotation2d.fromDegrees(3), 0, true)
             ),
             new ShootIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, CrabbyConstants.IntakeConstants.intakeSpeed)
         );
