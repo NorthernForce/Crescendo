@@ -41,8 +41,8 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
-        public static final PIDController controller = new PIDController(3.2, 0.14, 0.5);
-        public static final PIDController controller2 = new PIDController(4.2, 0.1, 0.5);
+        public static final PIDController controller = new PIDController(4.2, 0.14, 0.5);
+        public static final PIDController controller2 = new PIDController(4.2, 0.05, 0.5);
         public static final PIDController ampController = new PIDController(2, 0.1, 0.1);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
@@ -57,8 +57,8 @@ public class CrabbyConstants {
     }
     public static class IntakeConstants
     {
-        public static final double intakeSpeed = -0.7;
-        public static final double intakePurgeSpeed = 0.7;
+        public static final double intakeSpeed = -0.8;
+        public static final double intakePurgeSpeed = 0.8;
     }
     public static class IndexerConstants
     {

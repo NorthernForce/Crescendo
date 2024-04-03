@@ -64,7 +64,8 @@ public class Autos
             "S2.CSC",
             "S3.chaos",
             "S3.CS",
-            "S3.BERT"
+            "S3.BERT",
+            "S3.58"
             // "S3.brokenchaos",
             // "S3.C.V2",
             // "S3.LS.V1",
@@ -130,6 +131,9 @@ public class Autos
             () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
         NamedCommands.registerCommand("autoShot", new AutoShot(drive, setStateCommands, shooter, camera, wrist, intake, indexer, () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
             () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+        NamedCommands.registerCommand("everythingButShot", new EverythingButShot(drive, setStateCommands, shooter, camera, wrist, () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+                () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+                () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
         NamedCommands.registerCommand("spit", new Spit(shooter, wrist, indexer, intake));
             AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);
