@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CloseShot;
-import frc.robot.commands.LEDRelayBlink;
 import frc.robot.commands.LEDRelaySolid;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
@@ -125,9 +124,6 @@ public class CrabbyContainer implements RobotContainer
         ledRelay.setDefaultCommand(
             new LEDRelaySolid(ledRelay, false)
         );
-        Shuffleboard.getTab("General").add("LED On", new LEDRelaySolid(ledRelay, true).ignoringDisable(true));
-        Shuffleboard.getTab("General").add("LED Off", new LEDRelaySolid(ledRelay, false).ignoringDisable(true));
-        Shuffleboard.getTab("General").add("LED Blink", new LEDRelayBlink(ledRelay, .5).ignoringDisable(true));
         PortForwarder.add(5806, "10.1.72.11", 5800);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);
