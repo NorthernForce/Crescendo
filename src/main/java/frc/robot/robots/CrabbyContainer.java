@@ -3,6 +3,9 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.SwingUtilities;
+
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
@@ -216,7 +219,8 @@ public class CrabbyContainer implements RobotContainer
         //     drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
         // }
         dashboard.periodic();
-        displayer.repaint();
+        SwingUtilities.invokeLater(() -> displayer.repaint());
+        
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
