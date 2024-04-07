@@ -17,11 +17,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Axis;
-import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.StadiaController;
 
 public class XboxDisplayer extends JPanel {
     private Image xboxController;
@@ -46,20 +44,79 @@ public class XboxDisplayer extends JPanel {
     private int[][] flushDimensions = { { 160, 90 }, { 220, 90 } };
     private static JFrame frame;
     private static final String TITLE = "Key Logger ( >:) XDXDXDXDXXDXDXDXD OLOLOLOLOLOLOLO HEHEHEHEHHHEHHEHEEHE )";
-    private GenericHID driver;
     private ArrayList<Supplier<Double>> axis = new ArrayList<>();
     private ArrayList<Supplier<Boolean>> trigs = new ArrayList<>();
+    private int joyCurrent;
+
+    private enum JoystickButtons {
+        /** Left bumper. */
+        kLeftBumper(5),
+        /** Right bumper. */
+        kRightBumper(6),
+        /** Left stick. */
+        kLeftStick(9),
+        /** Right stick. */
+        kRightStick(10),
+        /** A. */
+        kA(1),
+        /** B. */
+        kB(2),
+        /** X. */
+        kX(3),
+        /** Y. */
+        kY(4),
+        /** Back. */
+        kBack(7),
+        /** Start. */
+        kStart(8);
+
+        public final int value;
+
+        JoystickButtons(int value) {
+            this.value = value;
+        }
+
+    }
+
+    private enum JoystickAxis {
+        /** Left X. */
+        kLeftX(0),
+        /** Right X. */
+        kRightX(4),
+        /** Left Y. */
+        kLeftY(1),
+        /** Right Y. */
+        kRightY(5),
+        /** Left trigger. */
+        kLeftTrigger(2),
+        /** Right trigger. */
+        kRightTrigger(3);
+
+        /** Axis value. */
+        public final int value;
+
+        JoystickAxis(int value) {
+            this.value = value;
+        }
+
+    }
 
     public XboxDisplayer() {
         xboxFile = new File("images/xbox_no_back.png");
-        if (DriverStation.getJoystickIsXbox(0)) {
-            driver = new XboxController(0);
-        }
-        driver = new XboxController(0);
         frame = new JFrame();
         frame.setBounds(0, 0, 950, 350);
         frame.setTitle(TITLE);
         setBackground(new Color(100, 100, 100));
+
+        if (!DriverStation.getJoystickIsXbox(0))
+            if (DriverStation.getJoystickType(0) == 21) {
+                for (StadiaController.Button button : StadiaController.Button.values()) {
+                    JoystickButtons.valueOf(button.name());
+                }
+                for (StadiaController.Axis axis : StadiaController.Axis.values()) {
+                    JoystickAxis.valueOf(axis.name());
+                }
+            }
 
         try {
             xboxController = ImageIO.read(xboxFile);
@@ -68,9 +125,9 @@ public class XboxDisplayer extends JPanel {
             JOptionPane.showMessageDialog(null, "Error loading image: " + e.getMessage(), "Error bad",
                     JOptionPane.ERROR_MESSAGE);
         }
-        // driver = new CommandXboxController(0);
+        // currentController = new CommandXboxController(0);
 
-        // else if(DriverStation.get)
+        // else if(currentControllerStation.get)
         // {
 
         // }
@@ -83,7 +140,6 @@ public class XboxDisplayer extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.RED);
-
         int circleSize = 22;
         int joystickSize = 35;
         Dimension squareSize = new Dimension(15, 16);
@@ -95,6 +151,14 @@ public class XboxDisplayer extends JPanel {
 
         // buttons
         for (int ii = 0; ii < 2; ii++) {
+            if (DriverStation.getJoystickName(ii).equals("")) {
+                if (ii == 1) {
+                    break;
+                } else {
+                    ii++;
+                }
+            }
+            joyCurrent = ii;
             int changeTrig = 0;
             int changeBy = 0;
             int change = ii == 0 ? 0 : 500;
@@ -130,7 +194,9 @@ public class XboxDisplayer extends JPanel {
                 // range[1] = " + iRange[1]);
                 if (iRange[0] == 0) {
                     g.setColor(trigs.get(i).get() ? Color.YELLOW : Color.RED);
-                    // if(driver.getRawButton(Button.kA.value)) System.out.println("A pressed");
+                    // if(DriverStation.getStickButton(joyCurrent, Button.kA.value))
+                    // System.out.println("A
+                    // pressed");
                     g.fillOval(buttonDimensions[i][0] + change, buttonDimensions[i][1], circleSize, circleSize);
                 } else if (iRange[0] == 1) {
                     g.setColor(trigs.get(i).get() ? Color.YELLOW : Color.RED);
@@ -167,62 +233,67 @@ public class XboxDisplayer extends JPanel {
                                     - (int) stroke / 2
                                     + (triggerDimensions[i - iRange[1]][1]) * axis.get(i - 12).get()),
                             (int) (triggerDimension.height - (int) stroke / 2),
-                            (int)((triggerDimension.width+triggerDimensions[i-iRange[1]][1])-(((triggerDimension.width + (triggerDimensions[i - iRange[1]][1]) + (int) stroke / 2
-                            + (1 - (triggerDimensions[i - iRange[1]][1] + triggerDimension.width))
-                                    * axis.get(i - 12).get())
-                            - (int) stroke / 2
-                            + (triggerDimensions[i - iRange[1]][1]) * axis.get(i - 12).get()))));
+                            (int) ((triggerDimension.width + triggerDimensions[i - iRange[1]][1])
+                                    - (((triggerDimension.width + (triggerDimensions[i - iRange[1]][1])
+                                            + (int) stroke / 2
+                                            + (1 - (triggerDimensions[i - iRange[1]][1] + triggerDimension.width))
+                                                    * axis.get(i - 12).get())
+                                            - (int) stroke / 2
+                                            + (triggerDimensions[i - iRange[1]][1]) * axis.get(i - 12).get()))));
                     g2d.setColor(orig);
                     changeTrig++;
 
                 } else if (iRange[0] == 5) {
-                    g.setColor(trigs.get(i-2).get() ? Color.YELLOW : Color.RED);
+                    g.setColor(trigs.get(i - 2).get() ? Color.YELLOW : Color.RED);
                     g.fillRect(flushDimensions[i - iRange[1]][0] + change, flushDimensions[i - iRange[1]][1],
                             flushDimension.height, flushDimension.width);
                 }
-
             }
             Color orig = g.getColor();
             g.setColor(Color.BLACK);
             g.fillRect(440, 0, 10, frame.getHeight());
             g.setFont(new Font("arial", Font.BOLD, 30));
-            g.drawString("Driver", 10, 30);
-            g.drawString("Manipulator", 460, 30);
+            g.drawString("Driver " + (DriverStation.getJoystickIsXbox(0) ? "(Connected)" : "(Not connected)"), 10, 30);
+            g.drawString("Manipulator " + (DriverStation.getJoystickIsXbox(1) ? "(Connected)" : "(Not connected)"), 460,
+                    30);
             g.setColor(orig);
+
+            // joysticks
+            DriverStationJNI.setJoystickOutputs((byte) 0, 1, (short) 1, (short) 1);
         }
-        // joysticks
+
     }
 
     public void setTrigs() {
-        trigs.add(() -> driver.getRawButton(Button.kA.value));
-        trigs.add(() -> driver.getRawButton(Button.kY.value));
-        trigs.add(() -> driver.getRawButton(Button.kX.value));
-        trigs.add(() -> driver.getRawButton(Button.kB.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kY.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kY.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kX.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kB.value));
 
-        trigs.add(() -> driver.getPOV(0) == 180);
-        trigs.add(() -> driver.getPOV(0) == 90);
-        trigs.add(() -> driver.getPOV(0) == 270);
-        trigs.add(() -> driver.getPOV(0) == 0);
-        trigs.add(() -> driver.getPOV(0) == 135);
-        trigs.add(() -> driver.getPOV(0) == 315);
-        trigs.add(() -> driver.getPOV(0) == 45);
-        trigs.add(() -> driver.getPOV(0) == 225);
+        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 180);
+        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 90);
+        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 270);
+        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 0);
+        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 135);
+        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 315);
+        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 45);
+        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 225);
 
-        trigs.add(() -> driver.getRawButton(Button.kLeftStick.value));
-        trigs.add(() -> driver.getRawButton(Button.kRightStick.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kLeftStick.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kRightStick.value));
 
-        trigs.add(() -> driver.getRawButton(Button.kLeftBumper.value));
-        trigs.add(() -> driver.getRawButton(Button.kRightBumper.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kLeftBumper.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kRightBumper.value));
 
-        trigs.add(() -> driver.getRawButton(Button.kBack.value));
-        trigs.add(() -> driver.getRawButton(Button.kStart.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kBack.value));
+        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kStart.value));
 
-        axis.add(() -> driver.getRawAxis(Axis.kLeftX.value));
-        axis.add(() -> driver.getRawAxis(Axis.kLeftY.value));
-        axis.add(() -> driver.getRawAxis(Axis.kRightX.value));
-        axis.add(() -> driver.getRawAxis(Axis.kRightY.value));
-        axis.add(() -> driver.getRawAxis(Axis.kLeftTrigger.value));
-        axis.add(() -> driver.getRawAxis(Axis.kRightTrigger.value));
+        axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kLeftX.value));
+        axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kLeftY.value));
+        axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kRightX.value));
+        axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kRightY.value));
+        axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kLeftTrigger.value));
+        axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kRightTrigger.value));
     }
 
 }
