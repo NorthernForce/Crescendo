@@ -19,13 +19,14 @@ import javax.swing.JPanel;
 
 import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class XboxDisplayer extends JPanel {
     private Image xboxController;
     private int[][] buttonDimensions = { { 266, 119 }, // y
-            { 266, 79 }, // a
+            { 286, 99 }, // a
             { 245, 99 }, // b
-            { 286, 99 } }; // x
+            { 266, 79 } }; // x
 
     private int[][] arrowDimensions = { { 154, 165 }, // down
             { 169, 149 }, // right
@@ -55,82 +56,6 @@ public class XboxDisplayer extends JPanel {
     private Supplier<int[][]> flushDimensions = ((Supplier<int[][]>) () -> {
         return joyCurrent == 1 ? flushDimensionsDriver : flushDimensionsManipulator;
     });
-
-    private enum JoystickButtons {
-        /** Left bumper. */
-        kLeftBumper(5),
-        /** Right bumper. */
-        kRightBumper(6),
-        /** Left stick. */
-        kLeftStick(9),
-        /** Right stick. */
-        kRightStick(10),
-        /** A. */
-        kA(1),
-        /** B. */
-        kB(2),
-        /** X. */
-        kX(3),
-        /** Y. */
-        kY(4),
-        /** Back. */
-        kBack(7),
-        /** Left stick button. */
-        kLeftStickStadia(7),
-        /** Right stick button. */
-        kRightStickStadia(8),
-        /** Ellipses button. */
-        kEllipses(9),
-        /** Hamburger button. */
-        kHamburger(10),
-        /** Stadia button. */
-        kStadia(11),
-        /** Google button. */
-        kGoogle(14),
-        /** Frame button. */
-        kFrame(15),
-        /** Start. */
-        kStart(8),
-        /** Right trigger button. */
-        kRightTriggerStadia(12),
-        /** Left trigger button. */
-        kLeftTriggerStadia(13);
-
-        public final int value;
-
-        JoystickButtons(int value) {
-            this.value = value;
-        }
-
-    }
-
-    private enum JoystickAxis {
-        /** Left X. */
-        kLeftX(0),
-        /** Right Y axis. */
-        kRightYStadia(4),
-        /** Right X. */
-        kRightX(4),
-        /** Right X axis. */
-        kRightXStadia(3),
-        /** Left Y. */
-        kLeftY(1),
-        /** Right Y. */
-        kRightY(5),
-        /** Left trigger. */
-        kLeftTrigger(2),
-        /** Right trigger. */
-        kRightTrigger(3);
-
-        /** Axis value. */
-        public final int value;
-
-        JoystickAxis(int value) {
-            this.value = value;
-        }
-
-    }
-
     public XboxDisplayer() {
         xboxFile = new File("images/xbox_no_back.png");
         frame = new JFrame();
@@ -152,8 +77,18 @@ public class XboxDisplayer extends JPanel {
         // }
         frame.add(this);
         frame.setVisible(true);
-        setTrigs(0);
-        setTrigs(1);
+        for (int port = 0; port < 2; port++) {
+//            if (joystickHasXboxControls(port)) {
+                setTrigs(port, XboxButtons.values(), XboxAxis.values());
+            // } else if (joystickHasStadiaControls(port)) {
+            //     setTrigs(port, StadiaButtons.values(), StadiaAxis.values());
+            // } else if (joystickHasDualsenseControls(port)) {
+            //     setTrigs(port, PS5Buttons.values(), PS5Axis.values());
+            // } else if (joystickHasPS4Controls(port)) {
+            //     setTrigs(port, PS4Buttons.values(), PS4Axis.values());
+            // }
+        }
+
     }
 
     @Override
@@ -170,7 +105,7 @@ public class XboxDisplayer extends JPanel {
         // buttons
         for (int ii = 0; ii < 2; ii++) {
             int totalLength = 0;
-            if (DriverStation.getJoystickName(ii).equals("")) {
+            if (!joystickConnected(ii)) {
                 if (ii == 1) {
                     break;
                 } else {
@@ -201,13 +136,6 @@ public class XboxDisplayer extends JPanel {
 
             }
             totalLength += bumperDimensions.length;
-            for (int i = 0; i < arrowDimensions.length; i++) {
-                g.setColor(trigs.get(i + totalLength).get() ? Color.YELLOW : Color.RED);
-                g.fillRect(arrowDimensions[i][0] + change, arrowDimensions[i][1],
-                        squareSize.width,
-                        squareSize.height);
-            }
-            totalLength += arrowDimensions.length;
             int totalAxisLength = 0;
             for (int i = 0; i < joySticksDimensions.length; i++) {
                 g.setColor(trigs.get(i + totalLength).get() ? Color.YELLOW : Color.RED);
@@ -254,6 +182,14 @@ public class XboxDisplayer extends JPanel {
                 g.fillRect(flushDimensions.get()[i][0] + change, flushDimensions.get()[i][1],
                         flushDimension.height, flushDimension.width);
             }
+            for (int i = 0; i < arrowDimensions.length; i++) {
+                g.setColor(trigs.get(i + totalLength).get() ? Color.YELLOW : Color.RED);
+                g.fillRect(arrowDimensions[i][0] + change, arrowDimensions[i][1],
+                        squareSize.width,
+                        squareSize.height);
+            }
+            totalLength += arrowDimensions.length;
+
 
         }
         Color orig = g.getColor();
@@ -269,75 +205,306 @@ public class XboxDisplayer extends JPanel {
         DriverStationJNI.setJoystickOutputs((byte) 0, 1, (short) 0, (short) 0);
     }
 
-    public void setTrigs(int port) {
-
-        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kA.value));
-        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kY.value));
-        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kX.value));
-        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kB.value));
-
-        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kLeftBumper.value));
-        trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kRightBumper.value));
-
-        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 180);
-        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 90);
-        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 270);
-        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 0);
-        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 135);
-        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 315);
-        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 45);
-        trigs.add(() -> DriverStation.getStickPOV(joyCurrent, 0) == 225);
-
-        axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kLeftX.value));
-        axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kLeftY.value));
-
-        if (joystickHasStadiaControls(port)) {
-            axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kRightXStadia.value));
-            axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kRightYStadia.value));
-            axis.add(() -> (double) (DriverStation.getStickButton(joyCurrent, JoystickButtons.kLeftTriggerStadia.value)
-                    ? 1
-                    : 0));
-            axis.add(() -> (double) (DriverStation.getStickButton(joyCurrent, JoystickButtons.kRightTriggerStadia.value)
-                    ? 1
-                    : 0));
-
+    public void setTrigs(int port, Enum<?>[] buttons, Enum<?>[] axes) {
+        for (Enum<?> button : buttons) {
+            trigs.add(() -> DriverStation.getStickButton(joyCurrent, ((Enum<?>) button).ordinal() + 1));
         }
-
-        if (joystickHasXboxControls(port)) {
-            axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kRightX.value));
-            axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kRightY.value));
-            axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kLeftTrigger.value));
-            axis.add(() -> DriverStation.getStickAxis(joyCurrent, JoystickAxis.kRightTrigger.value));
+        for(int i = 0; i < 360; i+=45) 
+        {
+            final int index = i;
+            trigs.add(() -> DriverStation.getStickPOV(port, 0) == index);
         }
-
-        if (joystickHasXboxControls(port)) {
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kLeftStick.value));
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kRightStick.value));
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kBack.value));
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kStart.value));
+        for (Enum<?> axe : axes) {
+            axis.add(() -> DriverStation.getStickAxis(joyCurrent, ((Enum<?>) axe).ordinal()));
         }
-
-        if (joystickHasStadiaControls(port)) {
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kLeftStickStadia.value));
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kRightStickStadia.value));
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kEllipses.value));
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kHamburger.value));
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kGoogle.value));
-            trigs.add(() -> DriverStation.getStickButton(joyCurrent, JoystickButtons.kFrame.value));
-        }
-
     }
 
+    /**
+     * This is the getter method to get if a controller has the same controls as an
+     * Xbox controller. This uses the get name method.
+     * 
+     * @param port the port for the method to check (0 = driver, 1 = manipulator)
+     * @return returns whether the controller has the same controls as an Xbox
+     *         controller as a boolean.
+     */
     public boolean joystickHasXboxControls(int port) {
         return DriverStation.getJoystickName(port).contains("Xbox")
                 || DriverStation.getJoystickName(port).contains("Logitech");
     }
 
+    /**
+     * This is the getter method to get if a controller has the same controls as a
+     * Stadia controller. This uses the get name method.
+     * 
+     * @param port the port for the method to check (0 = driver, 1 = manipulator)
+     * @return returns whether the controller has the same controls as a Stadia
+     *         controller as a boolean.
+     */
     public boolean joystickHasStadiaControls(int port) {
         return DriverStation.getJoystickName(port).contains("Stadia");
     }
 
+    /**
+     * This is the getter method to get if a controller has the same controls as a
+     * Dualsense controller. This uses the get name method.
+     * 
+     * @param port the port for the method to check (0 = driver, 1 = manipulator)
+     * @return returns whether the controller has the same controls as a PS5
+     *         controller (Dualsense) as a boolean.
+     */
+    public boolean joystickHasDualsenseControls(int port) {
+        return DriverStation.getJoystickName(port).contains("Dualsense");
+    }
+    /**
+     * This is the getter method to get if a controller has the same controls as a
+     * Dualsense controller. This uses the get name method.
+     * 
+     * @param port the port for the method to check (0 = driver, 1 = manipulator)
+     * @return returns whether the controller has the same controls as a PS5
+     *         controller (Dualsense) as a boolean.
+     */
+    public boolean joystickHasPS4Controls(int port) {
+        return DriverStation.getJoystickName(port).contains("Dualsense");
+    }
+
+    /**
+     * This is the getter method to check if a controller is connected to a port.
+     * 
+     * @param port the port for the method to check (0 = driver, 1 = manipulator)
+     * @return returns whether a controller is connected to a port as a boolean
+     */
     public boolean joystickConnected(int port) {
         return !DriverStation.getJoystickName(port).equals("");
+    }
+
+    public enum XboxButtons {
+        /** A. */
+        kA(1),
+        /** B. */
+        kB(2),
+        /** X. */
+        kX(3),
+        /** Y. */
+        kY(4),
+        /** Left bumper. */
+        kLeftBumper(5),
+        /** Right bumper. */
+        kRightBumper(6),
+        /** Left stick. */
+        kLeftStick(9),
+        /** Right stick. */
+        kRightStick(10),
+        /** Back. */
+        kBack(7),
+        /** Start. */
+        kHamburger(8);
+
+        /** Button value. */
+        public final int value;
+
+        XboxButtons(int value) {
+            this.value = value;
+        }
+
+    }
+
+    public enum XboxAxis {
+        /** Left X. */
+        kLeftX(0),
+        /** Right X. */
+        kRightX(4),
+        /** Left Y. */
+        kLeftY(1),
+        /** Right Y. */
+        kRightY(5),
+        /** Left trigger. */
+        kLeftTrigger(2),
+        /** Right trigger. */
+        kRightTrigger(3);
+
+        /** Axis value. */
+        public final int value;
+
+        XboxAxis(int value) {
+            this.value = value;
+        }
+    }
+
+    public enum PS5Buttons {
+        /** Square button. */
+        kX(1),
+        /** X button. */
+        kA(2),
+        /** Circle button. */
+        kB(3),
+        /** Triangle button. */
+        kY(4),
+        /** Left trigger 1 button. */
+        kLeftBumper(5),
+        /** Right trigger 1 button. */
+        kRightBumper(6),
+        /** Left trigger 2 button. */
+        kLeftTrigger(7),
+        /** Right trigger 2 button. */
+        kRightTrigger(8),
+        /** Create button. */
+        kBack(9),
+        /** Options button. */
+        kHamburger(10),
+        /** Left stick button. */
+        kLeftStick(11),
+        /** Right stick button. */
+        kRightStick(12),
+        /** PlayStation button. */
+        kHome(13),
+        /** Touchpad click button. */
+        kTouchpad(14);
+
+        /** Button value. */
+        public final int value;
+
+        PS5Buttons(int index) {
+            this.value = index;
+        }
+    }
+
+    public enum PS5Axis {
+        /** Left X axis. */
+        kLeftX(0),
+        /** Left Y axis. */
+        kLeftY(1),
+        /** Right X axis. */
+        kRightX(2),
+        /** Right Y axis. */
+        kRightY(5),
+        /** Left Trigger 2. */
+        kLeftTrigger(3),
+        /** Right Trigger 2. */
+        kRightTrigger(4);
+
+        /** Axis value. */
+        public final int value;
+
+        PS5Axis(int index) {
+            value = index;
+        }
+    }
+
+    public enum PS4Buttons {
+        /** Square button. */
+        kX(1),
+        /** X button. */
+        kA(2),
+        /** Circle button. */
+        kB(3),
+        /** Triangle button. */
+        kY(4),
+        /** Left Trigger 1 button. */
+        kLeftBumper(5),
+        /** Right Trigger 1 button. */
+        kRightBumper(6),
+        /** Left Trigger 2 button. */
+        kLeftTrigger(7),
+        /** Right Trigger 2 button. */
+        kRightTrigger(8),
+        /** Share button. */
+        kBack(9),
+        /** Option button. */
+        kHamburger(10),
+        /** Left stick button. */
+        kLeftStick(11),
+        /** Right stick button. */
+        kRightStick(12),
+        /** PlayStation button. */
+        kHome(13),
+        /** Touchpad click button. */
+        kTouchpad(14);
+
+        /** Button value. */
+        public final int value;
+
+        PS4Buttons(int index) {
+            this.value = index;
+        }
+    }
+
+    public enum PS4Axis {
+        /** Left X axis. */
+        kLeftX(0),
+        /** Left Y axis. */
+        kLeftY(1),
+        /** Right X axis. */
+        kRightX(2),
+        /** Right Y axis. */
+        kRightY(5),
+        /** Left Trigger 2. */
+        kLeftTrigger(3),
+        /** Right Trigger 2. */
+        kRightTrigger(4);
+
+        /** Axis value. */
+        public final int value;
+
+        PS4Axis(int index) {
+            value = index;
+        }
+    }
+
+    public enum StadiaButtons {
+        /** A button. */
+        kA(1),
+        /** B button. */
+        kB(2),
+        /** X Button. */
+        kX(3),
+        /** Y Button. */
+        kY(4),
+        /** Left bumper button. */
+        kLeftBumper(5),
+        /** Right bumper button. */
+        kRightBumper(6),
+        /** Left stick button. */
+        kLeftStick(7),
+        /** Right stick button. */
+        kRightStick(8),
+        /** Ellipses button. */
+        kBack(9),
+        /** Hamburger button. */
+        kHamburger(10),
+        /** Stadia button. */
+        kHome(11),
+        /** Right trigger button. */
+        kRightTrigger(12),
+        /** Left trigger button. */
+        kLeftTrigger(13),
+        /** Google button. */
+        kGoogle(14),
+        /** Frame button. */
+        kFrame(15);
+
+        /** Button value. */
+        public final int value;
+
+        StadiaButtons(int value) {
+            this.value = value;
+        }
+    }
+
+    public enum StadiaAxis {
+        /** Left X axis. */
+        kLeftX(0),
+        /** Right X axis. */
+        kRightX(3),
+        /** Left Y axis. */
+        kLeftY(1),
+        /** Right Y axis. */
+        kRightY(4);
+
+        /** Axis value. */
+        public final int value;
+
+        StadiaAxis(int value) {
+            this.value = value;
+        }
     }
 }
