@@ -107,8 +107,8 @@ public class CrabbyConstants {
         public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
         public static final double closeShotSpeed = 42; // TODO
-        public static final double ampBottomSpeed = 24; // TODO
-        public static final double ampTopSpeed = 12; // TODO
+        public static final double ampBottomSpeed = 22; // TODO
+        public static final double ampTopSpeed = 8; // TODO
         public static final double tolerance = 2.5; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }

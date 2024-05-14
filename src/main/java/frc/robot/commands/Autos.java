@@ -128,12 +128,12 @@ public class Autos
         NamedCommands.registerCommand("prepAutoShot", new AutoPrepShot(drive, camera, shooter, wrist,
             () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
             () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
-            () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+            () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble())).plus(Rotation2d.fromDegrees(0))));
         NamedCommands.registerCommand("autoShot", new AutoShot(drive, setStateCommands, shooter, camera, wrist, intake, indexer, () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
-            () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+            () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble())).plus(Rotation2d.fromDegrees(0))));
         NamedCommands.registerCommand("everythingButShot", new EverythingButShot(drive, setStateCommands, shooter, camera, wrist, () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
                 () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
-                () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+                () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble())).plus(Rotation2d.fromDegrees(0))));
         NamedCommands.registerCommand("spit", new Spit(shooter, wrist, indexer, intake));
             AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);

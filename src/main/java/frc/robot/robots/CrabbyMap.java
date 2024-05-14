@@ -47,7 +47,7 @@ public class CrabbyMap {
     public final NFRSparkMax climberMotor = new NFRSparkMax(MotorType.kBrushless, 13);
     {
         climberMotor.restoreFactoryDefaults();
-        climberMotor.setSmartCurrentLimit(40);
+        climberMotor.setSmartCurrentLimit(80);
         climberMotor.setIdleMode(IdleMode.kBrake);
         climberMotor.burnFlash();
     }
