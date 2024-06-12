@@ -16,6 +16,7 @@ public class BeachBallExtending {
     public void run() {
         max.set(CrabbyConstants.OffSeasonExtendingConstants.extendSpeed * (startingState ? 1.0 : -1.0));
 
+
     }
 
     public boolean isExtended() {
