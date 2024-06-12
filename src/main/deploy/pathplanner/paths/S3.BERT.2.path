@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.41058639382236,
-        "y": 0.7601200387585969
+        "x": 8.2468682316282,
+        "y": 0.7835083476434771
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.865899499222918,
-        "y": 1.0136137523968551
+        "x": 5.702181337028758,
+        "y": 1.0370020612817359
       },
       "isLocked": false,
       "linkedName": "S3.BERT.1"
@@ -32,10 +32,10 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 4.4,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 120.0,
-    "maxAngularAcceleration": 240.0
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,

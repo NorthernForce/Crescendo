@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 2.7,
-        "y": 6.9
+        "y": 6.973553801068638
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.981469498859725,
-        "y": 7.560263246042593
+        "x": 3.9814694988597252,
+        "y": 7.633817047111231
       },
       "isLocked": false,
       "linkedName": "S3.CS.4_START"
     },
     {
       "anchor": {
-        "x": 8.270256540513081,
-        "y": 7.244070355124084
+        "x": 8.328251722791663,
+        "y": 7.561394697661785
       },
       "prevControl": {
-        "x": 7.270256540513081,
-        "y": 7.244070355124084
+        "x": 7.328251722791663,
+        "y": 7.561394697661785
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,10 +32,10 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 4.4,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 120.0,
-    "maxAngularAcceleration": 240.0
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
