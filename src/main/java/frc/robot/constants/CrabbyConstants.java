@@ -125,7 +125,8 @@ public class CrabbyConstants {
     public static class OffSeasonExtendingConstants
     {
         public static final double extendSpeed = 1; //TODO get speed
-        public static final int limitSwitch = 23; //TODO get channel
+        public static final int limitSwitch1 = 23; //TODO get channel
+        public static final int limitSwitch2 = 24; //TODO get channel
     }
     public static class OrangePiConstants
     {

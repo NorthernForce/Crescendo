@@ -7,16 +7,25 @@ import frc.robot.constants.CrabbyConstants;
 
 public class BeachBallExtending {
     private NFRSparkMax max;
-    private DigitalInput limitSwitch = new DigitalInput(CrabbyConstants.OffSeasonExtendingConstants.limitSwitch);
+    private boolean startingState;
+    private DigitalInput limitSwitch = new DigitalInput(CrabbyConstants.OffSeasonExtendingConstants.limitSwitch1);
     public BeachBallExtending(NFRSparkMax max) {
         this.max = max;
+        startingState = limitSwitch.get();
     }
     public void run() {
-        max.set(CrabbyConstants.OffSeasonExtendingConstants.extendSpeed * (isExtended() ? 1.0 : -1.0));
+        max.set(CrabbyConstants.OffSeasonExtendingConstants.extendSpeed * (startingState ? 1.0 : -1.0));
+
     }
 
     public boolean isExtended() {
         return limitSwitch.get();
     }
 
+    public boolean isDone() {
+        return limitSwitch.get() != startingState;
+    }
+    public void stop() {
+        max.set(0);
+    }
 }

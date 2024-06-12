@@ -12,4 +12,12 @@ public class ExtendToBeachball extends Command{
     public void initialize() {
         motor.run();
     }
+
+    public void end(boolean interrupted) {
+        motor.stop();
+    }
+
+    public boolean isFinished() {
+        return motor.isDone();
+    }
 }
