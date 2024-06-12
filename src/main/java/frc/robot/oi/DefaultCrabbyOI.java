@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AimLobbage;
 import frc.robot.commands.CloseShotPreset;
+import frc.robot.commands.ExtendToBeachball;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
@@ -134,6 +135,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
 
+        controller.povLeft().onTrue(new ExtendToBeachball(container.getTheBall));
+        
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,

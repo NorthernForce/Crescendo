@@ -122,6 +122,11 @@ public class CrabbyConstants {
     {
         public static final XavierConfiguration config = new XavierConfiguration("xavier", "note_detection");
     }
+    public static class OffSeasonExtendingConstants
+    {
+        public static final double extendSpeed = 1; //TODO get speed
+        public static final int limitSwitch = 23; //TODO get channel
+    }
     public static class OrangePiConstants
     {
         public static final double cameraHeight = Units.inchesToMeters(26);
