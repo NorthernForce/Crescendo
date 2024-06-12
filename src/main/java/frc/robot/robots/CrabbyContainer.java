@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CloseShot;
+import frc.robot.commands.LEDRelaySolid;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
@@ -40,6 +41,7 @@ import frc.robot.subsystems.BeachBallExtending;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDRelay;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.subsystems.NFRPhotonCamera;
 import frc.robot.subsystems.Shooter;
@@ -59,6 +61,7 @@ public class CrabbyContainer implements RobotContainer
 
     public final NFRPhotonCamera orangePi;
     public final Xavier xavier;
+    public final LEDRelay ledRelay;
     public final WristJoint wristJoint;
     public final CrabbyMap map;
     public final CrabbyDashboard dashboard;
@@ -117,6 +120,11 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("Developer").addDouble("Distance", () -> lastRecordedDistance);
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
+
+        ledRelay = new LEDRelay(0);
+        ledRelay.setDefaultCommand(
+            new LEDRelaySolid(ledRelay, false)
+        );
         PortForwarder.add(5806, "10.1.72.11", 5800);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);

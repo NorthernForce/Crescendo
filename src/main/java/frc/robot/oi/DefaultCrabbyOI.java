@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.LEDRelaySolid;
 import frc.robot.commands.AimLobbage;
 import frc.robot.commands.CloseShotPreset;
 import frc.robot.commands.ExtendToBeachball;
@@ -47,9 +48,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 CrabbyConstants.IntakeConstants.intakePurgeSpeed, CrabbyConstants.IndexerConstants.indexerPurgeSpeed).withTimeout(0.20)
                 .andThen(new RunIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerSpeed,
                     CrabbyConstants.IntakeConstants.intakeSpeed))));
-        
-        new Trigger(() -> container.indexer.getBeamBreak().beamBroken()).onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
-        
+
+        new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
+            .onTrue(new RumbleController(controller.getHID(), 0.5, 0.5));
+
         controller.b().whileTrue(new PurgeIndexer(container.indexer, container.intake, CrabbyConstants.IntakeConstants.intakePurgeSpeed,
             CrabbyConstants.IndexerConstants.indexerPurgeSpeed ));
 
@@ -65,35 +67,42 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)).minus(Rotation2d.fromDegrees(0 * container.lastRecordedDistance)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)).plus(Rotation2d.fromDegrees(0)))));
         
         controller.rightTrigger().and(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
-                () -> CrabbyConstants.ShooterConstants.ampBottomSpeed))
-            .alongWith(new SideDrive(container.drive, container.setStateCommands, CrabbyConstants.DriveConstants.controller,
-                () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
-                () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
-                () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? Rotation2d.fromDegrees(90) : Rotation2d.fromDegrees(-90), true, true, () -> {
-                    var t = container.orangePi.getAmpTagYaw();
-                    if (t.isPresent())
-                    {
-                        if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
-                        {
-                            return Optional.of(t.get().minus(container.drive.getRotation().minus(Rotation2d.fromDegrees(90))).getRadians());
-                        }
-                        else
-                                    return Optional.of(t.get()
-                                            .minus(container.drive.getRotation().minus(Rotation2d.fromDegrees(-90)))
-                                            .getRadians());
-                    }
-                    return Optional.empty();
-                }, CrabbyConstants.DriveConstants.ampController))
-        );
+                () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
+        //     .alongWith(new SideDrive(container.drive, container.setStateCommands, CrabbyConstants.DriveConstants.controller,
+        //         () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
+        //         () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
+        //         () -> DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? Rotation2d.fromDegrees(90) : Rotation2d.fromDegrees(-90), true, true, () -> {
+        //             var t = container.orangePi.getAmpTagYaw();
+        //             if (t.isPresent())
+        //             {
+        //                 if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red)
+        //                 {
+        //                     return Optional.of(t.get().minus(container.drive.getRotation().minus(Rotation2d.fromDegrees(90))).getRadians());
+        //                 }
+        //                 else
+        //                             return Optional.of(t.get()
+        //                                     .minus(container.drive.getRotation().minus(Rotation2d.fromDegrees(-90)))
+        //                                     .getRadians());
+        //             }
+        //             return Optional.empty();
+        //         }, CrabbyConstants.DriveConstants.ampController))
+        // );
 
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
+        
+        controller.start().toggleOnTrue(new RampShooterWithDifferential(
+            container.shooter, () -> container.shooterSpeed.getDouble(0) + container.topRollerChange.getDouble(0),
+                () -> container.shooterSpeed.getDouble(0)));
+        
+        new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
+            .whileTrue(new LEDRelaySolid(container.ledRelay, true));
     }
     @Override
     public void bindDriverToJoystick(CrabbyContainer container, CommandGenericHID joystick)
@@ -161,7 +170,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
                 () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)).plus(Rotation2d.fromDegrees(0)))));
         
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
     }
