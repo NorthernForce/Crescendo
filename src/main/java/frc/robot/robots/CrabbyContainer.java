@@ -78,6 +78,7 @@ public class CrabbyContainer implements RobotContainer
     public CrabbyOI oi;
     public final Climber climber;
     public final BeachBallExtending getTheBall;
+    public final Intake roller;
     public CrabbyContainer()
     {
         dashboard = new CrabbyDashboard();
@@ -85,6 +86,9 @@ public class CrabbyContainer implements RobotContainer
         map = new CrabbyMap();
         intake = new Intake(map.intakeMotor);
         getTheBall = new BeachBallExtending(map.extendMotor);
+
+        roller = new Intake(map.beachBallRollerMotor);
+
         climber = new Climber(map.climberMotor);
         Shuffleboard.getTab("General").addDouble("Climber Position", () -> climber.getPosition());
 

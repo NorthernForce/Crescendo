@@ -59,4 +59,8 @@ public class CrabbyMap {
         extendMotor.setFollowerOppose(22);
         extendMotor.burnFlash();
     }
+    public final NFRSparkMax beachBallRollerMotor = new NFRSparkMax(MotorType.kBrushless, 0); //TODO: Find motor id
+    {
+        beachBallRollerMotor.setIdleMode(IdleMode.kBrake);
+    }
 }
