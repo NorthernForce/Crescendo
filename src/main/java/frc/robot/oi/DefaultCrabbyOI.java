@@ -99,9 +99,6 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
             .whileTrue(new LEDRelaySolid(container.ledRelay, true));
-
-        controller.leftTrigger().and(() -> container.getTheBall.isExtended())
-            .whileTrue(new RunIntake(container.roller, CrabbyConstants.BeachBallConstants.speed));
     }
     @Override
     public void bindDriverToJoystick(CrabbyContainer container, CommandGenericHID joystick)
@@ -173,8 +170,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
 
-        controller.leftTrigger().and(() -> container.getTheBall.isExtended())
-            .whileTrue(new RunIntake(container.roller, CrabbyConstants.BeachBallConstants.speed));
+        controller.x().whileTrue(new RunIntake(container.roller, CrabbyConstants.BeachBallConstants.speed));
     }
     @Override
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick)
