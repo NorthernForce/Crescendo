@@ -105,7 +105,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
             .whileTrue(new LEDRelaySolid(container.ledRelay, true));
         
-        controller.povRight().onTrue(new RetrieveNote(
+        controller.povRight().whileTrue(new RetrieveNote(
             container.xavier,
             container.drive,
             container.setStateCommands,
