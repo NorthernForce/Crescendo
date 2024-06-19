@@ -56,7 +56,7 @@ public class CrabbyMap {
     {
         extendMotor.restoreFactoryDefaults();
         extendMotor.setIdleMode(IdleMode.kBrake);
-        extendMotor.setFollowerOppose(22);
+        extendMotor.setFollowerOppose(0);
         extendMotor.burnFlash();
     }
 }
