@@ -22,7 +22,9 @@ public class NFRWristContinuousAngle extends Command
     }
     @Override public void execute()
     {
-        m_wrist.getController().setPositionTrapezoidal(0, m_angle.get().getRotations());
+        var ang =  m_angle.get();
+        m_wrist.getController().setPositionTrapezoidal(0, ang.getRotations());
+        m_wrist.setTargetAngle(ang);
     }
     @Override public boolean isFinished()
     {

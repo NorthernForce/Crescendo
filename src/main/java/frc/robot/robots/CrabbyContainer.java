@@ -3,6 +3,8 @@ package frc.robot.robots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
@@ -11,6 +13,8 @@ import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +26,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
@@ -225,6 +230,12 @@ public class CrabbyContainer implements RobotContainer
             lastRecordedDistance = distance.get();
         }
         dashboard.periodic();
+        var predictedAngle = getPredictedAngle();
+        if (predictedAngle.isPresent())
+        {
+            SmartDashboard.putNumber("Predicted Angle", predictedAngle.get().getDegrees());
+            SmartDashboard.putNumber("Predicted Distance", getPredictedDistance());
+        }
     }
     @Override
     public List<AutonomousRoutine> getAutonomousRoutines() {
@@ -247,5 +258,36 @@ public class CrabbyContainer implements RobotContainer
     public Dashboard getDashboard()
     {
         return dashboard;
+    }
+    public double distance(double x, double y)
+    {
+        return Math.sqrt(x * x + y * y);
+    }
+    public double getPredictedDistance()
+    {
+        var speeds = drive.getChassisSpeeds();
+        double r = distance(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond) * 0.25;
+        double A = Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
+        double B = orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(0)).getRadians();
+        return Math.sqrt(r * r + lastRecordedDistance * lastRecordedDistance - 2 * r * lastRecordedDistance * Math.cos(A - B));
+    }
+    public Optional<Rotation2d> getPredictedAngle()
+    {
+        if (orangePi.getSpeakerTagYaw().isPresent())
+        {
+            var speeds = drive.getChassisSpeeds();
+            double r = distance(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond) * 0.25;
+            double B = orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(0)).getRadians();
+            SmartDashboard.putNumber("B", B);
+            if (Math.abs(r) <= 0.1)
+            {
+                return orangePi.getSpeakerTagYaw();
+            }
+            double D = Math.acos((r * r + getPredictedDistance() * getPredictedDistance() - lastRecordedDistance * lastRecordedDistance) /
+                (2 * r * getPredictedDistance()));
+            SmartDashboard.putNumber("D", D);
+            return Optional.of(Rotation2d.fromRadians(MathUtil.angleModulus(Math.PI - (Math.PI - B) - (Math.PI - D))));
+        }
+        else return Optional.empty();
     }
 }

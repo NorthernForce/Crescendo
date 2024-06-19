@@ -15,12 +15,14 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.NFRPhotonCamera.NFRPhotonCameraConfiguration;
 import frc.robot.subsystems.Xavier.XavierConfiguration;
@@ -41,7 +43,7 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
-        public static final PIDController controller = new PIDController(4.2, 0.14, 0.5);
+        public static final ProfiledPIDController controller = new ProfiledPIDController(4.2, 0.14, 0.5, new Constraints(5, 5));
         public static final PIDController controller2 = new PIDController(4.2, 0.05, 0.5);
         public static final PIDController ampController = new PIDController(2, 0.1, 0.1);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(

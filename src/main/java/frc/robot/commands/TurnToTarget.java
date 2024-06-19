@@ -9,6 +9,7 @@ import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -19,7 +20,7 @@ public class TurnToTarget extends Command
 {
     protected final NFRSwerveDrive drive;
     protected final NFRSwerveModuleSetState[] setStateCommands;
-    protected final PIDController controller;
+    protected final ProfiledPIDController controller;
     protected final DoubleSupplier xSupplier, ySupplier, thetaSupplier;
     protected final Supplier<Optional<Rotation2d>> targetSupplier;
     protected final boolean optimize, fieldRelative;
@@ -37,7 +38,7 @@ public class TurnToTarget extends Command
      * @param optimize whether to optimize each swerve module (cut to the quickest possible state)
      * @param fieldRelative whether the translational control will be relative to the field or the robot
      */
-    public TurnToTarget(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, PIDController controller,
+    public TurnToTarget(NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, ProfiledPIDController controller,
         DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier thetaSupplier, Supplier<Optional<Rotation2d>> targetSupplier,
         boolean optimize, boolean fieldRelative)
     {
@@ -58,7 +59,6 @@ public class TurnToTarget extends Command
     @Override
     public void initialize()
     {
-        controller.reset();
         for (var command : setStateCommands)
         {
             command.schedule();
@@ -71,10 +71,10 @@ public class TurnToTarget extends Command
         if (detection.isPresent())
         {
             if (timer.hasElapsed(0.25)) {
-                controller.reset();
+                controller.reset(MathUtil.angleModulus(drive.getRotation().getRadians()));
             }
             timer.restart();;
-            controller.setSetpoint(MathUtil.angleModulus(drive.getRotation().minus(detection.get()).getRadians()));
+            controller.setGoal(MathUtil.angleModulus(drive.getRotation().minus(detection.get()).getRadians()));
         }
         ChassisSpeeds speeds = new ChassisSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), controller.calculate(
             MathUtil.angleModulus(drive.getRotation().getRadians())));

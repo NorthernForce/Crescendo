@@ -61,17 +61,19 @@ public class DefaultCrabbyOI implements CrabbyOI {
             () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.1, 1),
             () -> -MathUtil.applyDeadband(controller.getRightX(), 0.1, 1),
-            container.orangePi::getSpeakerTagYaw, true, true)
+            container::getPredictedAngle, true, true)
             .alongWith(new RampShooterWithDifferential(container.shooter,
-                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance)))
+                () -> container.topSpeedCalculator.getValueForDistance(container.getPredictedDistance()),
+                () -> container.bottomSpeedCalculator.getValueForDistance(container.getPredictedDistance())))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)).plus(Rotation2d.fromDegrees(0)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.getPredictedDistance())).plus(Rotation2d.fromDegrees(0)))));
         
-        controller.rightTrigger().and(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
+        controller.rightTrigger().and(() -> container.shooter.isRunning() && container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance)
+            && Math.abs(container.wristJoint.getTargetAngle().getRadians() - container.wristJoint.getRotation().getRadians())
+                < Math.toRadians(2))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
-            CrabbyConstants.WristConstants.tolerance, 0, true)
+            CrabbyConstants.WristConstants.tolerance, 0, true).alongWith(Commands.runOnce(() -> container.wristJoint.setTargetAngle(CrabbyConstants.WristConstants.ampRotation)))
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
         //     .alongWith(new SideDrive(container.drive, container.setStateCommands, CrabbyConstants.DriveConstants.controller,
@@ -144,7 +146,7 @@ public class DefaultCrabbyOI implements CrabbyOI {
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
 
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
-            CrabbyConstants.WristConstants.tolerance, 0, true)
+            CrabbyConstants.WristConstants.tolerance, 0, true).alongWith(Commands.runOnce(() -> container.wristJoint.setTargetAngle(CrabbyConstants.WristConstants.ampRotation)))
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
                 () -> CrabbyConstants.ShooterConstants.ampBottomSpeed)));
 
@@ -164,10 +166,10 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.a().whileTrue(new AimLobbage(container.wristJoint, container.shooter));
         
         controller.rightBumper().whileTrue(new RampShooterWithDifferential(container.shooter,
-                () -> container.topSpeedCalculator.getValueForDistance(container.lastRecordedDistance),
-                () -> container.bottomSpeedCalculator.getValueForDistance(container.lastRecordedDistance))
+                () -> container.topSpeedCalculator.getValueForDistance(container.getPredictedDistance()),
+                () -> container.bottomSpeedCalculator.getValueForDistance(container.getPredictedDistance()))
             .alongWith(new NFRWristContinuousAngle(container.wristJoint,
-                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)).plus(Rotation2d.fromDegrees(0)))));
+                () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.getPredictedDistance())).plus(Rotation2d.fromDegrees(0)))));
         
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
     }
