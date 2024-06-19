@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -79,6 +80,9 @@ public class SwerveDrive extends NFRSwerveDrive
     {
         Pose2d pose = poseEstimator.getEstimatedPosition();
         return new Pose2d(pose.getTranslation(), Rotation2d.fromRadians(MathUtil.angleModulus(pose.getRotation().getRadians())));
+    }
+    public SwerveDriveKinematics getKinematics() {
+        return kinematics;
     }
     public void scheduleCommands(NFRSwerveModuleSetState[] setStateCommands)
     {

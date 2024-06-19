@@ -18,7 +18,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -43,9 +43,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S3.chaos.1.5"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.1.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {
@@ -55,7 +68,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -74,9 +87,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S3.chaos.2.5"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.2.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {
@@ -86,7 +112,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -105,9 +131,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S3.chaos.3.5"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.3.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {
@@ -117,7 +156,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -136,9 +175,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S3.chaos.4.5"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.4.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {
@@ -148,7 +200,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -167,9 +219,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "S3.chaos.5.5"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3.chaos.5.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "dumbtake"
+                }
+              }
+            ]
           }
         },
         {

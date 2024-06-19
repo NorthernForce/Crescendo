@@ -6,11 +6,16 @@ import java.util.Map;
 import org.northernforce.commands.NFRSwerveModuleSetState;
 
 import org.northernforce.motors.NFRTalonFX;
+
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import org.northernforce.commands.NFRSwerveDriveCalibrate;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -25,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AddDataToTargetingCalculator;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CloseShot;
+import frc.robot.commands.LEDRelaySolid;
 import frc.robot.commands.OrchestraCommand;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.dashboard.CrabbyDashboard;
@@ -34,6 +40,7 @@ import frc.robot.oi.DefaultCrabbyOI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDRelay;
 import frc.robot.commands.RampShooterContinuous;
 import frc.robot.subsystems.NFRPhotonCamera;
 import frc.robot.subsystems.Shooter;
@@ -53,6 +60,7 @@ public class CrabbyContainer implements RobotContainer
 
     public final NFRPhotonCamera orangePi;
     public final Xavier xavier;
+    public final LEDRelay ledRelay;
     public final WristJoint wristJoint;
     public final CrabbyMap map;
     public final CrabbyDashboard dashboard;
@@ -111,12 +119,19 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("Developer").addDouble("Distance", () -> lastRecordedDistance);
 
         xavier = new Xavier(CrabbyConstants.XavierConstants.config);
+
+        ledRelay = new LEDRelay(0);
+        ledRelay.setDefaultCommand(
+            new LEDRelaySolid(ledRelay, false)
+        );
+        PortForwarder.add(5806, "10.1.72.11", 5800);
         
         shooter = new Shooter(map.shooterMotorTop, map.shooterMotorBottom, dashboard);
         Shuffleboard.getTab("General").addDouble("Top Shooter", shooter::getTopMotorVelocity);
         Shuffleboard.getTab("General").addDouble("Bottom Shooter", shooter::getBottomMotorVelocity);
         Shuffleboard.getTab("General").addBoolean("At Speed", () -> shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance));
         Shuffleboard.getTab("General").addDouble("Index Current", indexer::getMotorCurrent);
+        Shuffleboard.getTab("General").addBoolean("Climber Switch", () -> climber.isDown());
 
         Shuffleboard.getTab("General").addDouble("Intake Current", intake::getMotorCurrent);
 
@@ -148,6 +163,8 @@ public class CrabbyContainer implements RobotContainer
                 (NFRTalonFX)map.modules[3].getTurnController()), drive, map.modules[0], map.modules[1], map.modules[2], map.modules[3])
                 .ignoringDisable(true);
         }));
+        Shuffleboard.getTab("Developer").addDouble("Speaker Yaw", () -> orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(100)).getDegrees());
+        Pathfinding.setPathfinder(new LocalADStar());
     }
     @Override
     @Deprecated
@@ -207,11 +224,6 @@ public class CrabbyContainer implements RobotContainer
         {
             lastRecordedDistance = distance.get();
         }
-        // var estimatedPose = orangePi.getPose();
-        // if (estimatedPose.isPresent())
-        // {
-        //     drive.addVisionEstimate(estimatedPose.get().timestampSeconds, estimatedPose.get().estimatedPose.toPose2d());
-        // }
         dashboard.periodic();
     }
     @Override

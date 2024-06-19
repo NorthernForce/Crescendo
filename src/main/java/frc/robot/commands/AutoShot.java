@@ -28,7 +28,7 @@ public class AutoShot extends SequentialCommandGroup {
             ),
             new TurnToTarget2(drive, setStateCommands, CrabbyConstants.DriveConstants.controller2, orangePi::getSpeakerTagYaw, true),
             new ShootIndexerAndIntake(indexer, intake, CrabbyConstants.IndexerConstants.indexerSpeed, CrabbyConstants.IntakeConstants.intakeSpeed),
-            Commands.waitSeconds(0.8)
+            Commands.waitSeconds(0.3)
         );
         addRequirements(shooter, intake, indexer, wristJoint);
     }

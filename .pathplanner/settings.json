@@ -3,19 +3,29 @@
   "robotLength": 0.7,
   "holonomicMode": true,
   "pathFolders": [
+    "S3.58",
+    "S1.CS.LS",
+    "S1.CS.V1",
+    "S1.CS.V2",
     "S1.CS.V3",
     "S1.G1_G2",
     "S1.L",
     "S1.L.V1",
     "S1.L.V2",
+    "S1.LS",
     "S1.SIMPLE",
+    "S1.close",
     "S2.C.V1",
     "S2.C.V2",
+    "S2.CST",
     "S2.G2_G1",
     "S2.G2_G3",
     "S2.SIMPLE",
+    "S3.BERT",
+    "S3.CS",
     "S3.G3_G2",
     "S3.SIMPLE",
+    "S3.chaos",
     "Uncategorized"
   ],
   "autoFolders": [
@@ -24,9 +34,9 @@
     "S2",
     "S3"
   ],
-  "defaultMaxVel": 4.0,
+  "defaultMaxVel": 4.4,
   "defaultMaxAccel": 3.0,
-  "defaultMaxAngVel": 120.0,
-  "defaultMaxAngAccel": 240.0,
+  "defaultMaxAngVel": 540.0,
+  "defaultMaxAngAccel": 720.0,
   "maxModuleSpeed": 3.7
 }

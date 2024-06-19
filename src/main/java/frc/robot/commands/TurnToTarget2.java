@@ -52,7 +52,6 @@ public class TurnToTarget2 extends Command
     @Override
     public void execute()
     {
-        System.out.println("TurnTOTarget2");
         var detection = targetSupplier.get();
         if (detection.isPresent())
         {
@@ -75,10 +74,15 @@ public class TurnToTarget2 extends Command
     public boolean isFinished()
     {
         return Math.abs(targetSupplier.get().orElse(Rotation2d.fromDegrees(100)).getDegrees()) < 5
-        && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.1;
+            && Math.abs(drive.getChassisSpeeds().omegaRadiansPerSecond) < 0.10;
     }
     @Override
     public void end(boolean interrupted)
     {
+        SwerveModuleState[] states = drive.toModuleStates(new ChassisSpeeds());
+        for (int i = 0; i < states.length; i++) {
+            setStateCommands[i].setTargetState(optimize ? SwerveModuleState.optimize(states[i],
+                    drive.getModules()[i].getRotation()) : states[i]);
+        }
     }
 }

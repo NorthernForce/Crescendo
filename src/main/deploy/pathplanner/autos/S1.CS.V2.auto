@@ -158,9 +158,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "S1.CS.V2.6"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S1.CS.V2.6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
           }
         }
       ]

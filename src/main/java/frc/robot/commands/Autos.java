@@ -41,13 +41,14 @@ public class Autos
             "S1.SIMPLE",
             "S2.SIMPLE",
             "S3.SIMPLE",
-            "S1.G1_G2",
+            // "S1.G1_G2",
             "S2.G2_G1",
-            "S2.G2_G3",
-            "S3.G3_G2",
-            "S1.CS.V1",
-            "S1.CS.V2",
+            // "S2.G2_G3",
+            // "S3.G3_G2",
+            // "S1.CS.V1",
+            // "S1.CS.V2",
             "S1.CS.V3",
+            "S1.CS.LS",
             // "S1.CS.V2",
             // "S1.LS",
             // "S1.L.V1",
@@ -58,8 +59,13 @@ public class Autos
             // "S2.LS.V1",
             // "S2.S.V1",
             // "S2.S.V2",
-            "S2.T",
-            "S3.chaos"
+            "S2.CST",
+            // "S2.T",
+            "S2.CSC",
+            "S3.chaos",
+            "S3.CS",
+            "S3.BERT",
+            "S3.58"
             // "S3.brokenchaos",
             // "S3.C.V2",
             // "S3.LS.V1",
@@ -122,9 +128,12 @@ public class Autos
         NamedCommands.registerCommand("prepAutoShot", new AutoPrepShot(drive, camera, shooter, wrist,
             () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
             () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
-            () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+            () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble())).plus(Rotation2d.fromDegrees(0))));
         NamedCommands.registerCommand("autoShot", new AutoShot(drive, setStateCommands, shooter, camera, wrist, intake, indexer, () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
-            () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()))));
+            () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()), () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble())).plus(Rotation2d.fromDegrees(0))));
+        NamedCommands.registerCommand("everythingButShot", new EverythingButShot(drive, setStateCommands, shooter, camera, wrist, () -> topCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+                () -> bottomCalculator.getValueForDistance(lastRecordedDistance.getAsDouble()),
+                () -> Rotation2d.fromRadians(wristCalculator.getValueForDistance(lastRecordedDistance.getAsDouble())).plus(Rotation2d.fromDegrees(0))));
         NamedCommands.registerCommand("spit", new Spit(shooter, wrist, indexer, intake));
             AutoBuilder.configureHolonomic(poseSupplier, resetPose, drive::getChassisSpeeds, speeds -> drive.drive(speeds, setStateCommands, true, false),
             config, shouldFlipPath, drive);

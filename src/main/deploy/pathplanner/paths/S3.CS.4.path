@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.7,
+        "y": 6.973553801068638
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.9814694988597252,
+        "y": 7.633817047111231
+      },
+      "isLocked": false,
+      "linkedName": "S3.CS.4_START"
+    },
+    {
+      "anchor": {
+        "x": 8.328251722791663,
+        "y": 7.561394697661785
+      },
+      "prevControl": {
+        "x": 7.328251722791663,
+        "y": 7.561394697661785
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "S3.CS.5_START"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.4,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "S3.CS",
+  "previewStartingState": {
+    "rotation": 30.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

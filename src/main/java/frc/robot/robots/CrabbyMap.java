@@ -24,7 +24,7 @@ public class CrabbyMap {
     public final NFRGyro gyro = new NFRPigeon2(1);
     public final NFRSparkMax intakeMotor = new NFRSparkMax(MotorType.kBrushless, 14);
     public final NFRBeamBreak indexerBeamBreak = new NFRBeamBreak(7);
-    public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16); //TODO get the id
+    public final NFRSparkMax indexerMotor = new NFRSparkMax(MotorType.kBrushless, 16);
     {
         indexerMotor.restoreFactoryDefaults();
         indexerMotor.setSmartCurrentLimit(60);
@@ -44,10 +44,10 @@ public class CrabbyMap {
         wristSparkMax.setSmartCurrentLimit(40);
         wristSparkMax.setIdleMode(IdleMode.kBrake);
     }
-    public final NFRSparkMax climberMotor = new NFRSparkMax(MotorType.kBrushless, 15);
+    public final NFRSparkMax climberMotor = new NFRSparkMax(MotorType.kBrushless, 13);
     {
         climberMotor.restoreFactoryDefaults();
-        climberMotor.setSmartCurrentLimit(40);
+        climberMotor.setSmartCurrentLimit(80);
         climberMotor.setIdleMode(IdleMode.kBrake);
         climberMotor.burnFlash();
     }

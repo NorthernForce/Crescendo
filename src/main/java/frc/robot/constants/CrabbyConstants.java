@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -40,24 +41,30 @@ public class CrabbyConstants {
             new Translation2d(-0.225425, -0.307975)
         };
         public static final NFRSwerveDriveConfiguration config = new NFRSwerveDriveConfiguration("drive");
-        public static final PIDController controller = new PIDController(4.2, 0, 0.5);
-        public static final PIDController controller2 = new PIDController(4.2, 0.1, 0.5);
+        public static final PIDController controller = new PIDController(4.2, 0.14, 0.5);
+        public static final PIDController controller2 = new PIDController(4.2, 0.05, 0.5);
+        public static final PIDController ampController = new PIDController(2, 0.1, 0.1);
         public static final HolonomicPathFollowerConfig holonomicConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5),
-            new PIDConstants(1.5, 0, 0.5),
-            6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig());
+            new PIDConstants(1.5, 0, 0),
+            6, offsets[0].getDistance(new Translation2d()), new ReplanningConfig(true, true));
+        public static final HolonomicPathFollowerConfig ampHolonomicConfig = new HolonomicPathFollowerConfig(
+            new PIDConstants(6),
+            new PIDConstants(5, 0, 0),
+            4, offsets[0].getDistance(new Translation2d()), new ReplanningConfig(true, true));
         public static final double maxShootSpeed = 0.5;
+        public static final PathConstraints constraints = new PathConstraints(2.0, 3.0, 2.0, 2.0); // TODO: tune
     }
     public static class IntakeConstants
     {
-        public static final double intakeSpeed = -0.7;
-        public static final double intakePurgeSpeed = 0.7;
+        public static final double intakeSpeed = -0.8;
+        public static final double intakePurgeSpeed = 0.8;
     }
     public static class IndexerConstants
     {
         public static final double indexerSpeed = 0.6;
         public static final double indexerShootSpeed = 0.8;
-        public static final double indexerPurgeSpeed = -1; //TODO find indexerPurgeSpeed
+        public static final double indexerPurgeSpeed = -1;
     }
     public static class WristConstants
     {
@@ -65,7 +72,7 @@ public class CrabbyConstants {
             new NFRRotatingArmJointConfiguration("wristConfig")
                 .withUseLimits(true)
                 .withUseIntegratedLimits(true)
-                .withLimits(Rotation2d.fromDegrees(22), Rotation2d.fromDegrees(56))
+                .withLimits(Rotation2d.fromDegrees(21), Rotation2d.fromDegrees(56))
                 .withGearRatio(1) // TODO
                 .withGearbox(DCMotor.getNEO(1))
                 .withLength(1) // TODO
@@ -100,8 +107,8 @@ public class CrabbyConstants {
         public static final TalonFXConfiguration bottomShooterConfiguration = defaultTalonConfiguration.withSlot0(topSlot)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
         public static final double closeShotSpeed = 42; // TODO
-        public static final double ampBottomSpeed = 14; // TODO
-        public static final double ampTopSpeed = 7; // TODO
+        public static final double ampBottomSpeed = 22; // TODO
+        public static final double ampTopSpeed = 8; // TODO
         public static final double tolerance = 2.5; // RPS
         public static final double clearanceTime = 0.1; // Time in seconds for shooter to start ramping down after note is passed into shooter
     }

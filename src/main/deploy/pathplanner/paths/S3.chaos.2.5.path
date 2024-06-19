@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.133759925477097,
-        "y": 2.661683993201716
+        "x": 7.802490362815484,
+        "y": 2.537631514009468
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.188033378442056,
-        "y": 3.6074105402367573
+        "x": 6.856763815780443,
+        "y": 3.4833580610445094
       },
       "isLocked": false,
       "linkedName": "S3.chaos2.5"
     },
     {
       "anchor": {
-        "x": 5.832816986299056,
-        "y": 4.055899418212139
+        "x": 5.194693922151377,
+        "y": 4.2332839081632585
       },
       "prevControl": {
-        "x": 6.768793775117243,
-        "y": 3.8609042538750162
+        "x": 6.1306707109695635,
+        "y": 4.0382887438261355
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,10 +32,10 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 4.4,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 120.0,
-    "maxAngularAcceleration": 240.0
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "S3.chaos",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
