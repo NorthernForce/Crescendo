@@ -18,9 +18,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.LEDRelaySolid;
 import frc.robot.commands.AimLobbage;
 import frc.robot.commands.CloseShotPreset;
+import frc.robot.commands.FollowNote;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
+import frc.robot.commands.RetrieveNote;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIndexerAndIntake;
 import frc.robot.commands.ShootIndexerAndIntake;
@@ -102,6 +104,14 @@ public class DefaultCrabbyOI implements CrabbyOI {
         
         new Trigger(() -> container.indexer.getBeamBreak().beamBroken())
             .whileTrue(new LEDRelaySolid(container.ledRelay, true));
+        
+        controller.povRight().onTrue(new RetrieveNote(
+            container.xavier,
+            container.drive,
+            container.setStateCommands,
+            container.intake,
+            container.indexer,
+            () -> 0, true));
     }
     @Override
     public void bindDriverToJoystick(CrabbyContainer container, CommandGenericHID joystick)
