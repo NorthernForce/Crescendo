@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 
 import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS5Controller;
 
 public class XboxDisplayer extends JPanel {
     private Image xboxController;
@@ -28,14 +28,14 @@ public class XboxDisplayer extends JPanel {
             { 245, 99 }, // b
             { 266, 79 } }; // x
 
-    private int[][] arrowDimensions = { { 154, 165 }, // down
-            { 169, 149 }, // right
-            { 139, 149 }, // left
-            { 154, 133 }, // up?
-            { 169, 165 }, // down right
-            { 139, 133 }, // up left
+    private int[][] arrowDimensions = { { 154, 133 }, // up
             { 169, 133 }, // up right
-            { 139, 165 } }; // down left
+            { 169, 149 }, // right
+            { 169, 165 }, // down right
+            { 154, 165 }, // down
+            { 139, 165 }, // down left
+            { 139, 149 }, // left
+            { 139, 133 } }; // up left
 
     private int[][] joySticksDimensions = { { 106, 93 }, { 222, 138 } };
     private File xboxFile;
@@ -56,6 +56,7 @@ public class XboxDisplayer extends JPanel {
     private Supplier<int[][]> flushDimensions = ((Supplier<int[][]>) () -> {
         return joyCurrent == 1 ? flushDimensionsDriver : flushDimensionsManipulator;
     });
+
     public XboxDisplayer() {
         xboxFile = new File("images/xbox_no_back.png");
         frame = new JFrame();
@@ -78,13 +79,18 @@ public class XboxDisplayer extends JPanel {
         frame.add(this);
         frame.setVisible(true);
         for (int port = 0; port < 2; port++) {
-//            if (joystickHasXboxControls(port)) {
-                setTrigs(port, XboxButtons.values(), XboxAxis.values());
+            // if (joystickHasXboxControls(port)) {
+            //     System.out.println("Found Xbox controller");
+            //     setTrigs(port, XboxButtons.values(), XboxAxis.values());
             // } else if (joystickHasStadiaControls(port)) {
+            //     System.out.println("Found Stadia controller");
             //     setTrigs(port, StadiaButtons.values(), StadiaAxis.values());
             // } else if (joystickHasDualsenseControls(port)) {
-            //     setTrigs(port, PS5Buttons.values(), PS5Axis.values());
+            //     System.out.println("Found DualSense");
+                setTrigs(port, PS5Buttons.values(), PS5Axis.values());
             // } else if (joystickHasPS4Controls(port)) {
+            //     System.out.println("Found PS4 controller");
+
             //     setTrigs(port, PS4Buttons.values(), PS4Axis.values());
             // }
         }
@@ -135,24 +141,25 @@ public class XboxDisplayer extends JPanel {
                         (int) bumperDimension.height, (int) bumperDimension.width);
 
             }
-            totalLength += bumperDimensions.length;
             int totalAxisLength = 0;
-            for (int i = 0; i < joySticksDimensions.length; i++) {
-                g.setColor(trigs.get(i + totalLength).get() ? Color.YELLOW : Color.RED);
-                g.fillOval(
-                        joySticksDimensions[i][0] + change
-                                + (int) ((double) (axis.get(totalAxisLength + 2 * i).get()) * 7),
-                        joySticksDimensions[i][1]
-                                + (int) ((double) (axis.get(totalAxisLength + 1 + 2 * i).get()) * 7),
-                        joystickSize, joystickSize);
 
-            }
-            totalAxisLength += joySticksDimensions.length * 2;
-            totalLength += joySticksDimensions.length;
+            totalLength += bumperDimensions.length;
+            int leftX = joySticksDimensions[0][0] + change
+                    + (int) ((double) (axis.get(totalAxisLength).get()) * 7);
+            int leftY = joySticksDimensions[0][1]
+                    + (int) ((double) (axis.get(totalAxisLength + 1).get()) * 7);
 
             Graphics2D g2d = (Graphics2D) g;
             float stroke = 2.0f;
             Color orig = g2d.getColor();
+
+            for (int i = 0; i < flushDimensions.get().length; i++) {
+                g.setColor(trigs.get(i + totalLength).get() ? Color.YELLOW : Color.RED);
+                g.fillRect(flushDimensions.get()[i][0] + change, flushDimensions.get()[i][1],
+                        flushDimension.height, flushDimension.width);
+            }
+            totalLength += flushDimensions.get().length;
+            totalAxisLength += joySticksDimensions.length;
             for (int i = 0; i < triggerDimensions.length; i++) {
                 g2d.setColor(Color.BLACK);
                 g2d.setStroke(new BasicStroke(stroke));
@@ -177,11 +184,26 @@ public class XboxDisplayer extends JPanel {
                 g2d.setColor(orig);
 
             }
-            for (int i = 0; i < flushDimensions.get().length; i++) {
-                g.setColor(trigs.get(i + totalLength).get() ? Color.YELLOW : Color.RED);
-                g.fillRect(flushDimensions.get()[i][0] + change, flushDimensions.get()[i][1],
-                        flushDimension.height, flushDimension.width);
-            }
+
+            totalAxisLength += triggerDimensions.length;
+            // totalLength += triggerDimensions.length;
+            // totalLength += flushDimensions.get().length;
+            int rightX = joySticksDimensions[1][0] + change
+                    + (int) ((double) (axis.get(totalAxisLength + 0).get()) * 7);
+            int rightY = joySticksDimensions[1][1]
+                    + (int) ((double) (axis.get(totalAxisLength + 1).get()) * 7);
+            Color left = trigs.get(totalLength).get() ? Color.YELLOW : Color.RED;
+            Color right = trigs.get(totalLength + 1).get() ? Color.YELLOW : Color.RED;
+
+            // totalLength += triggerDimensions.length;
+            // totalLength += flushDimensions.get().length;
+            g.setColor(left);
+            g.fillOval(leftX, leftY, joystickSize, joystickSize);
+            totalLength += 1;
+            g.setColor(right);
+            g.fillOval(rightX, rightY, joystickSize, joystickSize);
+            totalLength += 1;
+
             for (int i = 0; i < arrowDimensions.length; i++) {
                 g.setColor(trigs.get(i + totalLength).get() ? Color.YELLOW : Color.RED);
                 g.fillRect(arrowDimensions[i][0] + change, arrowDimensions[i][1],
@@ -189,7 +211,6 @@ public class XboxDisplayer extends JPanel {
                         squareSize.height);
             }
             totalLength += arrowDimensions.length;
-
 
         }
         Color orig = g.getColor();
@@ -209,8 +230,7 @@ public class XboxDisplayer extends JPanel {
         for (Enum<?> button : buttons) {
             trigs.add(() -> DriverStation.getStickButton(joyCurrent, ((Enum<?>) button).ordinal() + 1));
         }
-        for(int i = 0; i < 360; i+=45) 
-        {
+        for (int i = 0; i < 360; i += 45) {
             final int index = i;
             trigs.add(() -> DriverStation.getStickPOV(port, 0) == index);
         }
@@ -253,8 +273,9 @@ public class XboxDisplayer extends JPanel {
      *         controller (Dualsense) as a boolean.
      */
     public boolean joystickHasDualsenseControls(int port) {
-        return DriverStation.getJoystickName(port).contains("Dualsense");
+        return DriverStation.getJoystickName(port).contains("DualSense");
     }
+
     /**
      * This is the getter method to get if a controller has the same controls as a
      * Dualsense controller. This uses the get name method.
@@ -278,26 +299,34 @@ public class XboxDisplayer extends JPanel {
     }
 
     public enum XboxButtons {
-        /** A. */
-        kA(1),
-        /** B. */
-        kB(2),
-        /** X. */
-        kX(3),
-        /** Y. */
-        kY(4),
-        /** Left bumper. */
-        kLeftBumper(5),
-        /** Right bumper. */
-        kRightBumper(6),
-        /** Left stick. */
-        kLeftStick(9),
-        /** Right stick. */
-        kRightStick(10),
-        /** Back. */
-        kBack(7),
-        /** Start. */
-        kHamburger(8);
+    /** Square button. */
+    kSquare(1),
+    /** X button. */
+    kCross(2),
+    /** Circle button. */
+    kCircle(3),
+    /** Triangle button. */
+    kTriangle(4),
+    /** Left trigger 1 button. */
+    kL1(5),
+    /** Right trigger 1 button. */
+    kR1(6),
+    /** Left trigger 2 button. */
+    kL2(7),
+    /** Right trigger 2 button. */
+    kR2(8),
+    /** Create button. */
+    kCreate(9),
+    /** Options button. */
+    kOptions(10),
+    /** Left stick button. */
+    kL3(11),
+    /** Right stick button. */
+    kR3(12),
+    /** PlayStation button. */
+    kPS(13),
+    /** Touchpad click button. */
+    kTouchpad(14);
 
         /** Button value. */
         public final int value;
@@ -331,34 +360,26 @@ public class XboxDisplayer extends JPanel {
     }
 
     public enum PS5Buttons {
-        /** Square button. */
-        kX(1),
-        /** X button. */
-        kA(2),
-        /** Circle button. */
-        kB(3),
-        /** Triangle button. */
+        /** A. */
+        kA(1),
+        /** B. */
+        kB(2),
+        /** X. */
+        kX(3),
+        /** Y. */
         kY(4),
-        /** Left trigger 1 button. */
+        /** Left bumper. */
         kLeftBumper(5),
-        /** Right trigger 1 button. */
+        /** Right bumper. */
         kRightBumper(6),
-        /** Left trigger 2 button. */
-        kLeftTrigger(7),
-        /** Right trigger 2 button. */
-        kRightTrigger(8),
-        /** Create button. */
-        kBack(9),
-        /** Options button. */
-        kHamburger(10),
-        /** Left stick button. */
-        kLeftStick(11),
-        /** Right stick button. */
-        kRightStick(12),
-        /** PlayStation button. */
-        kHome(13),
-        /** Touchpad click button. */
-        kTouchpad(14);
+        /** Left stick. */
+        kLeftStick(9),
+        /** Right stick. */
+        kRightStick(10),
+        /** Back. */
+        kBack(7),
+        /** Start. */
+        kHamburger(8);
 
         /** Button value. */
         public final int value;
