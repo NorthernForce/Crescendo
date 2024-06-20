@@ -276,6 +276,7 @@ public class CrabbyContainer implements RobotContainer
         if (orangePi.getSpeakerTagYaw().isPresent())
         {
             var speeds = drive.getChassisSpeeds();
+            //HAR HAR HAR! I think you were trying to find the predicted distance traveled, but you are using velocity...
             double r = distance(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond) * 0.25;
             double B = orangePi.getSpeakerTagYaw().orElse(Rotation2d.fromDegrees(0)).getRadians();
             SmartDashboard.putNumber("B", B);
@@ -289,5 +290,19 @@ public class CrabbyContainer implements RobotContainer
             return Optional.of(Rotation2d.fromRadians(MathUtil.angleModulus(Math.PI - (Math.PI - B) - (Math.PI - D))));
         }
         else return Optional.empty();
+    }
+    public Optional<Rotation2d> getPredictedAngleEverettsWay() {
+        double yVe = drive.getChassisSpeeds().vyMetersPerSecond;
+        double xVe = drive.getChassisSpeeds().vxMetersPerSecond;
+        double roboSpeed = distance(xVe, yVe);
+        double origDistance = lastRecordedDistance;
+        double theta = orangePi.getSpeakerTagYaw().get().getRadians();
+        // i guess ill trust connor on this next one: 
+        double roboDistance = roboSpeed * 0.25;
+        double cAngle = Math.acos((getPredictedDistance() * getPredictedDistance() + origDistance * origDistance - roboDistance * roboDistance) / 
+            (2 * getPredictedDistance() * origDistance));
+        System.out.println(cAngle);
+        cAngle = Math.PI - theta - cAngle;
+        return Optional.of(Rotation2d.fromRadians(cAngle));
     }
 }
