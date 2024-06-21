@@ -14,6 +14,7 @@ public class BeachBallExtending {
         startingState = limitSwitch.get();
     }
     public void run() {
+        startingState = !limitSwitch.get();
         max.set(CrabbyConstants.OffSeasonExtendingConstants.extendSpeed * (startingState ? 1.0 : -1.0));
 
 
