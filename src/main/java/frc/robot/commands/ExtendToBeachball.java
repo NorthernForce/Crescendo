@@ -15,6 +15,7 @@ public class ExtendToBeachball extends Command{
 
     public void end(boolean interrupted) {
         motor.stop();
+        if(interrupted) System.out.println("ONLY IN OHIO, WOAAAHHHOOOAAAHHH");
     }
 
     public boolean isFinished() {

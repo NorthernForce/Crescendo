@@ -25,7 +25,7 @@ public class BeachBallExtending {
     }
 
     public boolean isDone() {
-        return limitSwitch.get() != startingState;
+        return limitSwitch.get() == startingState;
     }
     public void stop() {
         max.set(0);
