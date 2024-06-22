@@ -3,17 +3,17 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import org.northernforce.commands.NFRSwerveModuleSetState;
-import org.northernforce.subsystems.drive.NFRSwerveDrive;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.CrabbyConstants;
+import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Xavier;
 
 public class FollowNote extends Command {
     private Xavier xavier;
-    private NFRSwerveDrive drive;
+    private SwerveDrive drive;
     private NFRSwerveModuleSetState[] setStateCommands;
     private DoubleSupplier strafeSupplier;
     private PIDController pid;
@@ -27,7 +27,7 @@ public class FollowNote extends Command {
      * @param strafeSupplier a supplier which returns the direction of strafe (if any)
      * @param useOptimization whether to use swerve optimization (recommended)
      */
-    public FollowNote(Xavier xavier, NFRSwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, DoubleSupplier strafeSupplier, boolean useOptimization) {
+    public FollowNote(Xavier xavier, SwerveDrive drive, NFRSwerveModuleSetState[] setStateCommands, DoubleSupplier strafeSupplier, boolean useOptimization) {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drive);
         addRequirements(xavier);
@@ -35,16 +35,14 @@ public class FollowNote extends Command {
         this.drive = drive;
         this.setStateCommands = setStateCommands;
         this.strafeSupplier = strafeSupplier;
-        this.pid = new PIDController(.75, 0, 0);
+        this.pid = CrabbyConstants.XavierConstants.noteRotationPID;
         this.useOptimization = useOptimization;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        for (NFRSwerveModuleSetState command : setStateCommands) {
-            command.schedule();
-        }
+        drive.scheduleCommands(setStateCommands);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -57,20 +55,13 @@ public class FollowNote extends Command {
         } else {
             speeds = new ChassisSpeeds(.5, strafeSupplier.getAsDouble() * 0.5, pid.calculate(radian));
         }
-        speeds = ChassisSpeeds.discretize(speeds, 0.02);
-        SwerveModuleState[] states = drive.toModuleStates(speeds);
-        for (int i = 0; i < states.length; i++) {
-            setStateCommands[i].setTargetState(useOptimization ? SwerveModuleState.optimize(
-                states[i], drive.getModules()[i].getRotation()) : states[i]);
-        }
+        drive.drive(speeds, setStateCommands, useOptimization, useOptimization);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        for (NFRSwerveModuleSetState command : setStateCommands) {
-            command.cancel();
-        }
+        drive.cancelCommands(setStateCommands);
     }
 
     // Returns true when the command should end.
