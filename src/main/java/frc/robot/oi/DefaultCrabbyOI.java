@@ -20,6 +20,7 @@ import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIndexerAndIntake;
+import frc.robot.commands.RunIntake;
 import frc.robot.commands.ShootIndexerAndIntake;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.constants.CrabbyConstants;
@@ -168,6 +169,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
                 () -> Rotation2d.fromRadians(container.angleCalculator.getValueForDistance(container.lastRecordedDistance)).plus(Rotation2d.fromDegrees(0)))));
         
         controller.y().whileTrue(new CloseShotPreset(container.shooter, container.wristJoint));
+
+        controller.x().whileTrue(new RunIntake(container.roller, CrabbyConstants.BeachBallConstants.speed));
     }
     @Override
     public void bindManipulatorToJoystick(CrabbyContainer container, CommandGenericHID joystick)

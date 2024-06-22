@@ -137,4 +137,8 @@ public class CrabbyConstants {
             new Rotation3d(0, cameraPitch.getRadians(), Math.toRadians(180))
         ));
     }
+    public static class BeachBallConstants
+    {
+        public static final double speed = 1;
+    }
 }
