@@ -37,6 +37,7 @@ import frc.robot.dashboard.CrabbyDashboard;
 import frc.robot.dashboard.Dashboard;
 import frc.robot.oi.CrabbyOI;
 import frc.robot.oi.DefaultCrabbyOI;
+import frc.robot.subsystems.BeachBallExtending;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -76,14 +77,14 @@ public class CrabbyContainer implements RobotContainer
     public final TargetingCalculator angleCalculator;
     public CrabbyOI oi;
     public final Climber climber;
+    public final BeachBallExtending getTheBall;
     public CrabbyContainer()
     {
-        
         dashboard = new CrabbyDashboard();
 
         map = new CrabbyMap();
         intake = new Intake(map.intakeMotor);
-
+        getTheBall = new BeachBallExtending(map.extendMotor);
         climber = new Climber(map.climberMotor);
         Shuffleboard.getTab("General").addDouble("Climber Position", () -> climber.getPosition());
 
@@ -98,7 +99,7 @@ public class CrabbyContainer implements RobotContainer
         Shuffleboard.getTab("General").addBoolean("Manual Wrist Positioning", () -> manualWrist);
         Shuffleboard.getTab("General").addDouble("Wrist Target", () -> Math.toDegrees(angleCalculator.getValueForDistance(lastRecordedDistance)));
         // Shuffleboard.getTab("General").add("Calibrate Wrist", new NFRResetWristCommand(wristJoint).ignoringDisable(true));
-        
+        Shuffleboard.getTab("General").addBoolean("Beachball Retriever Extended", () -> getTheBall.isExtended());
         drive = new SwerveDrive(CrabbyConstants.DriveConstants.config, map.modules, CrabbyConstants.DriveConstants.offsets, map.gyro, dashboard);
         setStateCommands = new NFRSwerveModuleSetState[] {
             new NFRSwerveModuleSetState(map.modules[0], 0, false),

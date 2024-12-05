@@ -1,7 +1,5 @@
 package frc.robot.oi;
 
-import java.util.Optional;
-
 import org.northernforce.commands.NFRRotatingArmJointSetAngle;
 import org.northernforce.commands.NFRRotatingArmJointWithJoystick;
 import org.northernforce.commands.NFRSwerveDriveStop;
@@ -9,8 +7,6 @@ import org.northernforce.commands.NFRSwerveDriveWithJoystick;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,13 +14,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.LEDRelaySolid;
 import frc.robot.commands.AimLobbage;
 import frc.robot.commands.CloseShotPreset;
+import frc.robot.commands.ExtendToBeachball;
 import frc.robot.commands.NFRWristContinuousAngle;
 import frc.robot.commands.PurgeIndexer;
 import frc.robot.commands.RampShooterWithDifferential;
 import frc.robot.commands.RumbleController;
 import frc.robot.commands.RunIndexerAndIntake;
 import frc.robot.commands.ShootIndexerAndIntake;
-import frc.robot.commands.SideDrive;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.constants.CrabbyConstants;
 import frc.robot.robots.CrabbyContainer;
@@ -143,6 +139,8 @@ public class DefaultCrabbyOI implements CrabbyOI {
         controller.rightTrigger().and(() -> container.shooter.isAtSpeed(CrabbyConstants.ShooterConstants.tolerance))
             .onTrue(new ShootIndexerAndIntake(container.indexer, container.intake, CrabbyConstants.IndexerConstants.indexerShootSpeed, -0.7));
 
+        controller.povLeft().onTrue(new ExtendToBeachball(container.getTheBall));
+        
         controller.leftBumper().whileTrue(new NFRRotatingArmJointSetAngle(container.wristJoint, CrabbyConstants.WristConstants.ampRotation,
             CrabbyConstants.WristConstants.tolerance, 0, true)
             .alongWith(new RampShooterWithDifferential(container.shooter, () -> CrabbyConstants.ShooterConstants.ampTopSpeed,
